@@ -33,24 +33,28 @@ namespace Qrakhen.Sqript
 
         public virtual void setValue<T>(T value) {
             this.value = value;
+        }        
+
+        public bool isType(int types) {
+            return (((int) type & types) > 0);
         }
 
         public enum Type
         {
-            KEYWORD,
-            OPERATOR,
-            STRUCTURE,
-            IDENTIFIER,
-            INTEGER,
-            DECIMAL,
-            NUMBER,
-            STRING,
-            BOOLEAN,
-            OBJECT,
-            ARRAY,
-            REFERENCE,
-            FUNCTION,
-            UNDEFINED
+            KEYWORD = 1,
+            OPERATOR = 2,
+            STRUCTURE = 4,
+            IDENTIFIER = 8,
+            INTEGER = 16,
+            DECIMAL = 32,
+                NUMBER = 48,
+            STRING = 128,
+            BOOLEAN = 256,
+            OBJECT = 512,
+            ARRAY = 1024,
+            REFERENCE = 2048,
+            FUNCTION = 4096,
+            UNDEFINED = 8192
         }
     }
 }
