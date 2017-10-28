@@ -20,23 +20,23 @@ namespace Qrakhen.Sqript
             loggingLevel = level;
         }
 
-        private static void line(string message) {
-            Console.WriteLine(" : " + message);
+        private static void line(object message) {
+            Console.WriteLine(" : " + message.ToString());
         }
 
-        public static void error(string message) {
+        public static void error(object message) {
             if ((int) loggingLevel >= (int) Level.CRITICAL) line("ERROR " + message);
         }
 
-        public static void warn(string message) {
+        public static void warn(object message) {
             if ((int)loggingLevel >= (int)Level.WARNINGS) line("WARN " + message);
         }
 
-        public static void log(string message) {
+        public static void log(object message) {
             if ((int)loggingLevel >= (int)Level.DEVELOPMENT) line(message);
         }
 
-        public static void spam(string message) {
+        public static void spam(object message) {
             if ((int)loggingLevel >= (int)Level.VERBOSE) line(message);
         }
     }
@@ -47,6 +47,7 @@ namespace Qrakhen.Sqript
             defineKeywords();
             defineOperators();
             string content = "";
+            Context global = new Context(null);
             do {
                 Console.Write(" ~> ");
                 content = Console.ReadLine();
@@ -54,10 +55,10 @@ namespace Qrakhen.Sqript
                 else if (content == "exit") break;
                 try {
                     var nizer = new Tokenizer(content);
-                    var result = nizer.parse();
-                    new Interpreter(null, result).execute();
+                    new Interpreter(global, nizer.parse()).execute();
                 } catch (Exception e) {
-                    Console.WriteLine("exception thrown >> " + e.Message);
+                    Console.WriteLine("exception thrown [" + e.Source + "] >> " + e.Message);
+                    Console.WriteLine(e.StackTrace);
                 }
             } while (content != "exit");
         }
@@ -77,8 +78,8 @@ namespace Qrakhen.Sqript
             Operators.define(Operator.CALCULATE_SUBSTRACT, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() - b.getValue<Decimal>()); });
             Operators.define(Operator.CALCULATE_DIVIDE, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() / b.getValue<Decimal>()); });
             Operators.define(Operator.CALCULATE_MULTIPLY, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() * b.getValue<Decimal>()); });
-            Operators.define(Operator.ASSIGN, delegate (Value a, Value b, Value r) { });
-            Operators.define(Operator.REFERENCE, delegate (Value a, Value b, Value r) { });
+            Operators.define(Operator.ASSIGN_VALUE, delegate (Value a, Value b, Value r) { a.setValue(b.getValue(), b.type); });
+            Operators.define(Operator.ASSIGN_REFERENCE, delegate (Value a, Value b, Value r) { });
         }
     }
 

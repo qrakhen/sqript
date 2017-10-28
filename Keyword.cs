@@ -39,7 +39,7 @@ namespace Qrakhen.Sqript
         public static Keyword get(string name) {
             if (keywords.ContainsKey(name)) return keywords[name];
             foreach (Keyword keyword in keywords.Values) {
-                foreach (string alias in keyword.aliases) {
+                foreach (string alias in keyword.aliases){
                     if (alias == name) return keyword;
                 }
             }

@@ -26,6 +26,11 @@ namespace Qrakhen.Sqript
             this.value = value;
         }
 
+        public virtual void setValue(object value, Type type) {
+            this.value = value;
+            this.type = type;
+        }
+
         public virtual void setValue<T>(T value) {
             this.value = value;
         }

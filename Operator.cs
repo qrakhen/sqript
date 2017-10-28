@@ -7,8 +7,8 @@ namespace Qrakhen.Sqript
     public class Operator
     {
         public const string
-            ASSIGN = "=",
-            REFERENCE = "&",
+            ASSIGN_VALUE = "=",
+            ASSIGN_REFERENCE = "<&",
             CALCULATE_ADD = "+",
             CALCULATE_SUBSTRACT = "-",
             CALCULATE_MULTIPLY = "*",
@@ -25,6 +25,10 @@ namespace Qrakhen.Sqript
         public Operator(string symbol, Action<Value, Value, Value> calculate) {
             this.symbol = symbol;
             this.calculate = calculate;
+        }
+
+        public override string ToString() {
+            return symbol;
         }
     }
 

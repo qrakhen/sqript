@@ -19,11 +19,15 @@ namespace Qrakhen.Sqript
                 case Type.KEYWORD: parsed = Keywords.get(value); break;
                 case Type.OPERATOR: parsed = Operators.get(value); break;
                 case Type.INTEGER: parsed = Int32.Parse(value); break;
-                case Type.DECIMAL: parsed = Decimal.Parse(value); break;
+                case Type.DECIMAL: parsed = Decimal.Parse(value, System.Globalization.NumberStyles.AllowDecimalPoint); break;
                 case Type.BOOLEAN: parsed = Boolean.Parse(value); break;
                 default: parsed = value; break;
             }
             return new Token(type, parsed);
+        }
+
+        public override string ToString() {
+            return "[" + type + ":" + value + "]";
         }
     }
 
@@ -56,8 +60,7 @@ namespace Qrakhen.Sqript
                 else if (Is.Number(cur)) addToken(readNumber(), Value.Type.NUMBER);
                 else if (Is.Identifier(cur)) addToken(readIdentifier(), Value.Type.IDENTIFIER);
                 else throw new Exception("unreadable symbol " + cur);
-            } while (peek() != null);
-
+            } while (!endOfStack());
             return result.ToArray();
         }
 
@@ -66,7 +69,7 @@ namespace Qrakhen.Sqript
             else if (type != Value.Type.STRING && Operators.get(value) != null) type = Value.Type.OPERATOR;
             else if (type == Value.Type.NUMBER) type = (value.IndexOf(".") < 0 ? Value.Type.INTEGER : Value.Type.DECIMAL);
             result.Add(Token.create(type, value));
-            Console.Write("{ " + type.ToString() + " [ " + value + " ] }" + (value == ";" || peek() == null ? Environment.NewLine : " >> "));
+            SqriptDebug.spam("{ " + type.ToString() + " [ " + value + " ] }" + (value == ";" || peek() == null ? Environment.NewLine : " >> "));
         }
 
         private string readOperator() {
@@ -74,7 +77,7 @@ namespace Qrakhen.Sqript
             do {
                 if (Is.Operator(peek())) buffer += digest();
                 else break;
-            } while (peek() != null);
+            } while (!endOfStack());
             return buffer;
         }
 
@@ -84,7 +87,7 @@ namespace Qrakhen.Sqript
                 if (peek() == "." && buffer.IndexOf(".") > -1) break;
                 else if (Is.Number(peek())) buffer += digest();
                 else break;
-            } while (peek() != null);
+            } while (!endOfStack());
             return buffer;
         }
 
@@ -93,7 +96,7 @@ namespace Qrakhen.Sqript
             do {
                 if (Is.Identifier(peek()) || Is.Number(peek())) buffer += digest();
                 else break;
-            } while (peek() != null);
+            } while (!endOfStack());
             return buffer;
         }
 
@@ -103,7 +106,7 @@ namespace Qrakhen.Sqript
                 if (peek() != limiter) buffer += digest();
                 else if (buffer.Substring(buffer.Length - 1, 1) == @"\") buffer = buffer.Substring(0, buffer.Length - 1) + digest();
                 else { digest(); break; }
-            } while (peek() != null);
+            } while (!endOfStack());
             return buffer;
         }
 

@@ -40,19 +40,29 @@ namespace Qrakhen.Sqript
                         default: throw new NotImplementedException("only reference creation implemented yet");
                     }
                 } else if (t.type == Value.Type.IDENTIFIER) {
-                    target = getReference(peek().getValue<string>());
+                    target = getReference(digest().getValue<string>());
                 } else if (t.type == Value.Type.OPERATOR) {
-                    if (Regex.IsMatch(t.getValue<string>(), "=")) {
+                    Operator op = digest().getValue<Operator>();
+                    if (op.symbol == Operator.ASSIGN_VALUE) {
                         if (target == null) throw new OperationException("can not execute assignment to no target reference");
+                        Token val = digest();
+                        target.setValue(val.getValue(), val.type);
+                    } else if (op.symbol == Operator.ASSIGN_REFERENCE) {
+                        if (target == null) throw new OperationException("can not execute assignment to no target reference");
+                        Token val = digest();
+                        Reference reference = getReference(val.getValue<string>());
+                        if (reference == null) throw new OperationException("can not assign reference to a primitive/non-reference");
+                        target.setValue(reference.getReference(), reference.type);
                     }
-                }
-                
-            } while (peek() != null);
+                } else digest();
+            } while (!endOfStack());
+            if (target != null) SqriptDebug.log(target);
         }
 
         private Reference declareReference(string name) {
             Reference r = new Reference(name, Value.Type.UNDEFINED, null);
             context.createReference(r);
+            SqriptDebug.spam("reference '" + name + "' declared!");
             return r;
         }
 
@@ -73,17 +83,21 @@ namespace Qrakhen.Sqript
 
         public virtual void execute() {
             List<Token> buffer = new List<Token>();
+            SqriptDebug.spam("interpreter.execute()");
             do {
                 Token cur = peek();
+                SqriptDebug.spam(cur.ToString());
                 if (cur.type == Value.Type.STRUCTURE && cur.getValue<string>() == ";") {
+                    digest();
                     new Statement(context, buffer.ToArray()).execute();
                     buffer.Clear();
                 } else if (cur.type == Value.Type.STRUCTURE && Regex.IsMatch(cur.getValue<string>(), "[{[(]")) {
                     readBody();
                 } else {
                     buffer.Add(digest());
+                    if (endOfStack()) new Statement(context, buffer.ToArray()).execute();
                 }
-            } while (peek() != null);
+            } while (!endOfStack());
         }
 
         public Token[] readBody() {
@@ -100,7 +114,7 @@ namespace Qrakhen.Sqript
                 else if (cur == descend) depth++;
                 if (depth > 0) buffer.Add(digest());
                 else if (depth == 0) digest();
-            } while (peek() != null && depth > 0);
+            } while (!endOfStack() && depth > 0);
             return buffer.ToArray();
         }
     }
