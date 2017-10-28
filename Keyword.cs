@@ -6,6 +6,17 @@ namespace Qrakhen.Sqript
 {
     public class Keyword
     {
+        public const string
+            DECLARE = "DECLARE",
+            DESTROY = "DESTROY",
+            NEW = "NEW",
+            CLASS = "CLASS",
+            FUNCTION = "FUNCTION",
+            OBJECT = "OBJECT",
+            ARRAY = "ARRAY",
+            RETURN = "RETURN";
+
+
         public string name { get; private set; }
         public string[] aliases { get; private set; }
 

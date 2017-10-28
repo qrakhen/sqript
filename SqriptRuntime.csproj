@@ -6,4 +6,5 @@
     <AssemblyName>SqriptRuntime</AssemblyName>
     <RootNamespace>Qrakhen.Sqript</RootNamespace>
   </PropertyGroup>
+
 </Project>

@@ -44,6 +44,7 @@ namespace Qrakhen.Sqript
             OBJECT,
             ARRAY,
             REFERENCE,
+            FUNCTION,
             UNDEFINED
         }
     }

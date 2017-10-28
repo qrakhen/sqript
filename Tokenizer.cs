@@ -27,29 +27,25 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public class Tokenizer
+    public class Tokenizer : Digester<char>
     {
-        private List<Token> stack;
-        private string sequence;
-        private long position;
+        private List<Token> result;
 
-        public Tokenizer(string sequence) {
-            this.sequence = sequence;
+        public Tokenizer(string sequence) : this(sequence.ToCharArray()) { }
+
+        private Tokenizer(char[] stack) : base(stack) { }
+
+        protected new string peek() {
+            return base.peek().ToString();
         }
 
-        private string peek() {
-            if (position >= sequence.Length) return null;
-            return sequence.Substring((int) position, 1);
-        }
-
-        private string digest() {
-            return sequence.Substring((int) position++, 1);
+        protected new string digest() {
+            return base.digest().ToString();
         }
 
         public Token[] parse() {
-            if (sequence.Length < 1) throw new InvalidOperationException("input sequence empty");
-            position = 0;
-            stack = new List<Token>();
+            if (stack.Length < 1) throw new InvalidOperationException("input sequence empty");
+            result = new List<Token>();
 
             do {
                 string cur = peek();
@@ -62,14 +58,14 @@ namespace Qrakhen.Sqript
                 else throw new Exception("unreadable symbol " + cur);
             } while (peek() != null);
 
-            return stack.ToArray();
+            return result.ToArray();
         }
 
         private void addToken(string value, Value.Type type) {
             if (type != Value.Type.STRING && Keywords.get(value) != null) type = Value.Type.KEYWORD;
             else if (type != Value.Type.STRING && Operators.get(value) != null) type = Value.Type.OPERATOR;
             else if (type == Value.Type.NUMBER) type = (value.IndexOf(".") < 0 ? Value.Type.INTEGER : Value.Type.DECIMAL);
-            stack.Add(Token.create(type, value));
+            result.Add(Token.create(type, value));
             Console.Write("{ " + type.ToString() + " [ " + value + " ] }" + (value == ";" || peek() == null ? Environment.NewLine : " >> "));
         }
 
@@ -106,9 +102,8 @@ namespace Qrakhen.Sqript
             do {
                 if (peek() != limiter) buffer += digest();
                 else if (buffer.Substring(buffer.Length - 1, 1) == @"\") buffer = buffer.Substring(0, buffer.Length - 1) + digest();
-                else break;
+                else { digest(); break; }
             } while (peek() != null);
-            digest();
             return buffer;
         }
 

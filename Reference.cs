@@ -32,5 +32,9 @@ namespace Qrakhen.Sqript
             }
             return this;
         }
+
+        public override string ToString() {
+            return "Reference '" + name + "' <" + type.ToString() + ", " + getValue() + ">";
+        }
     }    
 }

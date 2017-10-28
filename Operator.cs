@@ -6,6 +6,19 @@ namespace Qrakhen.Sqript
 {
     public class Operator
     {
+        public const string
+            ASSIGN = "=",
+            REFERENCE = "&",
+            CALCULATE_ADD = "+",
+            CALCULATE_SUBSTRACT = "-",
+            CALCULATE_MULTIPLY = "*",
+            CALCULATE_DIVIDE = "/",
+            CONDITION_AND = "&&",
+            CONDITION_OR = "||",
+            COLLECTION_ADD = "<",
+            COLLECTION_REMOVE = ">",
+            KEY_DELIMITER = ":";
+
         public string symbol { get; protected set; }
         public Action<Value, Value, Value> calculate { get; protected set; }
 
