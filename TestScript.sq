@@ -1,0 +1,11 @@
+﻿ref var_a = 5;
+ref var_b = 7.43;
+ref var_c = var_a;
+*~ var_x<~[];
+var_x[]<'zers';
+var_X[1]<&var_a;
+~: var_x[1];
+*~ someNormalString = "zerszersztesress";
+reference aStringWithingAnotherString = "abc'123'def";
+ref hyperStringWithDemBackSpaehes1233 <~~~ "abc\"sfgujaj nudelsalat sgdjn";
+ref am_i_still_here?;
