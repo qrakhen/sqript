@@ -24,6 +24,16 @@ namespace Qrakhen.Sqript
         }
     }
 
+    /// <summary>
+    /// [MODIFIER] [KEYWORD] NAME  OPERATOR|FUNC_CALL|FUNC_HEADER OPERATION|BODY_DEFINITION;
+    ///            ref       value =                              5 * (4 + 2);
+    ///            function  add   (a, b)                         { return a + b; }
+    /// </summary>
+    public class Block
+    {
+
+    }
+
     public class Statement : Interpreter
     {
         public Statement(Context context, Token[] stack) : base(context, stack) { }
@@ -45,8 +55,10 @@ namespace Qrakhen.Sqript
                     Operator op = digest().getValue<Operator>();
                     if (op.symbol == Operator.ASSIGN_VALUE) {
                         if (target == null) throw new OperationException("can not execute assignment to no target reference");
-                        Token val = digest();
-                        target.setValue(val.getValue(), val.type);
+                        Operation operation = new Operation(op, target, digest(), context);
+                        operation.execute();
+                        //Token val = digest();
+                        //target.setValue(val.getValue(), val.type);
                     } else if (op.symbol == Operator.ASSIGN_REFERENCE) {
                         if (target == null) throw new OperationException("can not execute assignment to no target reference");
                         Token val = digest();
@@ -57,6 +69,10 @@ namespace Qrakhen.Sqript
                 } else digest();
             } while (!endOfStack());
             if (target != null) SqriptDebug.log(target);
+        }
+
+        private Operation parseOperation(Token[] expression) {
+            return null;
         }
 
         private Reference declareReference(string name) {

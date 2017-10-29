@@ -7,13 +7,20 @@ namespace Qrakhen.Sqript
 {
     public class Token : Value
     {
-        private Token(Type type, object value) : base(type, value) { }
+        public Token parent { get; protected set; }
+        public List<Token> children { get; protected set; }
+
+        private Token(Type type, object value, Token parent = null) : base(type, value) {
+            this.parent = parent;
+            children = new List<Token>();
+            if (parent != null) parent.children.Add(this);
+        }
 
         public override void setValue<T>(T value) {
             throw new Exception("token value is read only");
         }
 
-        public static Token create(Type type, string value) {
+        public static Token create(Type type, string value, Token parent = null) {
             object parsed = null;
             switch (type) {
                 case Type.KEYWORD: parsed = Keywords.get(value); break;
@@ -23,7 +30,7 @@ namespace Qrakhen.Sqript
                 case Type.BOOLEAN: parsed = Boolean.Parse(value); break;
                 default: parsed = value; break;
             }
-            return new Token(type, parsed);
+            return new Token(type, parsed, parent);
         }
 
         public override string ToString() {

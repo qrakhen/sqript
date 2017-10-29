@@ -64,17 +64,18 @@ namespace Qrakhen.Sqript
         }
 
         private Value recursiveCast(object value) {
-            if (value.GetType() == typeof(Value)) return (value as Value);
+            if (value.GetType() == typeof(Value) || value.GetType() == typeof(Token)) return (value as Value);
+            else if (value.GetType() == typeof(Reference)) return ((value as Reference).getValue() as Value);
             else if (value.GetType() == typeof(Operation)) return recursiveCast((value as Operation).execute());
             else throw new OperationException("unkown value type provided: " + value.GetType().FullName);
         }
 
         public object execute() {
             object result = null;
-            SqriptDebug.spam("operation.execute() { " + op.symbol + " } ");
             Value
                 l = recursiveCast(left),
                 r = recursiveCast(right);
+            SqriptDebug.spam("operation.execute() { " + (l == null ? "undefined" : l.getValue()) + " " + op.symbol + " " + (r == null ? "undefined" : r.getValue()) + " } ");
             switch (op.symbol) {
                 case Operator.ASSIGN_VALUE:
                     if (left.GetType() != typeof(Reference)) throw new OperationException("only references as left-hand values allowed for assignment");

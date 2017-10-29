@@ -13,28 +13,31 @@ namespace Qrakhen.Sqript
         }
 
         public override object getValue() {
-            if (value.GetType() == typeof(Reference)) {
+            if (value == null) return null;
+            else if (value.GetType() == typeof(Reference)) {
                 return (value as Reference).getValue();
             }
             return value;
         }
 
         public override T getValue<T>() {
-            if (value.GetType() == typeof(Reference)) {
+            if (value == null) return default(T);
+            else if (value.GetType() == typeof(Reference)) {
                 return (value as Reference).getValue<T>();
             }
             return (T) value;
         }
 
         public Reference getReference() {
-            if (value.GetType() == typeof(Reference)) {
+            if (value == null) return null;
+            else if (value.GetType() == typeof(Reference)) {
                 return (value as Reference).getReference();
             }
             return this;
         }
 
         public override string ToString() {
-            return "Reference '" + name + "' <" + type.ToString() + ", " + getValue() + ">";
+            return "[" + type.ToString() + "] " + name + ": " + getValue();
         }
     }    
 }
