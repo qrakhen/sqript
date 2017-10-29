@@ -7,6 +7,7 @@ namespace Qrakhen.Sqript
     public class Value
     {
         public Type type { get; protected set; }
+        public System.Type systemType { get; protected set; }
         public object value { get; protected set; }
 
         public Value(Type type, object value) {

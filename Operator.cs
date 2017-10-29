@@ -86,8 +86,7 @@ namespace Qrakhen.Sqript
                 case Operator.CALCULATE_ADD:
                     if (!l.isType((int) Value.Type.NUMBER)) throw new OperationException("only numbers allowed for adding");
                     if (!r.isType((int) Value.Type.NUMBER)) throw new OperationException("only numbers allowed for adding");
-                    (left as Reference).setValue(r.getValue(), r.type);
-                    result = left;
+                    result = l.getValue<int>() + r.getValue<int>();
                     break;
             }
             return result;

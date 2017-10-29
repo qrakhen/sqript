@@ -89,8 +89,7 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public class Interpreter : Digester<Token>
-    {
+    public class Interpreter : Digester<Token> {
         protected Context context;
 
         public Interpreter(Context context, Token[] stack) : base(stack) {
