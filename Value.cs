@@ -7,7 +7,6 @@ namespace Qrakhen.Sqript
     public class Value
     {
         public Type type { get; protected set; }
-        public System.Type systemType { get; protected set; }
         public object value { get; protected set; }
 
         public Value(Type type, object value) {
@@ -39,6 +38,23 @@ namespace Qrakhen.Sqript
         public bool isType(int types) {
             return (((int) type & types) > 0);
         }
+        
+        public System.Type getSystemType(Type type) {
+            switch (type) {
+                case Type.KEYWORD: return typeof(Keyword);
+                case Type.OPERATOR: return typeof(Operator);
+                case Type.STRUCTURE: return typeof(string);
+                case Type.INTEGER: return typeof(int);
+                case Type.DECIMAL: return typeof(double);
+                case Type.NUMBER: return typeof(double);
+                case Type.STRING: return typeof(string);
+                case Type.BOOLEAN: return typeof(bool);
+                case Type.OBJECT: return typeof(Object);
+                case Type.REFERENCE: return typeof(Reference);
+                case Type.FUNCTION: return typeof(Function);
+                default: return null;
+            }
+        }
 
         public enum Type
         {
@@ -48,7 +64,7 @@ namespace Qrakhen.Sqript
             IDENTIFIER = 8,
             INTEGER = 16,
             DECIMAL = 32,
-                NUMBER = 48,
+            NUMBER = 48,
             STRING = 128,
             BOOLEAN = 256,
             OBJECT = 512,
