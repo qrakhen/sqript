@@ -64,6 +64,7 @@ namespace Qrakhen.Sqript
         }
 
         private Value recursiveCast(object value) {
+            if (value == null) throw new OperationException("value to be casted is null");
             if (value.GetType() == typeof(Value) || value.GetType() == typeof(Token)) return (value as Value);
             else if (value.GetType() == typeof(Reference)) return ((value as Reference).getValue() as Value);
             else if (value.GetType() == typeof(Operation)) return recursiveCast((value as Operation).execute());

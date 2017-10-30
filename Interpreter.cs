@@ -47,25 +47,19 @@ namespace Qrakhen.Sqript
                     string identifier = peek().getValue<string>();
                     switch (keyword.name) {
                         case Keyword.DECLARE: target = declareReference(digest().getValue<string>()); break;
+                        case Keyword.FUNCTION: target = declareReference(digest().getValue<string>()); break;
                         default: throw new NotImplementedException("only reference creation implemented yet");
                     }
                 } else if (t.type == Value.Type.IDENTIFIER) {
                     target = getReference(digest().getValue<string>());
                 } else if (t.type == Value.Type.OPERATOR) {
                     Operator op = digest().getValue<Operator>();
-                    if (op.symbol == Operator.ASSIGN_VALUE) {
-                        if (target == null) throw new OperationException("can not execute assignment to no target reference");
-                        Operation operation = new Operation(op, target, digest(), context);
-                        operation.execute();
-                        //Token val = digest();
-                        //target.setValue(val.getValue(), val.type);
-                    } else if (op.symbol == Operator.ASSIGN_REFERENCE) {
-                        if (target == null) throw new OperationException("can not execute assignment to no target reference");
-                        Token val = digest();
-                        Reference reference = getReference(val.getValue<string>());
-                        if (reference == null) throw new OperationException("can not assign reference to a primitive/non-reference");
-                        target.setValue(reference.getReference(), reference.type);
-                    }
+                    Token[] right = new Token[(stack.Length - position)];
+                    for (int i = position; i < right.Length; i++) right[i - position] = stack[i];
+                    Operation operation;
+                    if (right.Length == 1) operation = new Operation(op, target, digest(), context);
+                    else operation = new Operation(op, target, parseOperation(right), context);
+                    operation.execute();
                 } else digest();
             } while (!endOfStack());
             if (target != null) SqriptDebug.log(target);
