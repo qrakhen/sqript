@@ -95,7 +95,7 @@ namespace Qrakhen.Sqript
         static void defineKeywords() {
             Keywords.define(Keyword.DECLARE, "declare", "reference", "ref", "*~");
             Keywords.define(Keyword.DESTROY, "destroy", "dereference", "del", "~:");
-            Keywords.define(Keyword.NEW, "create", "new", "spawn", "~+");
+            Keywords.define(Keyword.NEW, "create", "new", "spawn", "~*");
             Keywords.define(Keyword.CLASS, "class");
             Keywords.define(Keyword.FUNCTION, "function", "fn");
             Keywords.define(Keyword.OBJECT, "object", "obqect");

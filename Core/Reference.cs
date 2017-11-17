@@ -43,7 +43,7 @@ namespace Qrakhen.Sqript
         }
 
         public virtual string toDebug() {
-            return "ref " + name + ": " + getReference().toDebug();
+            return name + ": " + getReference().toDebug();
         }
     }    
 }

@@ -14,22 +14,30 @@ namespace Qrakhen.Sqript
             
         }
 
-        public virtual void addChild(K key, Value item) {
-            value.Add(key, item);
-        }
-
-        public virtual void setChild(K key, Value item) {
-            Value child = getChild(key);
-            if (child == null) addChild(key, item);
+        public virtual void set(K key, Value item) {
+            Value child = get(key);
+            if (child == null) value.Add(key, item);
             else value[key] = item;
         }
 
-        public virtual void removeChild(K key) {
+        public virtual void remove(K key) {
             value.Remove(key);
         }
 
-        public virtual Value getChild(K key) {
+        public virtual Value get(K key) {
             return value.ContainsKey(key) ? value[key] : null;
+        }
+
+        public virtual Value get(K[] keys) {
+            if (keys.Length < 1) throw new Exception("trying to access collection member with empty set of keys");
+            Value v = get(keys[0]);
+            if (keys.Length > 1)
+                foreach (K key in keys) {
+                    if (v.getValueSystemType() is Collection<K>) {
+                        v = (v as Collection<K>).get(key).getValue<Value>();
+                    } else throw new Exception("accessing member of non-collection value");
+                }
+            return v;
         }
     }
 }

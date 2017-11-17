@@ -8,7 +8,7 @@ namespace Qrakhen.Sqript
     {
         public const string
             ASSIGN_VALUE = "=",
-            ASSIGN_REFERENCE = "=&",
+            ASSIGN_REFERENCE = "~&",
             CALCULATE_ADD = "+",
             CALCULATE_SUBTRACT = "-",
             CALCULATE_MULTIPLY = "*",
@@ -16,9 +16,8 @@ namespace Qrakhen.Sqript
             CONDITION_AND = "&&",
             CONDITION_OR = "||",
             CONDITION_EQUALS = "==",
-            COLLECTION_ADD = "<~",
-            COLLECTION_REMOVE = "~>",
-            KEY_DELIMITER = ":";
+            COLLECTION_ADD = "<+",
+            COLLECTION_REMOVE = "~>";
 
         public string symbol { get; protected set; }
         public Action<Value, Value, Value> calculate { get; protected set; }

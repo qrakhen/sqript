@@ -104,6 +104,7 @@ namespace Qrakhen.Sqript
                     }
                 } else if (t.type == ValueType.IDENTIFIER) {
                     target = getReference(digest().getValue<string>());
+                    if (peek().type == ValueType.STRUCTURE && peek().getValue<string>() == SE)
                 } else if (t.type == ValueType.OPERATOR) {
                     Operator op = digest().getValue<Operator>();
                     Token[] right = new Token[(stack.Length - position)];

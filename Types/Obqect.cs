@@ -6,13 +6,10 @@ namespace Qrakhen.Sqript
 {
     public class Obqect : Value<Dictionary<string, Obqect>>
     {
-
         public Obqect(Dictionary<string, Obqect> value) : base(ValueType.OBQECT, value) {
-
         }
 
-        public Obqect() : base(ValueType.OBQECT, new Dictionary<string, Obqect>()) { 
-       
+        public Obqect() : base(ValueType.OBQECT, new Dictionary<string, Obqect>()) {
         }
     }
 }
