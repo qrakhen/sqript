@@ -7,4 +7,9 @@
     <RootNamespace>Qrakhen.Sqript</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Core\" />
+    <Folder Include="SystemInterface\" />
+  </ItemGroup>
+
 </Project>

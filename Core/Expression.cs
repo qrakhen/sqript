@@ -36,8 +36,8 @@ namespace Qrakhen.Sqript
             Value
                 l = recursiveCast(left),
                 r = recursiveCast(right);
-            if (left.GetType() == typeof(Reference)) SqriptDebug.spam("operation.execute() { " + (left as Reference).name + " " + op.symbol + " " + r.getValue() + " }");
-            else SqriptDebug.spam("operation.execute() { " + l.getValue() + " " + op.symbol + " " + r.getValue() + " } ");
+            if (left.GetType() == typeof(Reference)) Debug.spam("operation.execute() { " + (left as Reference).name + " " + op.symbol + " " + r.getValue() + " }");
+            else Debug.spam("operation.execute() { " + l.getValue() + " " + op.symbol + " " + r.getValue() + " } ");
             switch (op.symbol) {
                 case Operator.ASSIGN_VALUE:
                     if (left.GetType() != typeof(Reference)) throw new OperationException("only references as left-hand values allowed for assignment");

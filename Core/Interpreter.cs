@@ -61,7 +61,7 @@ namespace Qrakhen.Sqript
                 Token t = digest();
                 if (t.type == ValueType.OPERATOR) {
                     if (prev != null) buffer.left = prev;
-                    else if (buffer.left == null) throw new InvalidOperationException("manipulation operators (-1, i++, a()) are not yet implemented. thank you for your patience.");
+                    else if (buffer.left == null) throw new Exception("manipulation operators (-1, i++, a()) are not yet implemented. thank you for your patience.", t);
                     else buffer.op = t.getValue<Operator>();
                 } else if (t.type == ValueType.STRUCTURE) {
                     if (t.getValue<string>() == "(") {
@@ -100,7 +100,7 @@ namespace Qrakhen.Sqript
                     switch (keyword.name) {
                         case Keyword.DECLARE: target = declareReference(digest().getValue<string>()); break;
                         //case Keyword.FUNCTION: target = declareReference(digest().getValue<string>()); break;
-                        default: throw new NotImplementedException("only reference creation implemented yet");
+                        default: throw new Exception("only reference creation implemented yet", peek());
                     }
                 } else if (t.type == ValueType.IDENTIFIER) {
                     target = getReference(digest().getValue<string>());
@@ -112,16 +112,16 @@ namespace Qrakhen.Sqript
                     if (right.Length == 1) expr = new Expression(op, target, digest(), context);
                     else expr = new Expression(op, target, new ExpressionParser(context, right).parse(), context);
                     result = expr.execute();
-                } else SqriptDebug.warn("unexpected token: '" + digest() + "'");
+                } else Debug.warn("unexpected token: '" + digest() + "'");
             } while (!endOfStack());
-            if (result != null) SqriptDebug.log(result.toDebug());
-            else if (target != null) SqriptDebug.log(target.toDebug());
+            if (result != null) Debug.log(result.toDebug());
+            else if (target != null) Debug.log(target.toDebug());
         }
 
         private Reference declareReference(string name) {
             Reference r = new Reference(name, null);
             context.createReference(r);
-            SqriptDebug.spam("reference '" + name + "' declared!");
+            Debug.spam("reference '" + name + "' declared!");
             return r;
         }
 
@@ -139,12 +139,24 @@ namespace Qrakhen.Sqript
             this.context = (context == null ? new Context(null) : context);
         }
 
+        protected override Token digest() {
+            Token t = base.digest();
+            Runtime.reader.token = t;
+            return t;
+        }
+
+        protected override Token peek() {
+            Token t = base.peek();
+            Runtime.reader.token = t;
+            return t;
+        }
+
         public virtual void execute() {
             List<Token> buffer = new List<Token>();
-            SqriptDebug.spam("interpreter.execute()");
+            Debug.spam("interpreter.execute()");
             do {
                 Token cur = peek();
-                SqriptDebug.spam(cur.ToString());
+                Debug.spam(cur.ToString());
                 if (cur.type == ValueType.STRUCTURE && cur.getValue<string>() == ";") {
                     digest();
                     new Statement(context, buffer.ToArray()).execute();
@@ -162,7 +174,7 @@ namespace Qrakhen.Sqript
             string
                 ascend = digest().getValue<string>(),
                 descend = (ascend == "{" ? "}" : (ascend == "(" ? ")" : (ascend == "[" ? "]" : "")));
-            if (descend == "") throw new ParseException("could not find closing element for opened '" + ascend + "'");
+            if (descend == "") throw new ParseException("could not find closing element for opened '" + ascend + "'", peek());
 
             do {
                 string cur = (peek().type == ValueType.STRUCTURE ? peek().getValue<string>() : "");

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -7,33 +8,41 @@ namespace Qrakhen.Sqript
 {
     public class Token : Value
     {
-        private Token(ValueType type, object value) : base(type, value) { }
+        public readonly int line, col;
 
-        public override void setValue(object value) {
-            throw new Exception("token value is read only");
+        private Token(ValueType type, object value, int line = -1, int col = -1) : base(type, value) {
+            this.line = line;
+            this.col = col;
         }
 
-        public static Token create(ValueType type, string value) {
+        public override void setValue(object value) {
+            throw new Exception("token value is read only", this);
+        }
+
+        public static Token create(ValueType type, string value, int line = -1, int col = -1) {
             object parsed = null;
+            NumberFormatInfo format = new NumberFormatInfo();
+            format.NumberDecimalSeparator = ".";
             switch (type) {
                 case ValueType.KEYWORD: parsed = Keywords.get(value); break;
                 case ValueType.OPERATOR: parsed = Operators.get(value); break;
                 case ValueType.INTEGER: parsed = Int32.Parse(value); break;
-                case ValueType.DECIMAL: parsed = Decimal.Parse(value, System.Globalization.NumberStyles.AllowDecimalPoint); break;
+                case ValueType.DECIMAL: parsed = Decimal.Parse(value, format); break;
                 case ValueType.BOOLEAN: parsed = Boolean.Parse(value); break;
                 default: parsed = value; break;
             }
-            return new Token(type, parsed);
+            return new Token(type, parsed, line, col);
         }
 
-        public override string ToString() {
-            return "[" + type + ":" + value + "]";
+        public string getLocation() {
+            return "@" + line + ":" + col;
         }
     }
 
     public class Tokenizer : Digester<char>
     {
         private List<Token> result;
+        private int __line = 0, __col = 0;
 
         public Tokenizer(string sequence) : this(sequence.ToCharArray()) { }
 
@@ -44,6 +53,7 @@ namespace Qrakhen.Sqript
         }
 
         protected new string digest() {
+            __col++;
             return base.digest().ToString();
         }
 
@@ -53,8 +63,12 @@ namespace Qrakhen.Sqript
 
             do {
                 string cur = peek();
-                if (Is.Whitespace(cur)) digest();
-                else if (Is.Structure(cur)) addToken(digest(), ValueType.STRUCTURE);
+                if (Is.Whitespace(cur)) {
+                    if (digest() == "\n") {
+                        __line++;
+                        __col = 0;
+                    }
+                } else if (Is.Structure(cur)) addToken(digest(), ValueType.STRUCTURE);
                 else if (Is.Operator(cur)) addToken(readOperator(), ValueType.OPERATOR);
                 else if (Is.String(cur)) addToken(readString(), ValueType.STRING);
                 else if (Is.Number(cur)) addToken(readNumber(), ValueType.NUMBER);
@@ -68,8 +82,8 @@ namespace Qrakhen.Sqript
             if (type != ValueType.STRING && Keywords.get(value) != null) type = ValueType.KEYWORD;
             else if (type != ValueType.STRING && Operators.get(value) != null) type = ValueType.OPERATOR;
             else if (type == ValueType.NUMBER) type = (value.IndexOf(".") < 0 ? ValueType.INTEGER : ValueType.DECIMAL);
-            result.Add(Token.create(type, value));
-            SqriptDebug.spam("{ " + type.ToString() + " [ " + value + " ] }" + (value == ";" || peek() == null ? Environment.NewLine : " >> "));
+            result.Add(Token.create(type, value, __line, __col));
+            Debug.spam("{ " + type.ToString() + " [ " + value + " ] }" + (value == ";" || peek() == null ? Environment.NewLine : " >> "));
         }
 
         private string readOperator() {
