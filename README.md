@@ -1,8 +1,9 @@
 ﻿# sqript
 ### ~ another type-less adventure into obscurity
 
-Sqript is a programming language interpreter written in C#
-It serves comes with it's very own syntax, data types, workflow and behaviours.
+Sqript is a programming language interpreter written in C#.
+
+It comes with it's very own syntax, data types, workflow and behaviours.
 Can be built for - and also runs on - all platforms, including your microwave.
 
 ### Some Features:

@@ -70,17 +70,37 @@ namespace Qrakhen.Sqript
                         else if (buffer.right == null) buffer.right = sub;
                     } else if (t.getValue<string>() == ")") {
                         return (prev == null ? new Expression(buffer.op, buffer.left, buffer.right, context) : prev);
+                    } else if (t.getValue<string>() == "[") {
+                        Array array = new Array();
+                        do {
+                            t = digest();
+                            if (t.type == ValueType.STRUCTURE && t.getValue<string>() == "]") break;
+                            array.add(t);
+                        } while (!endOfStack());
+                        if (buffer.left == null) buffer.left = array;
+                        else if (buffer.right == null) buffer.right = array;
+                    } else if (t.getValue<string>() == "{") {
+                        Obqect obqect = new Obqect();
+                        do {
+                            t = digest();
+                            if (t.type == ValueType.STRUCTURE && t.getValue<string>() == "}") break;
+                            else if (t.type == ValueType.IDENTIFIER) {
+                                string key = t.getValue<string>();
+                            }
+                        } while (!endOfStack());
+                        if (buffer.left == null) buffer.left = obqect;
+                        else if (buffer.right == null) buffer.right = obqect;
                     }
                 } else {
                     if (buffer.left == null) buffer.left = t;
                     else if (buffer.right == null) buffer.right = t;
                 }
                 //if (buffer.right == null && endOfStack()) buffer.right = 
-                if (buffer.ready()) {
+                if (buffer.ready() || endOfStack()) {
                     prev = new Expression(buffer.op, buffer.left, buffer.right, context);
                     buffer = new Expr();
                 }
-            }  while (!endOfStack());
+            } while (!endOfStack());
             return prev;
         }
     }
@@ -91,6 +111,7 @@ namespace Qrakhen.Sqript
 
         public override void execute() {
             Reference target = null;
+            Reference.MemberSelect select = null;
             Value result = null;
             do {
                 Token t = peek();
@@ -104,14 +125,34 @@ namespace Qrakhen.Sqript
                     }
                 } else if (t.type == ValueType.IDENTIFIER) {
                     target = getReference(digest().getValue<string>());
-                    if (peek().type == ValueType.STRUCTURE && peek().getValue<string>() == SE)
+                    if (peek().type == ValueType.STRUCTURE && peek().getValue<string>() == Structure.MEMBER_KEY_DELIMITER) {
+                        digest();
+                        List<object> buffer = new List<object>();
+                        do {
+                            if (peek().type == ValueType.IDENTIFIER || peek().isType((int)ValueType.NUMBER)) {
+                                buffer.Add(digest());
+                                if (peek().type == ValueType.STRUCTURE && peek().getValue<string>() == Structure.MEMBER_KEY_DELIMITER) {
+                                    digest();
+                                    continue;
+                                } else break;
+                            } else {
+                                throw new Exception("unexpected token when trying to resolve member tree: ", peek());
+                            }
+                        } while (!endOfStack());
+                        select = new Reference.MemberSelect(target, buffer.ToArray()); 
+                    }
                 } else if (t.type == ValueType.OPERATOR) {
                     Operator op = digest().getValue<Operator>();
                     Token[] right = new Token[(stack.Length - position)];
                     for (int i = 0; i < right.Length; i++) right[i] = digest();
+
+                    object left = null;
+                    if (select != null) left = select;
+                    else left = target;
+
                     Expression expr;
-                    if (right.Length == 1) expr = new Expression(op, target, digest(), context);
-                    else expr = new Expression(op, target, new ExpressionParser(context, right).parse(), context);
+                    if (right.Length == 1) expr = new Expression(op, left, digest(), context);
+                    else expr = new Expression(op, left, new ExpressionParser(context, right).parse(), context);
                     result = expr.execute();
                 } else Debug.warn("unexpected token: '" + digest() + "'");
             } while (!endOfStack());

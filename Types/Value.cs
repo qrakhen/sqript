@@ -41,7 +41,8 @@ namespace Qrakhen.Sqript
                 case ValueType.NUMBER: return typeof(decimal);
                 case ValueType.STRING: return typeof(string);
                 case ValueType.BOOLEAN: return typeof(bool);
-                case ValueType.OBQECT: return typeof(Object);
+                case ValueType.ARRAY: return typeof(Array);
+                case ValueType.OBQECT: return typeof(Obqect);
                 case ValueType.REFERENCE: return typeof(Reference);
                 case ValueType.FUNCTION: return typeof(Function);
                 default: return null;

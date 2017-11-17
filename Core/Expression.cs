@@ -21,11 +21,13 @@ namespace Qrakhen.Sqript
 
         private Value recursiveCast(object value) {
             if (value == null) throw new OperationException("value to be casted is null");
-            if (value.GetType() == typeof(Value) || value.GetType() == typeof(Token)) {
+            if (value is Value || value.GetType() == typeof(Token) || value is Array) {
                 if ((value as Value).type == ValueType.IDENTIFIER) return context.getReference((value as Value).getValue<string>()).getReference();
                 else return (value as Value);
             } else if (value.GetType() == typeof(Reference)) {
                 return ((value as Reference).getReference() as Value);
+            } else if (value.GetType() == typeof(Reference.MemberSelect)) {
+                return (value as Reference.MemberSelect).getMember();
             } else if (value.GetType() == typeof(Expression)) {
                 return recursiveCast((value as Expression).execute());
             } else throw new OperationException("unkown value type provided: " + value.GetType().FullName);
@@ -33,6 +35,10 @@ namespace Qrakhen.Sqript
 
         public Value execute() {
             Value result = null;
+
+            if (left == null) return null;
+            else if (right == null) return recursiveCast(left); // maybe add manipulator
+
             Value
                 l = recursiveCast(left),
                 r = recursiveCast(right);
@@ -40,14 +46,20 @@ namespace Qrakhen.Sqript
             else Debug.spam("operation.execute() { " + l.getValue() + " " + op.symbol + " " + r.getValue() + " } ");
             switch (op.symbol) {
                 case Operator.ASSIGN_VALUE:
-                    if (left.GetType() != typeof(Reference)) throw new OperationException("only references as left-hand values allowed for assignment");
-                    (left as Reference).assign(r, false);
+                    if (left.GetType() == typeof(Reference)) {
+                        (left as Reference).assign(r, false);
+                    } else if (left.GetType() != typeof(Reference.MemberSelect)) {
+                        (left as Reference.MemberSelect).assign(r, false);
+                    } else throw new OperationException("only references as left-hand values allowed for assignment");
                     result = r;
                     break;
 
                 case Operator.ASSIGN_REFERENCE:
-                    if (left.GetType() != typeof(Reference)) throw new OperationException("only references as left-hand values allowed for assignment");
-                    (left as Reference).assign(r, true);
+                    if (left.GetType() == typeof(Reference)) {
+                        (left as Reference).assign(r, true);
+                    } else if (left.GetType() != typeof(Reference.MemberSelect)) {
+                        (left as Reference.MemberSelect).assign(r, true);
+                    } else throw new OperationException("only references as left-hand values allowed for assignment");
                     result = r;
                     break;
 

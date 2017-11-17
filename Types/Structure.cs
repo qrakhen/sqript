@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Qrakhen.Sqript.Types
+namespace Qrakhen.Sqript
 {
     public class Structure
     {

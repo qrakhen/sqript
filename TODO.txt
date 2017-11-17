@@ -1,0 +1,10 @@
+﻿Make value be abstract super class with
+
+object value, valueType type;
+
+getValue<T>();
+setValue(value, type);
+
+that way, Scope can inherit from Value and implement Dictionary<string, Value> as value.
+This way, Object can inhert from Value too.
+Everything. Can. Inherit. From. Value. :)

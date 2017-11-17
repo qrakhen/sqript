@@ -4,8 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    class Interface<T> { }
-    public class InterfaceSystem : Interface
+    public class InterfaceSystem
     {
 
     }

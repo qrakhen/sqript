@@ -9,7 +9,7 @@ namespace Qrakhen.Sqript
         public Array(Dictionary<int, Value> value) : base(ValueType.ARRAY, value) { }
         public Array() : base(ValueType.ARRAY, new Dictionary<int, Value>()) { }
 
-        public virtual void addChild(Value item) {
+        public virtual void add(Value item) {
             int free = 0;
             do {
 

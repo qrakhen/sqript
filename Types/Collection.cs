@@ -39,5 +39,22 @@ namespace Qrakhen.Sqript
                 }
             return v;
         }
+
+        public struct MemberSelect
+        {
+            public Collection<K> collection;
+            public object[] select;
+
+            public MemberSelect(Collection<K> collection, object[] select) {
+                this.collection = collection;
+                this.select = select;
+            }
+
+            public Value getMember() {
+                K[] __keys = new K[select.Length];
+                for (int i = 0; i < select.Length; i++) __keys[i] = (K)select[i];
+                return collection.get(__keys);
+            }
+        }
     }
 }
