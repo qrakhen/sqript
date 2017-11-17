@@ -4,40 +4,46 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public class Reference : Value
+    public class Reference
     {
+        public Value value { get; protected set; }
         public string name { get; protected set; }
 
-        public Reference(string name, Type type, object value) : base(type, value) {
+        public Reference(string name, Value value = null) {
             this.name = name;
+            this.value = (value == null ? Value.NULL : value);
         }
 
-        public override object getValue() {
-            if (value == null) return null;
-            else if (value.GetType() == typeof(Reference)) {
-                return (value as Reference).getValue();
+        public virtual void assign(Value value, bool reference = false) {
+            if (reference) this.value = value;
+            else {
+                if (value == Value.NULL) value = new Value(value.type, value.getValue());
+                else this.value.setValue(value.getValue(), value.type);
             }
+        }
+
+        public ValueType getValueType() {
+            return value.type;
+        }
+
+        public virtual Value getReference() {
             return value;
         }
 
-        public override T getValue<T>() {
-            if (value == null) return default(T);
-            else if (value.GetType() == typeof(Reference)) {
-                return (value as Reference).getValue<T>();
-            }
-            return (T) value;
+        public virtual object getValue() {
+            return value.getValue();
         }
 
-        public Reference getReference() {
-            if (value == null) return null;
-            else if (value.GetType() == typeof(Reference)) {
-                return (value as Reference).getReference();
-            }
-            return this;
+        public virtual T getValue<T>() {
+            return value.getValue<T>();
         }
 
         public override string ToString() {
-            return "[" + type.ToString() + "] " + name + ": " + getValue();
+            return getReference().ToString();
+        }
+
+        public virtual string toDebug() {
+            return "ref " + name + ": " + getReference().toDebug();
         }
     }    
 }

@@ -7,30 +7,23 @@ namespace Qrakhen.Sqript
 {
     public class Token : Value
     {
-        public Token parent { get; protected set; }
-        public List<Token> children { get; protected set; }
+        private Token(ValueType type, object value) : base(type, value) { }
 
-        private Token(Type type, object value, Token parent = null) : base(type, value) {
-            this.parent = parent;
-            children = new List<Token>();
-            if (parent != null) parent.children.Add(this);
-        }
-
-        public override void setValue<T>(T value) {
+        public override void setValue(object value) {
             throw new Exception("token value is read only");
         }
 
-        public static Token create(Type type, string value, Token parent = null) {
+        public static Token create(ValueType type, string value) {
             object parsed = null;
             switch (type) {
-                case Type.KEYWORD: parsed = Keywords.get(value); break;
-                case Type.OPERATOR: parsed = Operators.get(value); break;
-                case Type.INTEGER: parsed = Int32.Parse(value); break;
-                case Type.DECIMAL: parsed = Decimal.Parse(value, System.Globalization.NumberStyles.AllowDecimalPoint); break;
-                case Type.BOOLEAN: parsed = Boolean.Parse(value); break;
+                case ValueType.KEYWORD: parsed = Keywords.get(value); break;
+                case ValueType.OPERATOR: parsed = Operators.get(value); break;
+                case ValueType.INTEGER: parsed = Int32.Parse(value); break;
+                case ValueType.DECIMAL: parsed = Decimal.Parse(value, System.Globalization.NumberStyles.AllowDecimalPoint); break;
+                case ValueType.BOOLEAN: parsed = Boolean.Parse(value); break;
                 default: parsed = value; break;
             }
-            return new Token(type, parsed, parent);
+            return new Token(type, parsed);
         }
 
         public override string ToString() {
@@ -61,20 +54,20 @@ namespace Qrakhen.Sqript
             do {
                 string cur = peek();
                 if (Is.Whitespace(cur)) digest();
-                else if (Is.Structure(cur)) addToken(digest(), Value.Type.STRUCTURE);
-                else if (Is.Operator(cur)) addToken(readOperator(), Value.Type.OPERATOR);
-                else if (Is.String(cur)) addToken(readString(), Value.Type.STRING);
-                else if (Is.Number(cur)) addToken(readNumber(), Value.Type.NUMBER);
-                else if (Is.Identifier(cur)) addToken(readIdentifier(), Value.Type.IDENTIFIER);
+                else if (Is.Structure(cur)) addToken(digest(), ValueType.STRUCTURE);
+                else if (Is.Operator(cur)) addToken(readOperator(), ValueType.OPERATOR);
+                else if (Is.String(cur)) addToken(readString(), ValueType.STRING);
+                else if (Is.Number(cur)) addToken(readNumber(), ValueType.NUMBER);
+                else if (Is.Identifier(cur)) addToken(readIdentifier(), ValueType.IDENTIFIER);
                 else throw new Exception("unreadable symbol " + cur);
             } while (!endOfStack());
             return result.ToArray();
         }
 
-        private void addToken(string value, Value.Type type) {
-            if (type != Value.Type.STRING && Keywords.get(value) != null) type = Value.Type.KEYWORD;
-            else if (type != Value.Type.STRING && Operators.get(value) != null) type = Value.Type.OPERATOR;
-            else if (type == Value.Type.NUMBER) type = (value.IndexOf(".") < 0 ? Value.Type.INTEGER : Value.Type.DECIMAL);
+        private void addToken(string value, ValueType type) {
+            if (type != ValueType.STRING && Keywords.get(value) != null) type = ValueType.KEYWORD;
+            else if (type != ValueType.STRING && Operators.get(value) != null) type = ValueType.OPERATOR;
+            else if (type == ValueType.NUMBER) type = (value.IndexOf(".") < 0 ? ValueType.INTEGER : ValueType.DECIMAL);
             result.Add(Token.create(type, value));
             SqriptDebug.spam("{ " + type.ToString() + " [ " + value + " ] }" + (value == ";" || peek() == null ? Environment.NewLine : " >> "));
         }

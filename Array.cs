@@ -4,7 +4,11 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    class Array
+    public class Array : Value<Dictionary<int, Value>>
     {
+        public Array(Dictionary<int, Value> value) : base(ValueType.ARRAY, value) { }
+        public Array() : base(ValueType.ARRAY, new Dictionary<int, Value>()) { }
+
+        
     }
 }

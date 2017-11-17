@@ -5,39 +5,44 @@ namespace Qrakhen.Sqript
 {
     public static class SqriptDebug
     {
-        private static Level loggingLevel = Level.DEVELOPMENT;
+        private static Level loggingLevel = Level.LOG;
 
         public enum Level
         {
             MUFFLE = 0,
             CRITICAL = 1,
             WARNINGS = 2,
-            DEVELOPMENT = 4,
-            VERBOSE = 8
+            LOG = 4,
+            VERBOSE = 8,
+            PRODUCTIVE = 1,
+            TESTING = 3,
+            DEVELOPMENT = 7,
+            ALL = 15
         }
 
         public static void setLoggingLevel(Level level) {
             loggingLevel = level;
         }
 
-        private static void line(object message) {
+        private static void line(object message, ConsoleColor color = ConsoleColor.White) {
+            Console.ForegroundColor = color;
             Console.WriteLine(" : " + message.ToString());
         }
 
         public static void error(object message) {
-            if ((int) loggingLevel >= (int) Level.CRITICAL) line("ERROR " + message);
+            if (((int)loggingLevel & (int) Level.CRITICAL) > 0) line("ERROR " + message, ConsoleColor.Red);
         }
 
         public static void warn(object message) {
-            if ((int)loggingLevel >= (int)Level.WARNINGS) line("WARN " + message);
+            if (((int)loggingLevel & (int)Level.WARNINGS) > 0) line("WARN " + message, ConsoleColor.Yellow);
         }
 
         public static void log(object message) {
-            if ((int)loggingLevel >= (int)Level.DEVELOPMENT) line(message);
+            if (((int)loggingLevel & (int)Level.LOG) > 0) line(message);
         }
 
         public static void spam(object message) {
-            if ((int)loggingLevel >= (int)Level.VERBOSE) line(message);
+            if (((int)loggingLevel & (int)Level.VERBOSE) > 0) line(message, ConsoleColor.Gray);
         }
     }
 
@@ -46,6 +51,7 @@ namespace Qrakhen.Sqript
         static void Main(string[] args) {
             defineKeywords();
             defineOperators();
+            SqriptDebug.setLoggingLevel(SqriptDebug.Level.DEVELOPMENT);
             string content = "";
             Context global = new Context(null);
             do {
@@ -57,8 +63,8 @@ namespace Qrakhen.Sqript
                     var nizer = new Tokenizer(content);
                     new Interpreter(global, nizer.parse()).execute();
                 } catch (Exception e) {
-                    Console.WriteLine("exception thrown [" + e.Source + "] >> " + e.Message);
-                    Console.WriteLine(e.StackTrace);
+                    SqriptDebug.error("[" + e.GetType().ToString() + "] >> " + e.Message);
+                    SqriptDebug.log(e.StackTrace);
                 }
             } while (content != "exit");
         }
@@ -75,7 +81,7 @@ namespace Qrakhen.Sqript
 
         static void defineOperators() {
             Operators.define(Operator.CALCULATE_ADD, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() + b.getValue<Decimal>()); });
-            Operators.define(Operator.CALCULATE_SUBSTRACT, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() - b.getValue<Decimal>()); });
+            Operators.define(Operator.CALCULATE_SUBTRACT, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() - b.getValue<Decimal>()); });
             Operators.define(Operator.CALCULATE_DIVIDE, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() / b.getValue<Decimal>()); });
             Operators.define(Operator.CALCULATE_MULTIPLY, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() * b.getValue<Decimal>()); });
             Operators.define(Operator.ASSIGN_VALUE, delegate (Value a, Value b, Value r) { a.setValue(b.getValue(), b.type); });
