@@ -4,45 +4,48 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public class Reference
+    public class Reference : Value<Value>
     {
-        public Value value { get; protected set; }
         public string name { get; protected set; }
 
-        public Reference(string name, Value value = null) {
+        public Reference(string name, Value value) : base(ValueType.REFERENCE, value) {
             this.name = name;
-            this.value = (value == null ? Value.NULL : value);
         }
-
+        
+        /// <summary>
+        /// Care, brainfuck ahead
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="reference"></param>
         public virtual void assign(Value value, bool reference = false) {
-            if (reference) this.value = value;
+            if (reference) setValue(value, type);
             else {
-                if (value == Value.NULL) value = new Value(value.type, value.getValue());
+                if (value == null) setValue(new Value(value.type, value.getValue()), type);
                 else this.value.setValue(value.getValue(), value.type);
             }
-        }
-
-        public ValueType getValueType() {
-            return value.type;
         }
 
         public virtual Value getReference() {
             return value;
         }
 
-        public virtual object getValue() {
+        public new virtual T getValue<T>() {
+            return value.getValue<T>();
+        }
+
+        public new virtual object getValue() {
             return value.getValue();
         }
 
-        public virtual T getValue<T>() {
-            return value.getValue<T>();
+        public ValueType getValueType() {
+            return value.type;
         }
 
         public override string ToString() {
             return getReference().ToString();
         }
 
-        public virtual string toDebug() {
+        public override string toDebug() {
             return name + ": " + getReference().toDebug();
         }
 
@@ -57,7 +60,7 @@ namespace Qrakhen.Sqript
             }
 
             public Value getMember(bool parent = false) {
-                if (reference.getReference().isType((int)ValueType.ARRAY)) {
+                /*if (reference.getReference().isType((int)ValueType.ARRAY)) {
                     int[] __keys = new int[select.Length - (parent ? 1 : 0)];
                     for (int i = 0; i < __keys.Length; i++) __keys[i] = (int)select[i];
                     return reference.getValue<Array>().get(__keys);
@@ -65,7 +68,8 @@ namespace Qrakhen.Sqript
                     string[] __keys = new string[select.Length - (parent ? 1 : 0)];
                     for (int i = 0; i < __keys.Length; i++) __keys[i] = (string)select[i];
                     return reference.getValue<Obqect>().get(__keys);
-                } else throw new Exception("can not get member of non-collection");
+                } else throw new Exception("can not get member of non-collection");*/
+                return null;
             }
 
             public void assign(Value value, bool reference = false) {

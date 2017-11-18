@@ -21,8 +21,8 @@ namespace Qrakhen.Sqript
 
         private Value recursiveCast(object value) {
             if (value == null) throw new OperationException("value to be casted is null");
-            if (value is Value || value.GetType() == typeof(Token) || value is Array) {
-                if ((value as Value).type == ValueType.IDENTIFIER) return context.getReference((value as Value).getValue<string>()).getReference();
+            if (value.GetType() == typeof(Value)) {
+                if ((value as Value).type == ValueType.IDENTIFIER) return context.get((value as Value).getValue<string>()).getReference();
                 else return (value as Value);
             } else if (value.GetType() == typeof(Reference)) {
                 return ((value as Reference).getReference() as Value);

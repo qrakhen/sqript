@@ -4,19 +4,19 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public class Collection<K> : Value<Dictionary<K, Value>>
+    public class Collection<K, T> : Value<Dictionary<K, T>>
     {
         public int size {
-            get { return value.Count; }
+            get { return (value as Dictionary<K, T>).Count; }
         }
 
-        public Collection(ValueType type, Dictionary<K, Value> value) : base(type, value) {
+        public Collection(ValueType type, Dictionary<K, T> value) : base(type, value) {
             
         }
 
-        public virtual void set(K key, Value item) {
-            Value child = get(key);
-            if (child == null) value.Add(key, item);
+        public virtual void set(K key, T item) {
+            T _item = get(key);
+            if (_item == null) value.Add(key, item);
             else value[key] = item;
         }
 
@@ -24,37 +24,8 @@ namespace Qrakhen.Sqript
             value.Remove(key);
         }
 
-        public virtual Value get(K key) {
-            return value.ContainsKey(key) ? value[key] : null;
-        }
-
-        public virtual Value get(K[] keys) {
-            if (keys.Length < 1) throw new Exception("trying to access collection member with empty set of keys");
-            Value v = get(keys[0]);
-            if (keys.Length > 1)
-                foreach (K key in keys) {
-                    if (v.getValueSystemType() is Collection<K>) {
-                        v = (v as Collection<K>).get(key).getValue<Value>();
-                    } else throw new Exception("accessing member of non-collection value");
-                }
-            return v;
-        }
-
-        public struct MemberSelect
-        {
-            public Collection<K> collection;
-            public object[] select;
-
-            public MemberSelect(Collection<K> collection, object[] select) {
-                this.collection = collection;
-                this.select = select;
-            }
-
-            public Value getMember() {
-                K[] __keys = new K[select.Length];
-                for (int i = 0; i < select.Length; i++) __keys[i] = (K)select[i];
-                return collection.get(__keys);
-            }
+        public virtual T get(K key) {
+            return value.ContainsKey(key) ? value[key] : default(T);
         }
     }
 }

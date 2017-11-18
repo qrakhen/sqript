@@ -162,13 +162,13 @@ namespace Qrakhen.Sqript
 
         private Reference declareReference(string name) {
             Reference r = new Reference(name, null);
-            context.createReference(r);
+            context.add(r);
             Debug.spam("reference '" + name + "' declared!");
             return r;
         }
 
         private Reference getReference(string name) {
-            Reference r = context.getReference(name);
+            Reference r = context.get(name);
             if (r == null) throw new NullReferenceException("unknown reference name '" + name + "' given");
             return r;
         }

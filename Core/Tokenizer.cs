@@ -15,7 +15,7 @@ namespace Qrakhen.Sqript
             this.col = col;
         }
 
-        public override void setValue(object value) {
+        public override void setValue(object value, ValueType type) {
             throw new Exception("token value is read only", this);
         }
 
