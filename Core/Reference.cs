@@ -7,11 +7,15 @@ namespace Qrakhen.Sqript
     public class Reference : Value<Value>
     {
         public string name { get; protected set; }
-
+        
         public Reference(string name, Value value) : base(ValueType.REFERENCE, value) {
             this.name = name;
         }
-        
+
+        public Reference(string name) : base(ValueType.REFERENCE, new Value(ValueType.NULL, null)) {
+            this.name = name;
+        }
+
         /// <summary>
         /// Care, brainfuck ahead
         /// </summary>
@@ -20,7 +24,7 @@ namespace Qrakhen.Sqript
         public virtual void assign(Value value, bool reference = false) {
             if (reference) setValue(value, type);
             else {
-                if (value == null) setValue(new Value(value.type, value.getValue()), type);
+                if (this.value == null || this.type == ValueType.NULL) setValue(value, type);
                 else this.value.setValue(value.getValue(), value.type);
             }
         }
@@ -46,7 +50,7 @@ namespace Qrakhen.Sqript
         }
 
         public override string toDebug() {
-            return name + ": " + getReference().toDebug();
+            return name + ": " + getReference()?.toDebug();
         }
 
         public class MemberSelect
@@ -73,13 +77,13 @@ namespace Qrakhen.Sqript
             }
 
             public void assign(Value value, bool reference = false) {
-                if (!reference) getMember().setValue(value.getValue(), value.type);
+                /*if (!reference) getMember().setValue(value.getValue(), value.type);
                 else {
                     object parent = getMember(true);
                     if ((parent as Value).type == ValueType.ARRAY) (parent as Array).set((int)select[select.Length - 1], value);
                     else if((parent as Value).type == ValueType.OBQECT)(parent as Obqect).set((string)select[select.Length - 1], value);
                     else throw new Exception("can not set member of non-collection");
-                }
+                }*/
             }
         }
     }    

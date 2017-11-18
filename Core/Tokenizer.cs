@@ -35,7 +35,7 @@ namespace Qrakhen.Sqript
         }
 
         public string getLocation() {
-            return "@" + line + ":" + col;
+            return " @ " + line + " : " + col;
         }
     }
 

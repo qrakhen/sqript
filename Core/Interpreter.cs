@@ -129,30 +129,40 @@ namespace Qrakhen.Sqript
                         digest();
                         List<object> buffer = new List<object>();
                         do {
-                            if (peek().type == ValueType.IDENTIFIER || peek().isType((int)ValueType.NUMBER)) {
-                                buffer.Add(digest());
-                                if (peek().type == ValueType.STRUCTURE && peek().getValue<string>() == Structure.MEMBER_KEY_DELIMITER) {
-                                    digest();
-                                    continue;
-                                } else break;
+                            if (peek().type == ValueType.IDENTIFIER && target.getValueType() == ValueType.OBQECT) {
+                                string key = digest().getValue<string>(); 
+                                Reference r = (target.getReference() == null ? null : (target.getReference() as Obqect).get(key));
+                                if (r == null) {
+                                    r = new Reference(key, null);
+                                    (target.getReference() as Obqect).set(key, r);
+                                }
+                                target = r;
+                            } else if (peek().isType((int)ValueType.NUMBER) && target.getValueType() == ValueType.ARRAY) {
+                                int key = digest().getValue<int>();
+                                Reference r = (target.getReference() == null ? null : (target.getReference() as Array).get(key));
+                                if (r == null) {
+                                    r = new Reference(key.ToString(), null);
+                                    (target.getReference() as Array).set(key, r);
+                                }
+                                target = r;
                             } else {
-                                throw new Exception("unexpected token when trying to resolve member tree: ", peek());
+                                throw new Exception("unexpected token when trying to resolve member tree", peek());
                             }
+                            if (peek().type == ValueType.STRUCTURE && peek().getValue<string>() == Structure.MEMBER_KEY_DELIMITER) {
+                                digest();
+                                continue;
+                            } else break;
                         } while (!endOfStack());
-                        select = new Reference.MemberSelect(target, buffer.ToArray()); 
+                        //select = new Reference.MemberSelect(target, buffer.ToArray()); 
                     }
                 } else if (t.type == ValueType.OPERATOR) {
                     Operator op = digest().getValue<Operator>();
                     Token[] right = new Token[(stack.Length - position)];
                     for (int i = 0; i < right.Length; i++) right[i] = digest();
 
-                    object left = null;
-                    if (select != null) left = select;
-                    else left = target;
-
                     Expression expr;
-                    if (right.Length == 1) expr = new Expression(op, left, digest(), context);
-                    else expr = new Expression(op, left, new ExpressionParser(context, right).parse(), context);
+                    if (right.Length == 1) expr = new Expression(op, target, digest(), context);
+                    else expr = new Expression(op, target, new ExpressionParser(context, right).parse(), context);
                     result = expr.execute();
                 } else Debug.warn("unexpected token: '" + digest() + "'");
             } while (!endOfStack());
@@ -161,7 +171,7 @@ namespace Qrakhen.Sqript
         }
 
         private Reference declareReference(string name) {
-            Reference r = new Reference(name, null);
+            Reference r = new Reference(name);
             context.add(r);
             Debug.spam("reference '" + name + "' declared!");
             return r;

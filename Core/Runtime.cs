@@ -103,12 +103,12 @@ namespace Qrakhen.Sqript
         }
 
         static void defineOperators() {
-            /*Operators.define(Operator.CALCULATE_ADD, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() + b.getValue<Decimal>()); });
-            Operators.define(Operator.CALCULATE_SUBTRACT, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() - b.getValue<Decimal>()); });
-            Operators.define(Operator.CALCULATE_DIVIDE, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() / b.getValue<Decimal>()); });
-            Operators.define(Operator.CALCULATE_MULTIPLY, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() * b.getValue<Decimal>()); });
-            Operators.define(Operator.ASSIGN_VALUE, delegate (Value a, Value b, Value r) { a.setValue(b.getValue(), b.type); });
-            Operators.define(Operator.ASSIGN_REFERENCE, delegate (Value a, Value b, Value r) { });*/
+            Operators.define(Operator.CALCULATE_ADD, delegate (Value a, Value b, Value r) {});
+            Operators.define(Operator.CALCULATE_SUBTRACT, delegate (Value a, Value b, Value r) {});
+            Operators.define(Operator.CALCULATE_DIVIDE, delegate (Value a, Value b, Value r) {});
+            Operators.define(Operator.CALCULATE_MULTIPLY, delegate (Value a, Value b, Value r) {});
+            Operators.define(Operator.ASSIGN_VALUE, delegate (Value a, Value b, Value r) {});
+            Operators.define(Operator.ASSIGN_REFERENCE, delegate (Value a, Value b, Value r) { });
         }
     }
 
