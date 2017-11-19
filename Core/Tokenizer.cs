@@ -10,7 +10,7 @@ namespace Qrakhen.Sqript
     {
         public readonly int line, col;
 
-        private Token(ValueType type, object value, int line = -1, int col = -1) : base(type, value) {
+        private Token(ValueType type, object value, int line = -1, int col = -1) : base(value, type) {
             this.line = line;
             this.col = col;
         }

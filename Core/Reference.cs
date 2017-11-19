@@ -12,7 +12,7 @@ namespace Qrakhen.Sqript
             this.name = name;
         }
 
-        public Reference(string name) : base(ValueType.REFERENCE, new Value(ValueType.NULL, null)) {
+        public Reference(string name) : base(ValueType.REFERENCE, new Value(null, ValueType.NULL)) {
             this.name = name;
         }
 
@@ -25,7 +25,7 @@ namespace Qrakhen.Sqript
             if (reference) setValue(value, type);
             else {
                 if (this.value == null || this.value.type == ValueType.NULL) setValue(value, type);
-                else setValue(new Value(value.type, value.getValue()));
+                else setValue(new Value(value.getValue(), value.type), type);
             }
         }
 

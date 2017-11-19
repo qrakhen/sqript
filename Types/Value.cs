@@ -7,14 +7,14 @@ namespace Qrakhen.Sqript
     public class Value
     {
         public static Value NULL {
-            get { return new Value(ValueType.NULL, null); }
+            get { return new Value(null, ValueType.NULL); }
             private set { }
         }
 
         public ValueType type { get; private set; } = ValueType.NULL;
         public object value { get; private set; } = null;
 
-        public Value(ValueType type, object value) {
+        public Value(object value, ValueType type) {
             this.type = type;
             this.value = value;
         }
@@ -78,7 +78,7 @@ namespace Qrakhen.Sqript
             // set { } should still be read only.
         }
 
-        public Value(ValueType type, T value) : base(type, value) {
+        public Value(ValueType type, T value) : base(value, type) {
 
         }
 
