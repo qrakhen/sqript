@@ -24,7 +24,7 @@ namespace Qrakhen.Sqript
         public virtual void assign(Value value, bool reference = false) {
             if (reference) setValue(value, type);
             else {
-                if (this.value == null || this.type == ValueType.NULL) setValue(value, type);
+                if (this.value == null || this.value.type == ValueType.NULL) setValue(value, type);
                 else this.value.setValue(value.getValue(), value.type);
             }
         }
