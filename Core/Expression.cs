@@ -42,7 +42,7 @@ namespace Qrakhen.Sqript
             Value
                 l = recursiveCast(left),
                 r = recursiveCast(right);
-            if (left.GetType() == typeof(Reference)) Debug.spam("operation.execute() { " + (left as Reference).name + " " + op.symbol + " " + r.ToString() + " }");
+            if (left.GetType() == typeof(Reference)) Debug.spam("operation.execute() { " + (left as Reference).getValue() + " " + op.symbol + " " + r.ToString() + " }");
             else Debug.spam("operation.execute() { " + l.getValue() + " " + op.symbol + " " + r.getValue() + " } ");
             switch (op.symbol) {
                 case Operator.ASSIGN_VALUE:

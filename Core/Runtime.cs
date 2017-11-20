@@ -26,7 +26,8 @@ namespace Qrakhen.Sqript
 
         private static void line(object message, ConsoleColor color = ConsoleColor.White) {
             Console.ForegroundColor = color;
-            Console.WriteLine(" : " + message.ToString());
+            string[] lines = message.ToString().Split(new char[] { '\n' });
+            foreach (string line in lines) Console.WriteLine(" ~> " + line);
         }
 
         public static void error(object message) {
@@ -72,7 +73,7 @@ namespace Qrakhen.Sqript
                         content = File.ReadAllText(args[0]);
                     } else {
                         reader.file = "stdin";
-                        Console.Write(" ~> ");
+                        Console.Write(" <~ ");
                         content = Console.ReadLine();
                         if (content == "test") content = File.ReadAllText("TestScript.sq");
                         else if (content == "exit") break;

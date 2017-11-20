@@ -133,7 +133,7 @@ namespace Qrakhen.Sqript
                                 string key = digest().getValue<string>(); 
                                 Reference r = (target.getReference() == null ? null : (target.getReference() as Obqect).get(key));
                                 if (r == null) {
-                                    r = new Reference(key, null);
+                                    r = new Reference(null);
                                     (target.getReference() as Obqect).set(key, r);
                                 }
                                 target = r;
@@ -141,7 +141,7 @@ namespace Qrakhen.Sqript
                                 int key = digest().getValue<int>();
                                 Reference r = (target.getReference() == null ? null : (target.getReference() as Array).get(key));
                                 if (r == null) {
-                                    r = new Reference(key.ToString(), null);
+                                    r = new Reference(null);
                                     (target.getReference() as Array).set(key, r);
                                 }
                                 target = r;
@@ -166,13 +166,13 @@ namespace Qrakhen.Sqript
                     result = expr.execute();
                 } else Debug.warn("unexpected token: '" + digest() + "'");
             } while (!endOfStack());
-            if (result != null) Debug.log(result.toDebug());
-            else if (target != null) Debug.log(target.toDebug());
+            if (result != null) Debug.log(result.ToString());
+            else if (target != null) Debug.log(target.ToString());
         }
 
         private Reference declareReference(string name) {
-            Reference r = new Reference(name);
-            context.add(r);
+            Reference r = new Reference();
+            context.set(name, r);
             Debug.spam("reference '" + name + "' declared!");
             return r;
         }

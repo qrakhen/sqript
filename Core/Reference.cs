@@ -8,12 +8,12 @@ namespace Qrakhen.Sqript
     {
         public string name { get; protected set; }
         
-        public Reference(string name, Value value) : base(ValueType.REFERENCE, value) {
-            this.name = name;
+        public Reference(Value value) : base(ValueType.REFERENCE, value) {
+
         }
 
-        public Reference(string name) : base(ValueType.REFERENCE, new Value(null, ValueType.NULL)) {
-            this.name = name;
+        public Reference() : base(ValueType.REFERENCE, new Value(null, ValueType.NULL)) {
+
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Qrakhen.Sqript
         }
 
         public new virtual object getValue() {
-            return value.getValue();
+            return value?.getValue();
         }
 
         public ValueType getValueType() {

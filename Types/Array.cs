@@ -14,7 +14,7 @@ namespace Qrakhen.Sqript
             do {
 
             } while (get(free++) != null);
-            set(free, new Reference(free.ToString(), item));
+            set(free, new Reference(item));
         }
 
         public virtual void add(Reference item) {

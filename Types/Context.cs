@@ -18,11 +18,7 @@ namespace Qrakhen.Sqript
 
         public override void set(string key, Reference reference) {
             if (value.ContainsKey(key)) throw new ReferenceException("can not redeclare reference", reference);
-            else base.set(reference.name, reference);
-        }
-
-        public virtual void add(Reference reference) {
-            set(reference.name, reference);
+            else base.set(key, reference);
         }
 
         public override void remove(string key) {
