@@ -15,7 +15,7 @@ namespace Qrakhen.Sqript
         /// </summary>
         /// <param name="keys"></param>
         /// <returns></returns>
-        public virtual Reference get(object[] keys) {
+        public new virtual Reference get(object[] keys) {
             if (keys.Length < 1) throw new Exception("trying to access collection member with empty set of keys");
             Reference v = null;
             Value c = this;
