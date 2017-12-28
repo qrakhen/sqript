@@ -21,10 +21,7 @@ namespace Qrakhen.Sqript
 
         private Value recursiveCast(object value) {
             if (value == null) throw new OperationException("value to be casted is null");
-            if (value is Value || value.GetType() == typeof(Token) || value is Array) {
-                if ((value as Value).type == ValueType.IDENTIFIER) return context.getReference((value as Value).getValue<string>()).getReference();
-                else return (value as Value);
-            } else if (value.GetType() == typeof(Reference)) {
+            if (value.GetType() == typeof(Reference)) {
                 return ((value as Reference).getReference() as Value);
             } else if (value.GetType() == typeof(Reference.MemberSelect)) {
                 return (value as Reference.MemberSelect).getMember();
@@ -45,7 +42,7 @@ namespace Qrakhen.Sqript
             Value
                 l = recursiveCast(left),
                 r = recursiveCast(right);
-            if (left.GetType() == typeof(Reference)) Debug.spam("operation.execute() { " + (left as Reference).name + " " + op.symbol + " " + r.getValue() + " }");
+            if (left.GetType() == typeof(Reference)) Debug.spam("operation.execute() { " + (left as Reference).getValue() + " " + op.symbol + " " + r.ToString() + " }");
             else Debug.spam("operation.execute() { " + l.getValue() + " " + op.symbol + " " + r.getValue() + " } ");
             switch (op.symbol) {
                 case Operator.ASSIGN_VALUE:
@@ -70,11 +67,11 @@ namespace Qrakhen.Sqript
                     if (!l.isType((int)ValueType.NUMBER | (int)ValueType.STRING)) throw new OperationException("can not add value of type " + l.type);
                     if (!r.isType((int)ValueType.NUMBER)) throw new OperationException("can not add value of type " + r.type);
                     if (l.getValueSystemType() == typeof(string)) {
-                        result = new Value(ValueType.STRING, l.getValue<string>() + r.getValue().ToString());
+                        result = new Value(l.getValue<string>() + r.getValue().ToString(), ValueType.STRING);
                     } else if (l.getValueSystemType() == typeof(decimal) || l.getValueSystemType() == typeof(decimal)) {
-                        result = new Value(ValueType.DECIMAL, Convert.ToDecimal(l.getValue()) + Convert.ToDecimal(r.getValue()));
+                        result = new Value(Convert.ToDecimal(l.getValue()) + Convert.ToDecimal(r.getValue()), ValueType.DECIMAL);
                     } else {
-                        result = new Value(ValueType.INTEGER, l.getValue<int>() + r.getValue<int>());
+                        result = new Value(l.getValue<int>() + r.getValue<int>(), ValueType.INTEGER);
                     } 
                     break;
 
@@ -82,9 +79,9 @@ namespace Qrakhen.Sqript
                     if (!l.isType((int)ValueType.NUMBER)) throw new OperationException("can not subtract value of type " + l.type);
                     if (!r.isType((int)ValueType.NUMBER)) throw new OperationException("can not subtract value of type " + r.type);
                     if (l.getValueSystemType() == typeof(decimal) || l.getValueSystemType() == typeof(decimal)) {
-                        result = new Value(ValueType.DECIMAL, Convert.ToDecimal(l.getValue()) - Convert.ToDecimal(r.getValue()));
+                        result = new Value(Convert.ToDecimal(l.getValue()) - Convert.ToDecimal(r.getValue()), ValueType.DECIMAL);
                     } else {
-                        result = new Value(ValueType.INTEGER, l.getValue<int>() - r.getValue<int>());
+                        result = new Value(l.getValue<int>() - r.getValue<int>(), ValueType.INTEGER);
                     }
                     break;
 
@@ -92,9 +89,9 @@ namespace Qrakhen.Sqript
                     if (!l.isType((int)ValueType.NUMBER)) throw new OperationException("can not multiply value of type " + l.type);
                     if (!r.isType((int)ValueType.NUMBER)) throw new OperationException("can not multiply value of type " + r.type);
                     if (l.getValueSystemType() == typeof(decimal) || l.getValueSystemType() == typeof(decimal)) {
-                        result = new Value(ValueType.DECIMAL, Convert.ToDecimal(l.getValue()) * Convert.ToDecimal(r.getValue()));
+                        result = new Value(Convert.ToDecimal(l.getValue()) * Convert.ToDecimal(r.getValue()), ValueType.DECIMAL);
                     } else {
-                        result = new Value(ValueType.INTEGER, l.getValue<int>() * r.getValue<int>());
+                        result = new Value(l.getValue<int>() * r.getValue<int>(), ValueType.INTEGER);
                     }
                     break;
 
@@ -103,27 +100,27 @@ namespace Qrakhen.Sqript
                     if (!r.isType((int)ValueType.NUMBER)) throw new OperationException("can not divide value of type " + r.type);
                     if (l.getValueSystemType() == typeof(decimal) || l.getValueSystemType() == typeof(decimal)) {
                         if (Convert.ToDecimal(r.getValue()) == 0) throw new OperationException("division by zero");
-                        result = new Value(ValueType.DECIMAL, Convert.ToDecimal(l.getValue()) / Convert.ToDecimal(r.getValue()));
+                        result = new Value(Convert.ToDecimal(l.getValue()) / Convert.ToDecimal(r.getValue()), ValueType.DECIMAL);
                     } else {
                         if (r.getValue<int>() == 0) throw new OperationException("division by zero");
-                        result = new Value(ValueType.INTEGER, l.getValue<int>() / r.getValue<int>());
+                        result = new Value(l.getValue<int>() / r.getValue<int>(), ValueType.INTEGER);
                     }
                     break;
 
                 case Operator.CONDITION_EQUALS:
-                    result = new Value(ValueType.BOOLEAN, r.getValue().Equals(l.getValue()));
+                    result = new Value(r.getValue().Equals(l.getValue()), ValueType.BOOLEAN);
                     break;
 
                 case Operator.CONDITION_AND:
                     if (!l.isType((int)ValueType.BOOLEAN)) throw new OperationException("can not compare non boolean " + l.type);
                     if (!r.isType((int)ValueType.BOOLEAN)) throw new OperationException("can not compare non boolean " + r.type);
-                    result = new Value(ValueType.BOOLEAN, l.getValue<bool>() && r.getValue<bool>());
+                    result = new Value(l.getValue<bool>() && r.getValue<bool>(), ValueType.BOOLEAN);
                     break;
 
                 case Operator.CONDITION_OR:
                     if (!l.isType((int)ValueType.BOOLEAN)) throw new OperationException("can not compare non boolean " + l.type);
                     if (!r.isType((int)ValueType.BOOLEAN)) throw new OperationException("can not compare non boolean " + r.type);
-                    result = new Value(ValueType.BOOLEAN, l.getValue<bool>() || r.getValue<bool>());
+                    result = new Value(l.getValue<bool>() || r.getValue<bool>(), ValueType.BOOLEAN);
                     break;
             }
             return result;

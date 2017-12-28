@@ -4,19 +4,19 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public class Collection<K> : Value<Dictionary<K, Value>>
+    public class Collection<K, T> : Value<Dictionary<K, T>>
     {
         public int size {
-            get { return value.Count; }
+            get { return (value as Dictionary<K, T>).Count; }
         }
 
-        public Collection(ValueType type, Dictionary<K, Value> value) : base(type, value) {
+        public Collection(ValueType type, Dictionary<K, T> value) : base(type, value) {
             
         }
 
-        public virtual void set(K key, Value item) {
-            Value child = get(key);
-            if (child == null) value.Add(key, item);
+        public virtual void set(K key, T item) {
+            T _item = get(key);
+            if (_item == null) value.Add(key, item);
             else value[key] = item;
         }
 
@@ -24,19 +24,22 @@ namespace Qrakhen.Sqript
             value.Remove(key);
         }
 
-        public virtual Value get(K key) {
-            return value.ContainsKey(key) ? value[key] : null;
+        public virtual T get(K key) {
+            return value.ContainsKey(key) ? value[key] : default(T);
         }
         
         /*public virtual Value get(object[] keys) {
             if (keys.Length < 1) throw new Exception("trying to access collection member with empty set of keys");
-            Value v = get(keys[0]);
-            if (keys.Length > 1)
-                foreach (K key in keys) {
-                    if (v.getValueSystemType() is Collection<K>) {
-                        v = (v as Collection<K>).get(key).getValue<Value>();
-                    } else throw new Exception("accessing member of non-collection value");
-                }
+            Value v = null;
+            Value c = this;
+            foreach (object key in keys) {
+                if (c is Obqect) {
+                    v = (c as Obqect).get((string)key);
+                } else if (c is Array) {
+                    v = (c as Array).get((int)key);
+                } else throw new Exception("accessing member of non-collection value");
+                c = v;
+            }
             return v;
         }*/
 
@@ -56,5 +59,13 @@ namespace Qrakhen.Sqript
                 return collection.get(__keys);
             }
         }*/
+
+        public override string ToString() {
+            return "[" + type.ToString() + "] (" + size + ")";
+        }
+
+        public override string toDebug() {
+            return "[" + type.ToString() + "] (" + size + ")";
+        }
     }
 }

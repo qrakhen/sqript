@@ -95,7 +95,7 @@ namespace Qrakhen.Sqript
                         content = File.ReadAllText(args[0]);
                     } else {
                         reader.file = "stdin";
-                        Console.Write(" ~> ");
+                        Console.Write(" <~ ");
                         content = Console.ReadLine();
                         if (content == "test") content = File.ReadAllText("TestScript.sq");
                         else if (content == "exit") break;
@@ -126,11 +126,11 @@ namespace Qrakhen.Sqript
         }
 
         static void defineOperators() {
-            Operators.define(Operator.CALCULATE_ADD, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() + b.getValue<Decimal>()); });
-            Operators.define(Operator.CALCULATE_SUBTRACT, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() - b.getValue<Decimal>()); });
-            Operators.define(Operator.CALCULATE_DIVIDE, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() / b.getValue<Decimal>()); });
-            Operators.define(Operator.CALCULATE_MULTIPLY, delegate (Value a, Value b, Value r) { r.setValue(a.getValue<Decimal>() * b.getValue<Decimal>()); });
-            Operators.define(Operator.ASSIGN_VALUE, delegate (Value a, Value b, Value r) { a.setValue(b.getValue(), b.type); });
+            Operators.define(Operator.CALCULATE_ADD, delegate (Value a, Value b, Value r) {});
+            Operators.define(Operator.CALCULATE_SUBTRACT, delegate (Value a, Value b, Value r) {});
+            Operators.define(Operator.CALCULATE_DIVIDE, delegate (Value a, Value b, Value r) {});
+            Operators.define(Operator.CALCULATE_MULTIPLY, delegate (Value a, Value b, Value r) {});
+            Operators.define(Operator.ASSIGN_VALUE, delegate (Value a, Value b, Value r) {});
             Operators.define(Operator.ASSIGN_REFERENCE, delegate (Value a, Value b, Value r) { });
         }
     }

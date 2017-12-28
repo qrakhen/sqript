@@ -4,32 +4,53 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public abstract class Value<T>
+    public class Value
     {
-        public ValueType type { get; protected set; }
-        public T value { get; protected set; }
+        public static Value NULL {
+            get { return new Value(null, ValueType.NULL); }
+            private set { }
+        }
 
-        public Value(ValueType type, T value) {
+        public ValueType type { get; private set; } = ValueType.NULL;
+        public object value { get; private set; } = null;
+
+        public Value(object value, ValueType type) {
             this.type = type;
             this.value = value;
         }
 
-        public virtual T getValue() {
+        public virtual object getValue() {
             return value;
         }
 
-        public virtual void setValue(T value) {
-            this.value = value;
+        public virtual T getValue<T>() {
+            return (T)value;
         }
 
-        public virtual void setValue(T value, ValueType type) {
+        public virtual void setValue(object value, ValueType type) {
             this.value = value;
             this.type = type;
+        }
+
+        public virtual void setValue(Value value) {
+            setValue(value.getValue(), value.type);
         }
 
         public bool isType(int types) {
             return (((int)type & types) > 0);
         }
+
+        public Type getValueSystemType() {
+            return value.GetType();
+        }
+
+        public override string ToString() {
+            return (value != null ? value.ToString() : (type == ValueType.NULL ? "null" : "undefined"));
+        }
+
+        public virtual string toDebug() {
+            return "[" + type.ToString() + "] " + this.ToString();
+        }    
 
         public static Type getSystemType(ValueType type) {
             switch (type) {
@@ -48,48 +69,25 @@ namespace Qrakhen.Sqript
                 default: return null;
             }
         }
-
-        public override string ToString() {
-            return (value != null ? value.ToString() : "nyd");
-        }
-
-        public virtual string toDebug() {
-            return "(" + type.ToString() + ") " + (value != null ? value.ToString() : "");
-        }
     }
 
-    public class Value : Value<object>
+    public class Value<T> : Value
     {
-        public static Value NULL {
-            get {
-                return new Value(ValueType.NULL, null);
-            }
-            private set { }
+        public new T value {
+            get { return (T)base.value; }
+            // set { } should still be read only.
         }
 
-        public Value(ValueType type, object value) : base(type, value) { }
+        public Value(ValueType type, T value) : base(value, type) {
 
-        public override object getValue() {
-            return value;
         }
 
-        public virtual T getValue<T>() {
-            return (T)value;
+        public new virtual T getValue() {
+            return (T) base.getValue();
         }
 
-        public override void setValue(object value) {
-            if (type == ValueType.NULL) return;
-            this.value = value;
-        }
-
-        public override void setValue(object value, ValueType type) {
-            if (type == ValueType.NULL) return;
-            this.value = value;
-            this.type = type;
-        }
-
-        public Type getValueSystemType() {
-            return value.GetType();
+        public virtual void setValue(T value, ValueType type) {
+            base.setValue(value, type);
         }
     }
 
@@ -103,10 +101,12 @@ namespace Qrakhen.Sqript
         INTEGER = 16,
         DECIMAL = 32,
         NUMBER = 48,
+        BOOLEAN = 64,
         STRING = 128,
-        BOOLEAN = 256,
+        CONTEXT = 256,
         OBQECT = 512,
         ARRAY = 1024,
+        COLLECTION = 1792,
         REFERENCE = 2048,
         FUNCTION = 4096,
         UNDEFINED = 8192

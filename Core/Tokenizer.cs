@@ -10,12 +10,12 @@ namespace Qrakhen.Sqript
     {
         public readonly int line, col;
 
-        private Token(ValueType type, object value, int line = -1, int col = -1) : base(type, value) {
+        private Token(ValueType type, object value, int line = -1, int col = -1) : base(value, type) {
             this.line = line;
             this.col = col;
         }
 
-        public override void setValue(object value) {
+        public override void setValue(object value, ValueType type) {
             throw new Exception("token value is read only", this);
         }
 
@@ -35,7 +35,7 @@ namespace Qrakhen.Sqript
         }
 
         public string getLocation() {
-            return "@" + line + ":" + col;
+            return " @ " + line + " : " + col;
         }
     }
 
