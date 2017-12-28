@@ -3,6 +3,15 @@ using System.IO;
 
 namespace Qrakhen.Sqript
 {
+    public static class Sqript
+    {
+        public const string asciiLogo =
+            "  ______________,  \n" +
+            " (__    ._ *~  -+- \n" +
+            " .__)(_][  |[_) |_.\n" +
+            "       |    |      \n";
+    }
+
     public static class Debug
     {
         private static Level loggingLevel = Level.LOG;
@@ -24,25 +33,38 @@ namespace Qrakhen.Sqript
             loggingLevel = level;
         }
 
-        private static void line(object message, ConsoleColor color = ConsoleColor.White) {
-            Console.ForegroundColor = color;
-            Console.WriteLine(" : " + message.ToString());
+        public static void write(object message, ConsoleColor color = ConsoleColor.White) {
+            string[] lines = message.ToString().Split(new char[] { '\n' });
+            foreach (string line in lines) {
+                Console.ForegroundColor = color;
+                Console.WriteLine("    " + line);
+            }
+        }
+
+        private static void writeOut(object message, ConsoleColor color = ConsoleColor.White) {
+            string[] lines = message.ToString().Split(new char[] { '\n' });
+            foreach (string line in lines) {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(" ~> ");
+                Console.ForegroundColor = color;
+                Console.WriteLine(line);
+            }
         }
 
         public static void error(object message) {
-            if (((int)loggingLevel & (int) Level.CRITICAL) > 0) line("ERROR " + message, ConsoleColor.Red);
+            if (((int)loggingLevel & (int) Level.CRITICAL) > 0) writeOut("ERROR " + message, ConsoleColor.Red);
         }
 
         public static void warn(object message) {
-            if (((int)loggingLevel & (int)Level.WARNINGS) > 0) line("WARN " + message, ConsoleColor.Yellow);
+            if (((int)loggingLevel & (int)Level.WARNINGS) > 0) writeOut("WARN " + message, ConsoleColor.Yellow);
         }
 
         public static void log(object message) {
-            if (((int)loggingLevel & (int)Level.LOG) > 0) line(message);
+            if (((int)loggingLevel & (int)Level.LOG) > 0) writeOut(message);
         }
 
         public static void spam(object message) {
-            if (((int)loggingLevel & (int)Level.VERBOSE) > 0) line(message, ConsoleColor.Gray);
+            if (((int)loggingLevel & (int)Level.VERBOSE) > 0) writeOut(message, ConsoleColor.Gray);
         }
     }
 
@@ -63,6 +85,7 @@ namespace Qrakhen.Sqript
             defineKeywords();
             defineOperators();
             Debug.setLoggingLevel(Debug.Level.DEVELOPMENT);
+            Debug.write("\n" + Sqript.asciiLogo + "");
             string content = "";
             Context global = new Context(null);
             do {

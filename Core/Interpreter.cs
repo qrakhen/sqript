@@ -168,7 +168,7 @@ namespace Qrakhen.Sqript
         }
 
         private Reference getReference(string name) {
-            Reference r = context.getReference(name);
+            Reference r = context.lookup(name);
             if (r == null) throw new NullReferenceException("unknown reference name '" + name + "' given");
             return r;
         }

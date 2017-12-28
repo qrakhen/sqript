@@ -1,7 +1,7 @@
 ﻿# sqript
-### ~ another type-less adventure into obscurity
+### ~ another (dynamic|static) type-(less|full) adventure into obscurity
 
-Sqript is a programming language interpreter written in C#.
+Sqript is a interpreted programming language written in C#.
 
 It comes with it's very own syntax, data types, workflow and behaviours.
 Can be built for - and also runs on - all platforms, including your microwave.
@@ -58,15 +58,112 @@ concat(str, num); // throws Sqript.FunctionParameterViolation
 
 ### Types
 #### STRING
+```javascript
+<string> ['abc', "abc"]
+<str>
+```
 Strings, yea. Can be concatinated using a + b;
 #### NUMBER
+```javascript
+<num> [0.0, 0]
+```
 Dynamic number type, can represent an integer or a decimal number.
 ##### INTEGER
+```javascript
+<int> [0]
+```
 ##### DECIMAL
+```javascript
+<dec> [0.0]
+```
 #### BOOLEAN
+```javascript
+<bool> [true|false]
+```
 #### COLLECTION
+```javascript
+<collection> [*]
+```
 Abstract type, inherited by Array and Obqect.
 ##### Array
+```javascript
+<array> [index:*]
+<arr>
+```
 ##### Obqect
+```javascript
+<object> [key:*]
+<obq> 
+```
 #### NULL
 Yes that's a type.
+No it can not be declared.
+
+### Keywords
+#### Reference
+```javascript
+reference | ref | declare | *~
+
+// dynamic declaration
+*~ name = 'Max';
+
+// static declaration
+ref<int> number = 10;
+
+// or with the special *~ alternative
+*dec~ number = 3.72;
+```
+
+### Operators
+#### Assign (by Value or Reference)
+```javascript
+name = 'Der' + 'ser'; // assigns value of right hand operation result
+*~ nameReference <& name; // assigns the actual variable by reference, so
+
+name = 'Foo'; // would result in
+(nameReference == 'Foo');
+```
+
+### Syntax
+#### Obqect Syntax
+```javascript
+// :  -> key delimiter
+// {} -> object declaration
+
+*~ obj = {};
+obj:name = 'Elephant';
+obj:child = {};
+obj:child:name = 'Noodles';
+```
+
+### Configuration
+```javascript
+:qonfig(configKey, value);
+
+:qonfig('forceTypes', true); // force static reference type declaration
+:qonfig('forceTypes');	// resets to default value (from qonfig.json)
+						// auto-reset when a new file is being read
+```
+
+#### Program/Project wide Configuration
+```javascript
+$ vi /path/to/your_sqrapp/qonfig.json
+```
+When no qonfig file is provided, default values will be used.
+
+#### Configuration Options
+```javascript
+key				| default		| values
+----------------|---------------|---------------------------------------
+forceTypes		| false			| false, true
+forceNamespace	| false			| false, true
+timeout		    | 60			| [any integer] (in seconds)
+allowInput		| true			| false, true (enables stdIn)
+entryPointFile  | main.sqr		| [any string] (path to entry point file)
+callStackLimit  | 128			| [any integer] (per function or constructor call)
+ignoreLines		| false			| false, true (ignores faulty lines)
+runtimeCore		| sqript.core	| [any string] (see runtime cores)
+useProcessOut	| true			| false, true (use stdOut internally)
+encoding		| UTF-8			| [any string] (encoding type)
+suppressErrors  | false			| false, true (does not throw exceptions)
+```

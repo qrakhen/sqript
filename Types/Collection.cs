@@ -27,8 +27,8 @@ namespace Qrakhen.Sqript
         public virtual Value get(K key) {
             return value.ContainsKey(key) ? value[key] : null;
         }
-
-        public virtual Value get(K[] keys) {
+        
+        /*public virtual Value get(object[] keys) {
             if (keys.Length < 1) throw new Exception("trying to access collection member with empty set of keys");
             Value v = get(keys[0]);
             if (keys.Length > 1)
@@ -38,9 +38,9 @@ namespace Qrakhen.Sqript
                     } else throw new Exception("accessing member of non-collection value");
                 }
             return v;
-        }
+        }*/
 
-        public struct MemberSelect
+        /*public struct MemberSelect
         {
             public Collection<K> collection;
             public object[] select;
@@ -55,6 +55,6 @@ namespace Qrakhen.Sqript
                 for (int i = 0; i < select.Length; i++) __keys[i] = (K)select[i];
                 return collection.get(__keys);
             }
-        }
+        }*/
     }
 }

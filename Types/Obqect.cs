@@ -4,12 +4,10 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public class Obqect : Collection<string>
+    public class Obqect : Context
     {
-        public Obqect(Dictionary<string, Value> value) : base(ValueType.OBQECT, value) {
-        }
+        public Obqect(Context parent, Dictionary<string, Reference> value) : base(parent, ValueType.OBQECT, value) {}
 
-        public Obqect() : base(ValueType.OBQECT, new Dictionary<string, Value>()) {
-        }
+        public Obqect(Context parent) : base(parent, ValueType.OBQECT, new Dictionary<string, Reference>()) {}
     }
 }

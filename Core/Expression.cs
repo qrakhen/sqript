@@ -30,6 +30,9 @@ namespace Qrakhen.Sqript
                 return (value as Reference.MemberSelect).getMember();
             } else if (value.GetType() == typeof(Expression)) {
                 return recursiveCast((value as Expression).execute());
+            } else if (value is Value) {
+                if ((value as Value).type == ValueType.IDENTIFIER) return context.lookup((value as Value).getValue<string>()).getReference();
+                else return (value as Value);
             } else throw new OperationException("unkown value type provided: " + value.GetType().FullName);
         }
 
