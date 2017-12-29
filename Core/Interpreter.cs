@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Qrakhen.Sqript
 {
-    public class Function : Context
+    /*public class Function : Context
     {
         public Value[] parameters { get; private set; }
         public Token[] stack { get; private set; }
@@ -13,13 +13,11 @@ namespace Qrakhen.Sqript
         public Function(Context parent) : base(parent) {
 
         }
-    }
+    }*/
 
-    public class Class : Context
+    public class Qlass : Context
     {
-        public Token[] stack { get; private set; }
-
-        public Class(Context parent) : base(parent) {
+        public Qlass(Funqtion context) : base(context, ValueType.QLASS, new Dictionary<string, Reference>()) {
 
         }
     }
@@ -36,7 +34,7 @@ namespace Qrakhen.Sqript
 
     public class ExpressionParser : Interpreter
     {
-        public ExpressionParser(Context context, Token[] stack) : base(context, stack) { }
+        public ExpressionParser(Funqtion context, Token[] stack) : base(context, stack) { }
 
         private struct Expr
         {
@@ -80,7 +78,7 @@ namespace Qrakhen.Sqript
                         if (buffer.left == null) buffer.left = array;
                         else if (buffer.right == null) buffer.right = array;
                     } else if (t.getValue<string>() == "{") {
-                        Obqect obqect = new Obqect();
+                        Obqect obqect = new Obqect(context);
                         do {
                             t = digest();
                             if (t.type == ValueType.STRUCTURE && t.getValue<string>() == "}") break;
@@ -107,9 +105,10 @@ namespace Qrakhen.Sqript
 
     public class Statement : Interpreter
     {
-        public Statement(Context context, Token[] stack) : base(context, stack) { }
+        public Statement(Funqtion context, Token[] stack) : base(context, stack) { }
 
         public override void execute() {
+            Debug.spam("executing statement:\n" + ToString());
             Reference target = null;
             Reference.MemberSelect select = null;
             Value result = null;
@@ -184,11 +183,12 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public class Interpreter : Digester<Token> {
-        protected Context context;
+    public class Interpreter : Digester<Token>
+    {
+        protected Funqtion context;
 
-        public Interpreter(Context context, Token[] stack) : base(stack) {
-            this.context = (context == null ? new Context(null) : context);
+        public Interpreter(Funqtion context, Token[] stack) : base(stack) {
+            this.context = (context == null ? new Funqtion(null) : context);
         }
 
         protected override Token digest() {
@@ -203,21 +203,27 @@ namespace Qrakhen.Sqript
             return t;
         }
 
-        public virtual void execute() {
+        public Funqtion parse() {
             List<Token> buffer = new List<Token>();
+            Funqtion funqtion = new Funqtion(context);
             Debug.spam("interpreter.execute()");
             do {
                 Token cur = peek();
                 Debug.spam(cur.ToString());
                 if (cur.type == ValueType.STRUCTURE && cur.getValue<string>() == ";") {
                     digest();
-                    new Statement(context, buffer.ToArray()).execute();
+                    funqtion.statements.Add(new Statement(funqtion, buffer.ToArray()));
                     buffer.Clear();
                 } else {
                     buffer.Add(digest());
-                    if (endOfStack()) new Statement(context, buffer.ToArray()).execute();
+                    if (endOfStack()) funqtion.statements.Add(new Statement(funqtion, buffer.ToArray()));
                 }
             } while (!endOfStack());
+            return funqtion;
+        }
+
+        public virtual void execute() {
+            
         }
 
         public Token[] readBody() {

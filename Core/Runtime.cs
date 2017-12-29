@@ -6,10 +6,10 @@ namespace Qrakhen.Sqript
     public static class Sqript
     {
         public const string asciiLogo =
-            "  ______________,  \n" +
-            " (__    ._ *~  -+- \n" +
-            " .__)(_][  |[_) |_.\n" +
-            "       |    |      \n";
+            "  _______/ ^ \\___.___,\n" +
+            " (__.   ._ .     |     \n" +
+            " .__)(_][  | [_) | _. \n" +
+            "  \\    |     |     / \n";
     }
 
     public static class Debug
@@ -87,7 +87,7 @@ namespace Qrakhen.Sqript
             Debug.setLoggingLevel(Debug.Level.DEVELOPMENT);
             Debug.write("\n" + Sqript.asciiLogo + "");
             string content = "";
-            Context global = new Context(null);
+            Funqtion global = new Funqtion(null);
             do {
                 try {
                     if (args.Length > 0) {

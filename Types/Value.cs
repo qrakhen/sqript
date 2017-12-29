@@ -63,9 +63,10 @@ namespace Qrakhen.Sqript
                 case ValueType.STRING: return typeof(string);
                 case ValueType.BOOLEAN: return typeof(bool);
                 case ValueType.ARRAY: return typeof(Array);
-                case ValueType.OBQECT: return typeof(Obqect);
                 case ValueType.REFERENCE: return typeof(Reference);
-                case ValueType.FUNCTION: return typeof(Function);
+                case ValueType.OBQECT: return typeof(Obqect);
+                case ValueType.QLASS: return typeof(Qlass);
+                case ValueType.FUNQTION: return typeof(Funqtion);
                 default: return null;
             }
         }
@@ -108,7 +109,8 @@ namespace Qrakhen.Sqript
         ARRAY = 1024,
         COLLECTION = 1792,
         REFERENCE = 2048,
-        FUNCTION = 4096,
-        UNDEFINED = 8192
+        FUNQTION = 4096,
+        QLASS = 8192,
+        UNDEFINED = 16384
     }
 }
