@@ -114,6 +114,19 @@ ref<int> number = 10;
 *dec~ number = 3.72;
 ```
 
+### Qlasses
+Yes, that's the word i chose for classes. Problem?
+Don't worry, you can still use the 'class' keyword alternative :)
+
+
+### Funqtions
+And again. That's how real this is.
+Yes, you can also use the keywords "function", "fn", "fq" or even "()~>" here.
+Don't ask how I came up with `()~>`.
+
+### Obqects
+:)
+
 ### Operators
 #### Assign (by Value or Reference)
 ```javascript
@@ -155,6 +168,7 @@ When no qonfig file is provided, default values will be used.
 ```javascript
 key				| default		| values
 ----------------|---------------|---------------------------------------
+logLevel		| DEVELOPMENT	| read below (sets console logging level)
 forceTypes		| false			| false, true
 forceNamespace	| false			| false, true
 timeout		    | 60			| [any integer] (in seconds)
@@ -166,4 +180,14 @@ runtimeCore		| sqript.core	| [any string] (see runtime cores)
 useProcessOut	| true			| false, true (use stdOut internally)
 encoding		| UTF-8			| [any string] (encoding type)
 suppressErrors  | false			| false, true (does not throw exceptions)
+```
+
+##### logLevel
+Can be set to one of these values:
+```javascript
+    MUFFLE		//disable all output
+    CRITICAL	//critical errors, such as program termination
+    WARNINGS	//warnings such as redeclaration of references
+    INFO		//default logs
+    VERBOSE		//verbose mode, spits out everything ever
 ```

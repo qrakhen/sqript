@@ -14,19 +14,15 @@ namespace Qrakhen.Sqript
 
     public static class Debug
     {
-        private static Level loggingLevel = Level.LOG;
+        private static Level loggingLevel = Level.INFO;
 
         public enum Level
         {
             MUFFLE = 0,
             CRITICAL = 1,
             WARNINGS = 2,
-            LOG = 4,
-            VERBOSE = 8,
-            PRODUCTIVE = 1,
-            TESTING = 3,
-            DEVELOPMENT = 7,
-            ALL = 15
+            INFO = 4,
+            VERBOSE = 8
         }
 
         public static void setLoggingLevel(Level level) {
@@ -60,7 +56,7 @@ namespace Qrakhen.Sqript
         }
 
         public static void log(object message, ConsoleColor color = ConsoleColor.White) {
-            if (((int)loggingLevel >= (int)Level.LOG)) writeOut(message, color);
+            if (((int)loggingLevel >= (int)Level.INFO)) writeOut(message, color);
         }
 
         public static void spam(object message, ConsoleColor color = ConsoleColor.Gray) {
@@ -84,10 +80,9 @@ namespace Qrakhen.Sqript
         static void Main(string[] args) {
             defineKeywords();
             defineOperators();
-            Debug.setLoggingLevel(Debug.Level.VERBOSE);
+            Debug.setLoggingLevel(Debug.Level.INFO);
             Debug.write("\n" + Sqript.asciiLogo + "");
             string content = "";
-            MainContext main = new MainContext();
             do {
                 try {
                     if (args.Length > 0) {
@@ -102,8 +97,8 @@ namespace Qrakhen.Sqript
                     }
                     var nizer = new Tokenizer(content);
                     var stack = nizer.parse();
-                    main.queue(new Interpreter(stack).parse());
-                    main.execute();
+                    GlobalContext.getInstance().queue(new Statementizer(stack).parse());
+                    GlobalContext.getInstance().execute();
                 } catch (Exception e) {
                     Debug.warn("exception thrown in file " + reader.file + " at " + e.getLocation());
                     if (e.cause != null) Debug.log("caused by token " + e.cause.toDebug() + e.cause.getLocation());
@@ -121,9 +116,9 @@ namespace Qrakhen.Sqript
             Keywords.define(Keyword.DECLARE, "declare", "reference", "ref", "*~");
             Keywords.define(Keyword.DESTROY, "destroy", "dereference", "del", "~:");
             Keywords.define(Keyword.NEW, "create", "new", "spawn", "~*");
-            Keywords.define(Keyword.CLASS, "class");
-            Keywords.define(Keyword.FUNCTION, "function", "fn");
-            Keywords.define(Keyword.OBJECT, "object", "obqect");
+            Keywords.define(Keyword.QLASS, "qlass", "class");
+            Keywords.define(Keyword.FUNQTION, "funqtion", "fq", "function", "fn", "()~>");
+            Keywords.define(Keyword.OBQECT, "object", "obqect", "obq");
             Keywords.define(Keyword.RETURN, "return", "<~");
         }
 

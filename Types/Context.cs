@@ -51,6 +51,7 @@ namespace Qrakhen.Sqript
         public override string ToString() {
             string r = " { ";
             foreach (var v in value) {
+                if (v.Value.getValue() == this) continue;
                 r += "\n" + v.Key + " = " + v.Value.ToString() + ",";
             }
             return r.Substring(0, r.Length - 1) + "\n}";
@@ -59,6 +60,7 @@ namespace Qrakhen.Sqript
         public override string toDebug() {
             string r = base.toDebug() + " { ";
             foreach (var v in value) {
+                if (v.Value.getValue() == this) continue;
                 r += "\n" + v.Key + " = " + v.Value.toDebug() + ",";
             }
             return r.Substring(0, r.Length - 1) + "\n}";

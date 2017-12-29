@@ -32,7 +32,7 @@ namespace Qrakhen.Sqript
 
     }
 
-    public class ExpressionParser : Interpreter
+    public class ExpressionParser : Interpretoken
     {
         public ExpressionParser(Token[] stack) : base(stack) { }
 
@@ -103,11 +103,11 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public class Statement : Interpreter
+    public class Statement : Interpretoken
     {
         public Statement(Token[] stack) : base(stack) { }
 
-        public override void execute(Funqtion context) {
+        public void execute(Funqtion context) {
             Debug.spam("executing statement:\n" + ToString());
             Reference target = null;
             Reference.MemberSelect select = null;
@@ -191,9 +191,9 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public class Interpreter : Digester<Token>
+    public class Interpretoken : Digester<Token>
     {
-        public Interpreter(Token[] stack) : base(stack) { }
+        public Interpretoken(Token[] stack) : base(stack) { }
 
         protected override Token digest() {
             Token t = base.digest();
@@ -206,6 +206,11 @@ namespace Qrakhen.Sqript
             Runtime.reader.token = t;
             return t;
         }
+    }
+
+    public class Statementizer : Interpretoken
+    {
+        public Statementizer(Token[] stack) : base(stack) { }
 
         public Funqtion createFunction(Funqtion context) {
             Funqtion funqtion = new Funqtion(context);
@@ -232,10 +237,6 @@ namespace Qrakhen.Sqript
                 }
             } while (!endOfStack());
             return statements.ToArray();
-        }
-
-        public virtual void execute(Funqtion context) {
-            
         }
 
         public Token[] readBody() {

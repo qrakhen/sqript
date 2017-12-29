@@ -25,33 +25,4 @@ namespace Qrakhen.Sqript
             return null;
         }
     }
-
-    public class MainContext : Funqtion
-    {
-        private List<Statement> queued;
-
-        public MainContext() : base(null) {
-            queued = new List<Statement>();
-        }
-
-        public void queue(Statement[] statements) {
-            foreach (Statement statement in statements) {
-                queued.Add(statement);
-            }
-        }
-
-        public void queue(Statement statement) {
-            queue(new Statement[] { statement });
-        }
-
-        public void execute() {
-            Debug.spam("main context processing " + queued.Count + " queued statements...");
-            foreach (Statement statement in queued) {
-                statement.execute(this);
-                statements.Add(statement);
-            }
-            queued.Clear();
-            Debug.spam("main context total executed statement amount: " + statements.Count);
-        }
-    }
 }

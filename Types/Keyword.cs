@@ -10,9 +10,9 @@ namespace Qrakhen.Sqript
             DECLARE = "DECLARE",
             DESTROY = "DESTROY",
             NEW = "NEW",
-            CLASS = "CLASS",
-            FUNCTION = "FUNCTION",
-            OBJECT = "OBJECT",
+            QLASS = "CLASS",
+            FUNQTION = "FUNCTION",
+            OBQECT = "OBJECT",
             ARRAY = "ARRAY",
             RETURN = "RETURN";
 
