@@ -8,8 +8,8 @@ namespace Qrakhen.Sqript
         public const string asciiLogo =
             "  _______/ ^ \\___.___,\n" +
             " (__.   ._ .     |     \n" +
-            " .__)(_][  | [_) | _. \n" +
-            "  \\    |     |     / \n";
+            " .__)(_][  | [_) | _.  \n" +
+            "  \\    |     |     /  \n\n";
     }
 
     public static class Debug
@@ -29,11 +29,11 @@ namespace Qrakhen.Sqript
             loggingLevel = level;
         }
 
-        public static void write(object message, ConsoleColor color = ConsoleColor.White) {
+        public static void write(object message, ConsoleColor color = ConsoleColor.White, string newLineSeperator = "\n", string prefix = "") {
             string[] lines = message.ToString().Split(new char[] { '\n' });
             foreach (string line in lines) {
                 Console.ForegroundColor = color;
-                Console.WriteLine("    " + line);
+                Console.Write(prefix + line + newLineSeperator);
             }
         }
 
@@ -42,8 +42,7 @@ namespace Qrakhen.Sqript
             foreach (string line in lines) {
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Write(" ~> ");
-                Console.ForegroundColor = color;
-                Console.WriteLine(line);
+                write(line, color);
             }
         }
 
@@ -80,8 +79,8 @@ namespace Qrakhen.Sqript
         static void Main(string[] args) {
             defineKeywords();
             defineOperators();
-            Debug.setLoggingLevel(Debug.Level.INFO);
-            Debug.write("\n" + Sqript.asciiLogo + "");
+            Debug.setLoggingLevel(Debug.Level.VERBOSE);
+            Debug.write("\n" + Sqript.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
             string content = "";
             do {
                 try {
@@ -90,7 +89,7 @@ namespace Qrakhen.Sqript
                         content = File.ReadAllText(args[0]);
                     } else {
                         reader.file = "stdin";
-                        Console.Write(" <~ ");
+                        Debug.write(" <~ ", ConsoleColor.White, "");
                         content = Console.ReadLine();
                         if (content == "test") content = File.ReadAllText("TestScript.sq");
                         else if (content == "exit") break;
@@ -100,7 +99,7 @@ namespace Qrakhen.Sqript
                     GlobalContext.getInstance().queue(new Statementizer(stack).parse());
                     GlobalContext.getInstance().execute();
                 } catch (Exception e) {
-                    Debug.warn("exception thrown in file " + reader.file + " at " + e.getLocation());
+                    Debug.error("exception thrown in file " + reader.file + " at " + e.getLocation());
                     if (e.cause != null) Debug.log("caused by token " + e.cause.toDebug() + e.cause.getLocation());
                     else if (reader.token != null) Debug.log("cause unknown - last read token: " + reader.token.toDebug() + reader.token.getLocation());
                     Debug.error("[" + e.GetType().ToString() + "] " + e.Message);

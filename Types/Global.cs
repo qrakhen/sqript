@@ -85,8 +85,18 @@ namespace Qrakhen.Sqript
         public void execute() {
             Debug.spam("main context processing " + queued.Count + " queued statements...");
             foreach (Statement statement in queued) {
-                statement.execute(this);
-                statements.Add(statement);
+                try {
+                    statement.execute(this);
+                    statements.Add(statement);
+                } catch (Exception e) {
+                    Debug.warn("encountered exception while trying to execute statement queue:");
+                    queued.Clear();
+                    throw e;
+                } catch (System.Exception e) {
+                    Debug.warn("encountered system exception while trying to execute statement queue:");
+                    queued.Clear();
+                    throw e;
+                }
             }
             queued.Clear();
             Debug.spam("main context total executed statement amount: " + statements.Count);
