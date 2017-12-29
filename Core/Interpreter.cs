@@ -34,7 +34,7 @@ namespace Qrakhen.Sqript
 
     public class ExpressionParser : Interpreter
     {
-        public ExpressionParser(Funqtion context, Token[] stack) : base(context, stack) { }
+        public ExpressionParser(Token[] stack) : base(stack) { }
 
         private struct Expr
         {
@@ -52,7 +52,7 @@ namespace Qrakhen.Sqript
             }
         }
 
-        public Expression parse() {
+        public Expression parse(Context context) {
             Expression prev = null;
             Expr buffer = new Expr();
             do {
@@ -63,7 +63,7 @@ namespace Qrakhen.Sqript
                     else buffer.op = t.getValue<Operator>();
                 } else if (t.type == ValueType.STRUCTURE) {
                     if (t.getValue<string>() == "(") {
-                        object sub = parse().execute();
+                        object sub = parse(context).execute();
                         if (buffer.left == null) buffer.left = sub;
                         else if (buffer.right == null) buffer.right = sub;
                     } else if (t.getValue<string>() == ")") {
@@ -105,9 +105,9 @@ namespace Qrakhen.Sqript
 
     public class Statement : Interpreter
     {
-        public Statement(Funqtion context, Token[] stack) : base(context, stack) { }
+        public Statement(Token[] stack) : base(stack) { }
 
-        public override void execute() {
+        public override void execute(Funqtion context) {
             Debug.spam("executing statement:\n" + ToString());
             Reference target = null;
             Reference.MemberSelect select = null;
@@ -118,12 +118,12 @@ namespace Qrakhen.Sqript
                     Keyword keyword = digest().getValue<Keyword>();
                     string identifier = peek().getValue<string>();
                     switch (keyword.name) {
-                        case Keyword.DECLARE: target = declareReference(digest().getValue<string>()); break;
+                        case Keyword.DECLARE: target = declareReference(context, digest().getValue<string>()); break;
                         //case Keyword.FUNCTION: target = declareReference(digest().getValue<string>()); break;
                         default: throw new Exception("only reference creation implemented yet", peek());
                     }
                 } else if (t.type == ValueType.IDENTIFIER) {
-                    target = getReference(digest().getValue<string>());
+                    target = getReference(context, digest().getValue<string>());
                     if (peek().type == ValueType.STRUCTURE && peek().getValue<string>() == Structure.MEMBER_KEY_DELIMITER) {
                         digest();
                         List<object> buffer = new List<object>();
@@ -161,35 +161,39 @@ namespace Qrakhen.Sqript
 
                     Expression expr;
                     if (right.Length == 1) expr = new Expression(op, target, digest(), context);
-                    else expr = new Expression(op, target, new ExpressionParser(context, right).parse(), context);
+                    else expr = new Expression(op, target, new ExpressionParser(right).parse(context), context);
                     result = expr.execute();
                 } else Debug.warn("unexpected token: '" + digest() + "'");
             } while (!endOfStack());
-            if (result != null) Debug.log(result.ToString());
-            else if (target != null) Debug.log(target.ToString());
+            if (result != null) Debug.log(result.ToString(), ConsoleColor.Green);
+            else if (target != null) Debug.log(target.ToString(), ConsoleColor.Green);
         }
 
-        private Reference declareReference(string name) {
+        private Reference declareReference(Context context, string name) {
             Reference r = new Reference();
             context.set(name, r);
             Debug.spam("reference '" + name + "' declared!");
             return r;
         }
 
-        private Reference getReference(string name) {
+        private Reference getReference(Context context, string name) {
             Reference r = context.lookup(name);
             if (r == null) throw new NullReferenceException("unknown reference name '" + name + "' given");
             return r;
+        }
+
+        public override string ToString() {
+            string str = "'";
+            foreach (Token token in stack) {
+                str += token.getValue().ToString() + " ";
+            } 
+            return str.Substring(0, str.Length - 1) + "'";
         }
     }
 
     public class Interpreter : Digester<Token>
     {
-        protected Funqtion context;
-
-        public Interpreter(Funqtion context, Token[] stack) : base(stack) {
-            this.context = (context == null ? new Funqtion(null) : context);
-        }
+        public Interpreter(Token[] stack) : base(stack) { }
 
         protected override Token digest() {
             Token t = base.digest();
@@ -203,26 +207,34 @@ namespace Qrakhen.Sqript
             return t;
         }
 
-        public Funqtion parse() {
-            List<Token> buffer = new List<Token>();
+        public Funqtion createFunction(Funqtion context) {
             Funqtion funqtion = new Funqtion(context);
+            foreach (Statement statement in parse()) {
+                funqtion.statements.Add(statement);
+            }
+            return funqtion;
+        }
+
+        public Statement[] parse() {
+            List<Token> buffer = new List<Token>();
+            List<Statement> statements = new List<Statement>();
             Debug.spam("interpreter.execute()");
             do {
                 Token cur = peek();
                 Debug.spam(cur.ToString());
                 if (cur.type == ValueType.STRUCTURE && cur.getValue<string>() == ";") {
                     digest();
-                    funqtion.statements.Add(new Statement(funqtion, buffer.ToArray()));
+                    statements.Add(new Statement(buffer.ToArray()));
                     buffer.Clear();
                 } else {
                     buffer.Add(digest());
-                    if (endOfStack()) funqtion.statements.Add(new Statement(funqtion, buffer.ToArray()));
+                    if (endOfStack()) statements.Add(new Statement(buffer.ToArray()));
                 }
             } while (!endOfStack());
-            return funqtion;
+            return statements.ToArray();
         }
 
-        public virtual void execute() {
+        public virtual void execute(Funqtion context) {
             
         }
 

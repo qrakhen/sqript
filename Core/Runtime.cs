@@ -51,20 +51,20 @@ namespace Qrakhen.Sqript
             }
         }
 
-        public static void error(object message) {
-            if (((int)loggingLevel & (int) Level.CRITICAL) > 0) writeOut("ERROR " + message, ConsoleColor.Red);
+        public static void error(object message, ConsoleColor color = ConsoleColor.Red) {
+            if (((int)loggingLevel >= (int) Level.CRITICAL)) writeOut("ERROR " + message, color);
         }
 
-        public static void warn(object message) {
-            if (((int)loggingLevel & (int)Level.WARNINGS) > 0) writeOut("WARN " + message, ConsoleColor.Yellow);
+        public static void warn(object message, ConsoleColor color = ConsoleColor.Yellow) {
+            if (((int)loggingLevel >= (int)Level.WARNINGS)) writeOut("WARN " + message, color);
         }
 
-        public static void log(object message) {
-            if (((int)loggingLevel & (int)Level.LOG) > 0) writeOut(message);
+        public static void log(object message, ConsoleColor color = ConsoleColor.White) {
+            if (((int)loggingLevel >= (int)Level.LOG)) writeOut(message, color);
         }
 
-        public static void spam(object message) {
-            if (((int)loggingLevel & (int)Level.VERBOSE) > 0) writeOut(message, ConsoleColor.Gray);
+        public static void spam(object message, ConsoleColor color = ConsoleColor.Gray) {
+            if (((int)loggingLevel >= (int)Level.VERBOSE)) writeOut(message, color);
         }
     }
 
@@ -84,10 +84,10 @@ namespace Qrakhen.Sqript
         static void Main(string[] args) {
             defineKeywords();
             defineOperators();
-            Debug.setLoggingLevel(Debug.Level.DEVELOPMENT);
+            Debug.setLoggingLevel(Debug.Level.VERBOSE);
             Debug.write("\n" + Sqript.asciiLogo + "");
             string content = "";
-            Funqtion global = new Funqtion(null);
+            MainContext main = new MainContext();
             do {
                 try {
                     if (args.Length > 0) {
@@ -101,7 +101,9 @@ namespace Qrakhen.Sqript
                         else if (content == "exit") break;
                     }
                     var nizer = new Tokenizer(content);
-                    new Interpreter(global, nizer.parse()).execute();
+                    var stack = nizer.parse();
+                    main.queue(new Interpreter(stack).parse());
+                    main.execute();
                 } catch (Exception e) {
                     Debug.warn("exception thrown in file " + reader.file + " at " + e.getLocation());
                     if (e.cause != null) Debug.log("caused by token " + e.cause.toDebug() + e.cause.getLocation());

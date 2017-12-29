@@ -17,12 +17,41 @@ namespace Qrakhen.Sqript
 
         public Funqtion(Context parent, List<Statement> statements) : this(parent, new Dictionary<string, Reference>(), statements) { }
 
-        public Value execute(Value[] parameters) {
+        public virtual Value execute(Value[] parameters = null) {
             Debug.spam("executing function:\n" + this.ToString());
             foreach (Statement statement in statements) {
-                statement.execute();
+                statement.execute(this);
             }
             return null;
+        }
+    }
+
+    public class MainContext : Funqtion
+    {
+        private List<Statement> queued;
+
+        public MainContext() : base(null) {
+            queued = new List<Statement>();
+        }
+
+        public void queue(Statement[] statements) {
+            foreach (Statement statement in statements) {
+                queued.Add(statement);
+            }
+        }
+
+        public void queue(Statement statement) {
+            queue(new Statement[] { statement });
+        }
+
+        public void execute() {
+            Debug.spam("main context processing " + queued.Count + " queued statements...");
+            foreach (Statement statement in queued) {
+                statement.execute(this);
+                statements.Add(statement);
+            }
+            queued.Clear();
+            Debug.spam("main context total executed statement amount: " + statements.Count);
         }
     }
 }

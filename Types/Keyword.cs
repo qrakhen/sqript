@@ -24,6 +24,10 @@ namespace Qrakhen.Sqript
             this.name = name;
             this.aliases = aliases;
         }
+
+        public override string ToString() {
+            return name;
+        }
     } 
 
 
