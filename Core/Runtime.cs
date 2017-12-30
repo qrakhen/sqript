@@ -96,7 +96,7 @@ namespace Qrakhen.Sqript
                     }
                     var nizer = new Tokenizer(content);
                     var stack = nizer.parse();
-                    GlobalContext.getInstance().queue(new Statementizer(stack).parse());
+                    GlobalContext.getInstance().queue(new Funqtionizer(stack).parse(GlobalContext.getInstance()));
                     GlobalContext.getInstance().execute();
                 } catch (Exception e) {
                     Debug.error("exception thrown in file " + reader.file + " at " + e.getLocation());
@@ -112,7 +112,7 @@ namespace Qrakhen.Sqript
         }
 
         static void defineKeywords() {
-            Keywords.define(Keyword.DECLARE, "declare", "reference", "ref", "*~");
+            Keywords.define(Keyword.DECLARE, "declare", "deqlare", "reference", "ref", "*~");
             Keywords.define(Keyword.DESTROY, "destroy", "dereference", "del", "~:");
             Keywords.define(Keyword.NEW, "create", "new", "spawn", "~*");
             Keywords.define(Keyword.QLASS, "qlass", "class");

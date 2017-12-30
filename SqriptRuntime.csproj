@@ -11,8 +11,4 @@
     <Compile Remove="Core\Context.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Core\" />
-  </ItemGroup>
-
 </Project>

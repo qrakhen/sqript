@@ -10,11 +10,14 @@ namespace Qrakhen.Sqript
             DECLARE = "DECLARE",
             DESTROY = "DESTROY",
             NEW = "NEW",
-            QLASS = "CLASS",
-            FUNQTION = "FUNCTION",
-            OBQECT = "OBJECT",
+            QLASS = "QLASS",
+            FUNQTION = "FUNQTION",
+            OBQECT = "OBQECT",
             ARRAY = "ARRAY",
-            RETURN = "RETURN";
+            RETURN = "RETURN",
+            PUBLIC = "PUBLIC",
+            PROTECTED = "PROTECTED",
+            PRIVATE = "PRIVATE";
 
 
         public string name { get; private set; }

@@ -146,6 +146,10 @@ namespace Qrakhen.Sqript
                 return Regex.IsMatch(c, @"\s");
             }
 
+            public static bool Comment(string c) {
+                return Regex.IsMatch(c, @"#");
+            }
+
             public static bool Identifier(string c) {
                 return (!Operator(c) && !Structure(c) && !String(c) && !Number(c) && !Whitespace(c));
             }
