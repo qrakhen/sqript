@@ -32,7 +32,8 @@ namespace Qrakhen.Sqript
                         if (t.type == ValueType.STRUCTURE && t.getValue<string>() == "(") {
                             do {
                                 t = digest();
-                                if (t.type == ValueType.IDENTIFIER) {
+                                if (t.type == ValueType.STRUCTURE && t.getValue<string>() == ")") break;
+                                else if (t.type == ValueType.IDENTIFIER) {
                                     funqtion.parameters.Add(t.getValue<string>());
                                     t = digest();
                                     if (t.type == ValueType.STRUCTURE && t.getValue<string>() == ",") continue;
