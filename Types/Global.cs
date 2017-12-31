@@ -74,6 +74,14 @@ namespace Qrakhen.Sqript
             queued = new List<Statement>();
         }
 
+        private void init() {
+            set("qonfig", new Reference(new QonfigFunqtion()));
+            set("global", new Reference(getInstance()));
+            Interface stdout = new ConsoleInterface();
+            stdout.load();
+            set("stdout", new Reference(stdout.createInterfaceContext()));
+        }
+
         public static GlobalContext getInstance() {
             if (instance == null) resetInstance();
             return instance;
@@ -81,8 +89,7 @@ namespace Qrakhen.Sqript
 
         public static void resetInstance() {
             instance = new GlobalContext();
-            getInstance().set("qonfig", new Reference(new QonfigFunqtion()));
-            getInstance().set("global", new Reference(getInstance()));
+            instance.init();
         }
 
         public void queue(Statement[] statements) {

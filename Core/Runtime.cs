@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Qrakhen.Sqript
 {
-    public static class Sqript
+    public static class SQRIPT
     {
         public const string asciiLogo =
             "  _______/ ^ \\___.___,\n" +
@@ -337,7 +337,7 @@ namespace Qrakhen.Sqript
 
         static void Main(string[] args) {
             Debug.setLoggingLevel(Debug.Level.VERBOSE);
-            Debug.write("\n" + Sqript.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
+            Debug.write("\n" + SQRIPT.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
 
             defineKeywords();
             defineOperators();
