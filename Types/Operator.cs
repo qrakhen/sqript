@@ -17,7 +17,8 @@ namespace Qrakhen.Sqript
             CONDITION_OR = "||",
             CONDITION_EQUALS = "==",
             COLLECTION_ADD = "<+",
-            COLLECTION_REMOVE = "~>";
+            COLLECTION_REMOVE = "~>",
+            NO_OPERATION = "";
 
         public string symbol { get; protected set; }
         public Action<Value, Value, Value> calculate { get; protected set; }

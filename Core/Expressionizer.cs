@@ -32,7 +32,7 @@ namespace Qrakhen.Sqript
                 Token t = digest();
                 if (t.type == ValueType.OPERATOR) {
                     if (prev != null) buffer.left = prev;
-                    else if (buffer.left == null) throw new Exception("manipulation operators (-1, i++, a()) are not yet implemented. thank you for your patience.", t);
+                    else if (buffer.left == null) throw new Exception("manipulation operators (-1, i++) are not yet implemented. thank you for your patience.", t);
                     else buffer.op = t.getValue<Operator>();
                 } else if (t.type == ValueType.STRUCTURE) {
                     if (t.getValue<string>() == "(") {

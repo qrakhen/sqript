@@ -13,15 +13,19 @@ namespace Qrakhen.Sqript
             this.stack = stack;
         }
 
-        public virtual bool endOfStack() {
+        protected virtual void resetStack() {
+            position = 0;
+        }
+
+        protected virtual bool endOfStack() {
             return (position > stack.Length - 1);
         }
 
-        public virtual T peek() {
+        protected virtual T peek() {
             return stack[(position < stack.GetUpperBound(0) ? position : stack.GetUpperBound(0))];
         }
 
-        public virtual T digest() {
+        protected virtual T digest() {
             if (!endOfStack()) return stack[position++];
             else return peek();
         }

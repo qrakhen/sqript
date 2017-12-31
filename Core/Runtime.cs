@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Qrakhen.Sqript
@@ -79,8 +80,9 @@ namespace Qrakhen.Sqript
         static void Main(string[] args) {
             defineKeywords();
             defineOperators();
-            Debug.setLoggingLevel(Debug.Level.VERBOSE);
+            Debug.setLoggingLevel(Debug.Level.INFO);
             Debug.write("\n" + Sqript.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
+            List<string> history = new List<string>();
             string content = "";
             do {
                 try {
@@ -88,9 +90,52 @@ namespace Qrakhen.Sqript
                         reader.file = args[0];
                         content = File.ReadAllText(args[0]);
                     } else {
-                        reader.file = "stdin";
                         Debug.write(" <~ ", ConsoleColor.White, "");
-                        content = Console.ReadLine();
+                        reader.file = "stdin";
+                        content = "";
+                        int historyIndex = 0;
+                        ConsoleKeyInfo c;
+                        do {
+                            c = Console.ReadKey(true);
+                            if (c.Key == ConsoleKey.Enter) {
+                                if (c.Modifiers == ConsoleModifiers.Shift) {
+                                    content += "\n";
+                                    Console.WriteLine();
+                                    Debug.write("    ", ConsoleColor.White, "");
+                                } else break;
+                            } else if (c.Key == ConsoleKey.Backspace) {
+                                if (Console.CursorLeft > 4) {
+                                    Console.CursorLeft -= 1;
+                                    Console.Write(" ");
+                                    Console.CursorLeft -= 1;
+                                    content = content.Substring(0, content.Length - 1);
+                                }
+                            } else if (c.Key == ConsoleKey.UpArrow) {
+                                /*historyIndex--;
+                                if (historyIndex < 0) historyIndex = 0;
+                                if (historyIndex >= history.Count - 1) {
+                                    Debug.write(" <~ " + history[historyIndex], ConsoleColor.White, "\n    ");
+                                    content = history[historyIndex];
+                                }*/
+                            } else if (c.Key == ConsoleKey.DownArrow) {
+                                /*historyIndex++;
+                                if (historyIndex >= history.Count) {
+                                    historyIndex = history.Count;
+                                    content = "";
+                                } else {
+                                    Debug.write(" <~ " + history[historyIndex], ConsoleColor.White, "\n    ");
+                                    content = history[historyIndex];
+                                }*/
+                            } else if (c.Key == ConsoleKey.LeftArrow) {
+                                
+                            } else if (c.Key == ConsoleKey.RightArrow) {
+
+                            } else {
+                                content += c.KeyChar;
+                                Console.Write(c.KeyChar);
+                            }
+                        } while (c.Key != ConsoleKey.Escape);
+                        history.Add(content);
                         if (content.StartsWith("RUN")) content = File.ReadAllText(content.Substring(4) + (content.EndsWith(".sq") ? "" : ".sq"));
                         else if (content == "CLEAR") {
                             GlobalContext.resetInstance();
@@ -119,7 +164,7 @@ namespace Qrakhen.Sqript
             Keywords.define(Keyword.DESTROY, "destroy", "dereference", "del", "~:");
             Keywords.define(Keyword.NEW, "create", "new", "spawn", "~*");
             Keywords.define(Keyword.QLASS, "qlass", "class");
-            Keywords.define(Keyword.FUNQTION, "funqtion", "fq", "function", "fn");
+            Keywords.define(Keyword.FUNQTION, "funqtion", "fq", "function", "fn", "*:");
             Keywords.define(Keyword.OBQECT, "object", "obqect", "obq");
             Keywords.define(Keyword.RETURN, "return", "<~");
         }

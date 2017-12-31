@@ -6,6 +6,10 @@ namespace Qrakhen.Sqript
 {
     public abstract class Context : Collection<string, Reference>
     {
+        public const string
+            CHAR_OPEN = "{",
+            CHAR_CLOSE = "}";
+
         public Context parent { get; protected set; }
 
         public Context(Context parent, ValueType type, Dictionary<string, Reference> value) : base(type, value) {

@@ -21,24 +21,22 @@ namespace Qrakhen.Sqript
             if (t.check(FQ_OPEN)) {
                 Funqtion fq = new Funqtion(context);
                 do {
-                    t = digest();
+                    t = peek();
                     if (t.check(FQ_BODY_OPEN)) break;
                     else if (t.check(ValueType.IDENTIFIER)) {
-                        fq.parameters.Add(t.getValue<string>());
+                        fq.parameters.Add(t.str());
+                        digest();
                     } else throw new ParseException("unexpected token found when trying to parse funqtion parameter declaration", t);
                 } while (!endOfStack());
                 if (endOfStack()) throw new ParseException("unexpected end of stack when trying to parse funqtion parameter declaration", t);
                 else {
-                    t = peek();
-                    if (t.check(FQ_BODY_OPEN)) {
-                        Token[] body = readBody();
-                        fq.statements.AddRange(new Statementizer(body).parse(fq));
-                        if (peek().check(FQ_CLOSE)) {
-                            return fq;
-                        } else if (peek().check(FQ_OVERLOAD_DELIMITER)) {
-                            throw new FunqtionizerException("funqtions overloads not yet implemented", t);
-                        } else throw new ParseException("unexpected token found when trying to parse funqtion body definition", t);
-                    } else throw new ParseException("unexpected funqtion body opening, expected '{'", t);
+                    Token[] body = readBody();
+                    fq.statements.AddRange(new Statementizer(body).parse(fq));
+                    if (peek().check(FQ_CLOSE)) {
+                        return fq;
+                    } else if (peek().check(FQ_OVERLOAD_DELIMITER)) {
+                        throw new FunqtionizerException("funqtions overloads not yet implemented", peek());
+                    } else throw new ParseException("unexpected token found when trying to parse funqtion body definition", peek());
                 }
             } else throw new ParseException("unexpected funqtion parameter opening, expected '('", t);
         }
@@ -47,13 +45,14 @@ namespace Qrakhen.Sqript
             return new Funqtionizer(stack).parse(context);
         }
 
-        public Value[] parseCall(Context context) {
+        public Value[] parseParameters(Context context) {
             List<Value> parameters = new List<Value>();
             Token t = digest();
             if (t.check(FQ_OPEN)) {
-                t = digest();
+                t = peek();
                 if (t.check(FQ_CLOSE)) return new Value[0];
                 else do {
+                        t = digest();
                         if (t.isType(ValueType.ANY_VALUE)) parameters.Add(t.makeValue());
                         else if (t.isType(ValueType.IDENTIFIER)) parameters.Add(context.getOrThrow(t.str()).getReference());
                         else throw new ParseException("unexpected token found when trying to parse funqtion call", t);
@@ -66,8 +65,8 @@ namespace Qrakhen.Sqript
             } else throw new ParseException("unexpected funqtion call parameter opening, expected '('", t);
         }
 
-        public static Value[] parseCall(Context context, Token[] stack) {
-            return new Funqtionizer(stack).parseCall(context);
+        public static Value[] parseParameters(Context context, Token[] stack) {
+            return new Funqtionizer(stack).parseParameters(context);
         }
     }
 

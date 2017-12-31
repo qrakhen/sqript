@@ -23,9 +23,16 @@ namespace Qrakhen.Sqript
         public Funqtion(Context parent, List<Statement> statements) : this(parent, new Dictionary<string, Reference>(), statements) { }
 
         public virtual Value execute(Value[] parameters = null) {
+            // we need to store all references in a temporary xfq (execution funqtion) so that the original funqtion is not mutated
             Debug.spam("executing function:\n" + this.ToString());
+            Funqtion xfq = new Funqtion(parent);
+            for (int i = 0; i < parameters.Length; i++) {
+                if (i >= this.parameters.Count) throw new Exception("more parameters provided than funqtion accepts");
+                Debug.spam(this.parameters[i] + " = " + parameters[i].str());
+                xfq.set(this.parameters[i], new Reference(parameters[i]));
+            }
             foreach (Statement statement in statements) {
-                Value r = statement.execute(this);
+                Value r = statement.execute(xfq);
                 if (r == null) continue;
                 Debug.spam("reached return statement, returning " + r.str());
                 return r;

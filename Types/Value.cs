@@ -109,16 +109,17 @@ namespace Qrakhen.Sqript
         IDENTIFIER = 8,
         INTEGER = 16,
         DECIMAL = 32,
-        NUMBER = 48,
         BOOLEAN = 64,
         STRING = 128,
         ARRAY = 256,
         OBQECT = 512,
         FUNQTION = 1024,
         QLASS = 2048,
-        CONTEXT = QLASS + FUNQTION + OBQECT,
-        ANY_VALUE = NUMBER + BOOLEAN + STRING + ARRAY + CONTEXT,
         REFERENCE = 4096,
-        UNDEFINED = 16384
+        UNDEFINED = 16384,
+        NUMBER = INTEGER + DECIMAL,
+        PRIMITIVE = NUMBER + BOOLEAN + STRING,
+        CONTEXT = QLASS + FUNQTION + OBQECT,
+        ANY_VALUE = PRIMITIVE + ARRAY + CONTEXT,
     }
 }

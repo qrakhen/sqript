@@ -9,7 +9,7 @@ namespace Qrakhen.Sqript
     {
         public Statement(Token[] stack) : base(stack) { }
 
-        public Value execute(Funqtion context) {
+        public Value execute(Funqtion context, bool forceReturn = false) {
             Debug.spam("executing statement:\n" + ToString());
             Reference target = null;
             Value result = null;
@@ -20,11 +20,10 @@ namespace Qrakhen.Sqript
                 Token t = peek();
                 if (t.check(ValueType.KEYWORD)) {
                     Keyword keyword = digest().getValue<Keyword>();
-                    string identifier = peek().getValue<string>();
                     switch (keyword.name) {
-                        case Keyword.DECLARE: target = declareReference(context, digest().getValue<string>()); break;
-                        case Keyword.FUNQTION: target = declareReference(context, digest().getValue<string>()); break;
-                        case Keyword.QLASS: target = declareReference(context, digest().getValue<string>()); break;
+                        case Keyword.DECLARE: target = declareReference(context, digest().str()); break;
+                        case Keyword.FUNQTION: target = declareReference(context, digest().str()); break;
+                        case Keyword.QLASS: target = declareReference(context, digest().str()); break;
                         case Keyword.RETURN: returning = true; break;
                         default: throw new Exception("unexpected or not yet supported keyword '" + keyword.name + "'", peek());
                     }
@@ -68,7 +67,7 @@ namespace Qrakhen.Sqript
                         result = target;
                     } else {
                         if (!target.getReference().isType(ValueType.FUNQTION)) throw new ParseException("trying to execute a non-funqtion", t);
-                        Value[] parameters = Funqtionizer.parseCall(context, readBody(true));
+                        Value[] parameters = Funqtionizer.parseParameters(context, readBody(true));
                         result = (target.getReference() as Funqtion).execute(parameters);
                     }
                 } else if (t.type == ValueType.OPERATOR) {
@@ -80,12 +79,15 @@ namespace Qrakhen.Sqript
                     if (right.Length == 1) expr = new Expression(op, target, digest(), context);
                     else expr = new Expression(op, target, new Expressionizer(right).parse(context), context);
                     result = expr.execute();
+                } else if (t.isType(ValueType.ANY_VALUE)) {
+                    Token[] remaining = new Token[(stack.Length - position)];
+                    for (int i = 0; i < remaining.Length; i++) remaining[i] = digest();
+                    Expression expr = new Expressionizer(remaining).parse(context);
+                    result = expr.execute();
                 } else Debug.warn("unexpected token: '" + digest() + "'");
             } while (!endOfStack());
-            if (result != null) Debug.log(result.ToString(), ConsoleColor.Green);
-            else if (target != null) Debug.log(target.ToString(), ConsoleColor.Green);
-
-            if (returning) return result;
+            resetStack();
+            if (returning || forceReturn) return result;
             else return null;
         }
 
@@ -97,9 +99,7 @@ namespace Qrakhen.Sqript
         }
 
         private Reference getReference(Context context, string name) {
-            Reference r = context.lookup(name);
-            if (r == null) throw new NullReferenceException("unknown reference name '" + name + "' given");
-            return r;
+            return context.lookupOrThrow(name);
         }
 
         public override string ToString() {

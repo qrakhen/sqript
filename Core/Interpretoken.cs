@@ -9,13 +9,13 @@ namespace Qrakhen.Sqript
     {
         public Interpretoken(Token[] stack) : base(stack) { }
 
-        public override Token digest() {
+        protected override Token digest() {
             Token t = base.digest();
             Runtime.reader.token = t;
             return t;
         }
 
-        public override Token peek() {
+        protected override Token peek() {
             Token t = base.peek();
             Runtime.reader.token = t;
             return t;
@@ -26,7 +26,7 @@ namespace Qrakhen.Sqript
             int depth = 1;
             if (includeBrackets) buffer.Add(peek());
             string
-                ascend = digest().getValue<string>(),
+                ascend = digest().str(),
                 descend = (ascend == "{" ? "}" : (ascend == "(" ? ")" : (ascend == "[" ? "]" : "")));
             if (descend == "") throw new ParseException("could not find closing element for opened '" + ascend + "'", peek());
 

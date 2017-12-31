@@ -91,7 +91,8 @@ namespace Qrakhen.Sqript
             Debug.spam("main context processing " + queued.Count + " queued statements...");
                 foreach (Statement statement in queued) {
                     try {
-                        statement.execute(this);
+                        Value r = statement.execute(this, true);
+                        if (r != null) Debug.log(r.ToString(), ConsoleColor.Green);
                         statements.Add(statement);
                     } catch (Exception e) {
                         Debug.warn("encountered exception while trying to execute statement queue:");

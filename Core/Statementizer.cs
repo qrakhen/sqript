@@ -13,15 +13,17 @@ namespace Qrakhen.Sqript
             if (stack.Length == 0) return new Statement[0]; 
             List<Token> buffer = new List<Token>();
             List<Statement> statements = new List<Statement>();
+            int level = 0;
             do {
-                Token cur = peek();
-                Debug.spam(cur.ToString());
-                if (cur.type == ValueType.STRUCTURE && cur.getValue<string>() == ";") {
-                    digest();
+                Token t = digest();
+                Debug.spam(t.ToString());
+                if (t.check(";") && level == 0) {
                     statements.Add(new Statement(buffer.ToArray()));
                     buffer.Clear();
                 } else {
-                    buffer.Add(digest());
+                    if (t.check(Context.CHAR_OPEN)) level++;
+                    else if (t.check(Context.CHAR_OPEN)) level--;
+                    buffer.Add(t);
                     if (endOfStack()) statements.Add(new Statement(buffer.ToArray()));
                 }
             } while (!endOfStack());
