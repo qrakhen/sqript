@@ -6,80 +6,68 @@ namespace Qrakhen.Sqript
 {
     public class Funqtionizer : Interpretoken
     {
+        public const string
+            FQ_OPEN = "(",
+            FQ_CLOSE = ")",
+            FQ_BODY_OPEN = "{",
+            FQ_BODY_CLOSE = "}",
+            FQ_OVERLOAD_DELIMITER = ",",
+            FQ_PARAMETER_LIMITER = ",";
+
         public Funqtionizer(Token[] stack) : base(stack) { }
 
-        public Statement[] parse(Funqtion context) {
-            Debug.spam("Funqtionizer.execute()");
-            if (stack.Length == 0) return new Statement[0]; 
-            List<Token> buffer = new List<Token>();
-            List<Statement> statements = new List<Statement>();
-            do {
-                Token cur = peek();
-                Debug.spam(cur.ToString());
-                if (cur.type == ValueType.STRUCTURE && cur.getValue<string>() == ";") {
-                    digest();
-                    statements.Add(new Statement(buffer.ToArray()));
-                    buffer.Clear();
-                } else if (cur.type == ValueType.KEYWORD) {
-                    string keyword = Keywords.get(cur.getValue().ToString()).name;
-                    if (keyword == Keyword.FUNQTION) {
-                        digest();
-                        Funqtion funqtion = new Funqtion(context);
-                        if (peek().type != ValueType.IDENTIFIER) throw new FunqtionizerException("unexpected token when trying to parse funqtion definition, expected name", peek());
-                        string name = digest().getValue<string>();
-                        Debug.spam("creating new funqtion definition '" + name + "'");
-                        Token t = digest();
-                        if (t.type == ValueType.STRUCTURE && t.getValue<string>() == "(") {
-                            do {
-                                t = digest();
-                                if (t.type == ValueType.STRUCTURE && t.getValue<string>() == ")") break;
-                                else if (t.type == ValueType.IDENTIFIER) {
-                                    funqtion.parameters.Add(t.getValue<string>());
-                                    t = digest();
-                                    if (t.type == ValueType.STRUCTURE && t.getValue<string>() == ",") continue;
-                                    else if (t.type == ValueType.STRUCTURE && t.getValue<string>() == ")") break;
-                                    else throw new FunqtionizerException("unexpected token found when trying to parse funqtion parameter declaration", t);
-                                } else throw new FunqtionizerException("unexpected token found when trying to parse funqtion parameter declaration", t);
-                            } while (!endOfStack());
-                            if (endOfStack()) throw new FunqtionizerException("unexpected end of stack when trying to parse funqtion parameter declaration", t);
-                            else {
-                                t = peek();
-                                if (t.type == ValueType.STRUCTURE && t.getValue<string>() == "{") {
-                                    Token[] body = readBody();
-                                    funqtion.statements.AddRange(new Funqtionizer(body).parse(funqtion));
-                                    context.set(name, new Reference(funqtion));
-                                    Debug.spam("funqtion " + name + " parsed:\n" + funqtion.ToString());
-                                } else throw new FunqtionizerException("unexpected funqtion body opening, expected '{'", t);
-                            }
-                        } else throw new FunqtionizerException("unexpected funqtion parameter opening, expected '('", t);
-                    } else {
-                        buffer.Add(digest());
-                        if (endOfStack()) statements.Add(new Statement(buffer.ToArray()));
-                    }
-                } else {
-                    buffer.Add(digest());
-                    if (endOfStack()) statements.Add(new Statement(buffer.ToArray()));
+        public Funqtion parse(Context context) {
+            Token t = digest();
+            if (t.check(FQ_OPEN)) {
+                Funqtion fq = new Funqtion(context);
+                do {
+                    t = digest();
+                    if (t.check(FQ_BODY_OPEN)) break;
+                    else if (t.check(ValueType.IDENTIFIER)) {
+                        fq.parameters.Add(t.getValue<string>());
+                    } else throw new ParseException("unexpected token found when trying to parse funqtion parameter declaration", t);
+                } while (!endOfStack());
+                if (endOfStack()) throw new ParseException("unexpected end of stack when trying to parse funqtion parameter declaration", t);
+                else {
+                    t = peek();
+                    if (t.check(FQ_BODY_OPEN)) {
+                        Token[] body = readBody();
+                        fq.statements.AddRange(new Statementizer(body).parse(fq));
+                        if (peek().check(FQ_CLOSE)) {
+                            return fq;
+                        } else if (peek().check(FQ_OVERLOAD_DELIMITER)) {
+                            throw new FunqtionizerException("funqtions overloads not yet implemented", t);
+                        } else throw new ParseException("unexpected token found when trying to parse funqtion body definition", t);
+                    } else throw new ParseException("unexpected funqtion body opening, expected '{'", t);
                 }
-            } while (!endOfStack());
-            return statements.ToArray();
+            } else throw new ParseException("unexpected funqtion parameter opening, expected '('", t);
         }
 
-        public Token[] readBody() {
-            List<Token> buffer = new List<Token>();
-            int depth = 1;
-            string
-                ascend = digest().getValue<string>(),
-                descend = (ascend == "{" ? "}" : (ascend == "(" ? ")" : (ascend == "[" ? "]" : "")));
-            if (descend == "") throw new ParseException("could not find closing element for opened '" + ascend + "'", peek());
+        public static Funqtion parse(Context context, Token[] stack) {
+            return new Funqtionizer(stack).parse(context);
+        }
 
-            do {
-                string cur = (peek().type == ValueType.STRUCTURE ? peek().getValue<string>() : "");
-                if (cur == descend) depth--;
-                else if (cur == ascend) depth++;
-                if (depth > 0) buffer.Add(digest());
-                else if (depth == 0) digest();
-            } while (!endOfStack() && depth > 0);
-            return buffer.ToArray();
+        public Value[] parseCall(Context context) {
+            List<Value> parameters = new List<Value>();
+            Token t = digest();
+            if (t.check(FQ_OPEN)) {
+                t = digest();
+                if (t.check(FQ_CLOSE)) return new Value[0];
+                else do {
+                        if (t.isType(ValueType.ANY_VALUE)) parameters.Add(t.makeValue());
+                        else if (t.isType(ValueType.IDENTIFIER)) parameters.Add(context.getOrThrow(t.str()).getReference());
+                        else throw new ParseException("unexpected token found when trying to parse funqtion call", t);
+                        t = digest();
+                        if (t.check(FQ_PARAMETER_LIMITER)) continue;
+                        else if (t.check(FQ_CLOSE)) break;
+                        else throw new ParseException("unexpected token found when trying to parse funqtion call", t);
+                    } while (!endOfStack());
+                return parameters.ToArray();
+            } else throw new ParseException("unexpected funqtion call parameter opening, expected '('", t);
+        }
+
+        public static Value[] parseCall(Context context, Token[] stack) {
+            return new Funqtionizer(stack).parseCall(context);
         }
     }
 

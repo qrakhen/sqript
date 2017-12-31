@@ -1,7 +1,7 @@
 ﻿# sqript
 ### ~ another (dynamic|static) type-(less|full) adventure into obscurity
 
-Sqript is a interpreted programming language written in C#.
+Sqript is an interpreting programming language written in C#.
 
 It comes with it's very own syntax, data types, workflow and behaviours.
 Can be built for - and also runs on - all platforms, including your microwave.
@@ -168,9 +168,11 @@ When no qonfig file is provided, default values will be used.
 ```javascript
 key				| default		| values
 ----------------|---------------|---------------------------------------
-logLevel		| DEVELOPMENT	| read below (sets console logging level)
-forceTypes		| false			| false, true
-forceNamespace	| false			| false, true
+logLevel		| DEVELOPMENT	| set logging level
+forceTypes		| false			| forces type usage
+forceNamespace	| false			| forces namespace usage
+allowRedeclare  | false			| allows reference redeclaration
+allowAliases	| true			| allows keyword aliases
 timeout		    | 60			| [any integer] (in seconds)
 allowInput		| true			| false, true (enables stdIn)
 entryPointFile  | main.sqr		| [any string] (path to entry point file)

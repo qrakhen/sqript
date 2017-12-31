@@ -87,23 +87,35 @@ namespace Qrakhen.Sqript
         }
 
         public void execute() {
+            if (queued.Count > 0) {
             Debug.spam("main context processing " + queued.Count + " queued statements...");
-            foreach (Statement statement in queued) {
-                try {
-                    statement.execute(this);
-                    statements.Add(statement);
-                } catch (Exception e) {
-                    Debug.warn("encountered exception while trying to execute statement queue:");
-                    queued.Clear();
-                    throw e;
-                } catch (System.Exception e) {
-                    Debug.warn("encountered system exception while trying to execute statement queue:");
-                    queued.Clear();
-                    throw e;
+                foreach (Statement statement in queued) {
+                    try {
+                        statement.execute(this);
+                        statements.Add(statement);
+                    } catch (Exception e) {
+                        Debug.warn("encountered exception while trying to execute statement queue:");
+                        queued.Clear();
+                        throw e;
+                    } catch (System.Exception e) {
+                        Debug.warn("encountered system exception while trying to execute statement queue:");
+                        queued.Clear();
+                        throw e;
+                    }
                 }
+                queued.Clear();
             }
-            queued.Clear();
             Debug.spam("main context total executed statement amount: " + statements.Count);
+        }
+
+        public override string ToString() {
+            string r = "GLOBAL {\n";
+            return r + "}";
+        }
+
+        public override string toDebug() {
+            string r = "GLOBAL {\n";
+            return r + "}";
         }
     }
 }

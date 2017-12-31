@@ -28,6 +28,12 @@ namespace Qrakhen.Sqript
             else return null;
         }
 
+        public Reference lookupOrThrow(string name, bool recursive = true) {
+            if (value.ContainsKey(name)) return value[name];
+            else if (recursive && parent != null) return parent.lookup(name, true);
+            else throw new ContextException("could not lookup identifier '" + name + "' in current context");
+        }
+
         public Reference get(string[] keys) {
             Context c = this;
             for (int i = 0; i < keys.Length - 1; i++) {
@@ -48,6 +54,11 @@ namespace Qrakhen.Sqript
             else return null;
         }
 
+        public Reference getOrThrow(string key) {
+            if (value.ContainsKey(key)) return value[key];
+            else throw new ContextException("unkown identifier '" + key + "' in current context");
+        }
+
         public override string ToString() {
             string r = "{";
             foreach (var v in value) {
@@ -66,5 +77,10 @@ namespace Qrakhen.Sqript
             }
             return r.Substring(0, r.Length - 1) + "\n}";
         }
+    }
+
+    public class ContextException : Exception
+    {
+        public ContextException(string message) : base(message) { }
     }
 }

@@ -27,6 +27,10 @@ namespace Qrakhen.Sqript
             return (T)value;
         }
 
+        public virtual string str() {
+            return getValue().ToString();
+        }
+
         public virtual void setValue(object value, ValueType type) {
             this.value = value;
             this.type = type;
@@ -38,6 +42,10 @@ namespace Qrakhen.Sqript
 
         public bool isType(int types) {
             return (((int)type & types) > 0);
+        }
+
+        public bool isType(ValueType types) {
+            return isType((int) types);
         }
 
         public Type getValueSystemType() {
@@ -104,13 +112,13 @@ namespace Qrakhen.Sqript
         NUMBER = 48,
         BOOLEAN = 64,
         STRING = 128,
-        CONTEXT = 256,
+        ARRAY = 256,
         OBQECT = 512,
-        ARRAY = 1024,
-        COLLECTION = 1792,
-        REFERENCE = 2048,
-        FUNQTION = 4096,
-        QLASS = 8192,
+        FUNQTION = 1024,
+        QLASS = 2048,
+        CONTEXT = QLASS + FUNQTION + OBQECT,
+        ANY_VALUE = NUMBER + BOOLEAN + STRING + ARRAY + CONTEXT,
+        REFERENCE = 4096,
         UNDEFINED = 16384
     }
 }

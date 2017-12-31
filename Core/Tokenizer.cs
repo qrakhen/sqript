@@ -6,8 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Qrakhen.Sqript
 {
-    public class Token : Value
-    {
+    public class Token : Value {
         public readonly int line, col;
 
         private Token(ValueType type, object value, int line = -1, int col = -1) : base(value, type) {
@@ -17,6 +16,22 @@ namespace Qrakhen.Sqript
 
         public override void setValue(object value, ValueType type) {
             throw new Exception("token value is read only", this);
+        }
+
+        public bool check(ValueType type, object value) {
+            return (this.type == type && this.value == value);
+        }
+
+        public bool check(string value) {
+            return (this.value.ToString() == value);
+        }
+
+        public bool check(ValueType type) {
+            return (this.type == type);
+        }
+
+        public Value makeValue() {
+            return new Value(value, type);
         }
 
         public static Token create(ValueType type, string value, int line = -1, int col = -1) {

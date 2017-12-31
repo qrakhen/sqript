@@ -119,7 +119,7 @@ namespace Qrakhen.Sqript
             Keywords.define(Keyword.DESTROY, "destroy", "dereference", "del", "~:");
             Keywords.define(Keyword.NEW, "create", "new", "spawn", "~*");
             Keywords.define(Keyword.QLASS, "qlass", "class");
-            Keywords.define(Keyword.FUNQTION, "funqtion", "fq", "function", "fn", "()~>");
+            Keywords.define(Keyword.FUNQTION, "funqtion", "fq", "function", "fn");
             Keywords.define(Keyword.OBQECT, "object", "obqect", "obq");
             Keywords.define(Keyword.RETURN, "return", "<~");
         }

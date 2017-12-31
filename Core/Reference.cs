@@ -5,9 +5,7 @@ using System.Text;
 namespace Qrakhen.Sqript
 {
     public class Reference : Value<Value>
-    {
-        public string name { get; protected set; }
-        
+    {        
         public Reference(Value value) : base(ValueType.REFERENCE, value) {
 
         }
@@ -47,10 +45,6 @@ namespace Qrakhen.Sqript
 
         public override string ToString() {
             return getReference().ToString();
-        }
-
-        public override string toDebug() {
-            return name + ": " + getReference()?.toDebug();
         }
 
         public class MemberSelect

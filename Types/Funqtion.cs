@@ -25,31 +25,32 @@ namespace Qrakhen.Sqript
         public virtual Value execute(Value[] parameters = null) {
             Debug.spam("executing function:\n" + this.ToString());
             foreach (Statement statement in statements) {
-                statement.execute(this);
+                Value r = statement.execute(this);
+                if (r == null) continue;
+                Debug.spam("reached return statement, returning " + r.str());
+                return r;
             }
             return null;
         }
 
         public override string ToString() {
-            string r = "";
-            foreach (string parameter in parameters) r += parameter + ", ";
-            if (r.Length > 0) r = r.Substring(0, r.Length - 2);
-            r = "funqtion(" + r + ") {\n";
+            string r = "(";
+            foreach (string parameter in parameters) r += parameter + " ";
+            r = r + "{\n";
             foreach (Statement statement in statements) {
                 r += "    " + statement.ToString() + "\n";
             }
-            return r + "}";
+            return r + "})";
         }
 
         public override string toDebug() {
-            string r = "";
-            foreach (string parameter in parameters) r += parameter + ", ";
-            if (r.Length > 0) r = r.Substring(0, r.Length - 2);
-            r = "funqtion(" + r + ") {\n";
+            string r = "(";
+            foreach (string parameter in parameters) r += parameter + " ";
+            r = r + "{\n";
             foreach (Statement statement in statements) {
                 r += "    " + statement.ToString() + "\n";
             }
-            return r + "}";
+            return r + "})";
         }
     }
 }

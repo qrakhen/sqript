@@ -9,29 +9,34 @@ namespace Qrakhen.Sqript
     {
         public Statement(Token[] stack) : base(stack) { }
 
-        public void execute(Funqtion context) {
+        public Value execute(Funqtion context) {
             Debug.spam("executing statement:\n" + ToString());
             Reference target = null;
-            Reference.MemberSelect select = null;
             Value result = null;
+            bool
+                declaring = false,
+                returning = false;
             do {
                 Token t = peek();
-                if (t.type == ValueType.KEYWORD) {
+                if (t.check(ValueType.KEYWORD)) {
                     Keyword keyword = digest().getValue<Keyword>();
                     string identifier = peek().getValue<string>();
                     switch (keyword.name) {
                         case Keyword.DECLARE: target = declareReference(context, digest().getValue<string>()); break;
-                        //case Keyword.FUNCTION: target = declareReference(digest().getValue<string>()); break;
-                        default: throw new Exception("only reference creation implemented yet", peek());
+                        case Keyword.FUNQTION: target = declareReference(context, digest().getValue<string>()); break;
+                        case Keyword.QLASS: target = declareReference(context, digest().getValue<string>()); break;
+                        case Keyword.RETURN: returning = true; break;
+                        default: throw new Exception("unexpected or not yet supported keyword '" + keyword.name + "'", peek());
                     }
+                    if (target != null) declaring = true;
                 } else if (t.type == ValueType.IDENTIFIER) {
-                    target = getReference(context, digest().getValue<string>());
-                    if (peek().type == ValueType.STRUCTURE && peek().getValue<string>() == Structure.MEMBER_KEY_DELIMITER) {
+                    if (target == null) target = getReference(context, digest().getValue<string>());
+                    if (peek().check(Structure.MEMBER_KEY_DELIMITER)) {
                         digest();
                         List<object> buffer = new List<object>();
                         do {
                             if (peek().type == ValueType.IDENTIFIER && target.getValueType() == ValueType.OBQECT) {
-                                string key = digest().getValue<string>(); 
+                                string key = digest().getValue<string>();
                                 Reference r = (target.getReference() == null ? null : (target.getReference() as Obqect).get(key));
                                 if (r == null) {
                                     r = new Reference(null);
@@ -56,6 +61,16 @@ namespace Qrakhen.Sqript
                         } while (!endOfStack());
                         //select = new Reference.MemberSelect(target, buffer.ToArray()); 
                     }
+                } else if (t.check(Funqtionizer.FQ_OPEN)) {
+                    if (declaring) {
+                        Funqtion fq = Funqtionizer.parse(context, readBody(true));
+                        target.assign(fq, true);
+                        result = target;
+                    } else {
+                        if (!target.getReference().isType(ValueType.FUNQTION)) throw new ParseException("trying to execute a non-funqtion", t);
+                        Value[] parameters = Funqtionizer.parseCall(context, readBody(true));
+                        result = (target.getReference() as Funqtion).execute(parameters);
+                    }
                 } else if (t.type == ValueType.OPERATOR) {
                     Operator op = digest().getValue<Operator>();
                     Token[] right = new Token[(stack.Length - position)];
@@ -69,6 +84,9 @@ namespace Qrakhen.Sqript
             } while (!endOfStack());
             if (result != null) Debug.log(result.ToString(), ConsoleColor.Green);
             else if (target != null) Debug.log(target.ToString(), ConsoleColor.Green);
+
+            if (returning) return result;
+            else return null;
         }
 
         private Reference declareReference(Context context, string name) {

@@ -11,4 +11,8 @@
     <Compile Remove="Core\Context.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="fqtest.sq" />
+  </ItemGroup>
+
 </Project>
