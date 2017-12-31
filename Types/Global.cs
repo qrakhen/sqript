@@ -68,6 +68,10 @@ namespace Qrakhen.Sqript
             return instance;
         }
 
+        public static void resetInstance() {
+            instance = new GlobalContext();
+        }
+
         public GlobalContext() : base(null) {
             queued = new List<Statement>();
         }

@@ -91,12 +91,15 @@ namespace Qrakhen.Sqript
                         reader.file = "stdin";
                         Debug.write(" <~ ", ConsoleColor.White, "");
                         content = Console.ReadLine();
-                        if (content == "test") content = File.ReadAllText("TestScript.sq");
-                        else if (content == "exit") break;
+                        if (content.StartsWith("RUN")) content = File.ReadAllText(content.Substring(4) + (content.EndsWith(".sq") ? "" : ".sq"));
+                        else if (content == "CLEAR") {
+                            GlobalContext.resetInstance();
+                            continue;
+                        } else if (content == "EXIT") break;
                     }
                     var nizer = new Tokenizer(content);
                     var stack = nizer.parse();
-                    GlobalContext.getInstance().queue(new Funqtionizer(stack).parse(GlobalContext.getInstance()));
+                    GlobalContext.getInstance().queue(new Statementizer(stack).parse(GlobalContext.getInstance()));
                     GlobalContext.getInstance().execute();
                 } catch (Exception e) {
                     Debug.error("exception thrown in file " + reader.file + " at " + e.getLocation());
