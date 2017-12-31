@@ -12,7 +12,8 @@ namespace Qrakhen.Sqript
             "  _______/ ^ \\___.___,\n" +
             " (__.   ._ .     |     \n" +
             " .__)(_][  | [_) | _.  \n" +
-            "  \\    |     |     /  \n\n";
+            "  \\    |     |     /  \n\n" +
+            "     qrakhen.net       \n\n";
     }
 
     public static class Debug
@@ -24,8 +25,8 @@ namespace Qrakhen.Sqript
             MUFFLE = 0,
             CRITICAL = 1,
             WARNINGS = 2,
-            INFO = 4,
-            VERBOSE = 8
+            INFO = 3,
+            VERBOSE = 4
         }
 
         public static void setLoggingLevel(Level level) {
@@ -336,8 +337,12 @@ namespace Qrakhen.Sqript
         }
 
         static void Main(string[] args) {
-            Debug.setLoggingLevel(Debug.Level.VERBOSE);
+            Debug.setLoggingLevel(Debug.Level.INFO);
             Debug.write("\n" + SQRIPT.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
+            Debug.log("  available cli commands:");
+            Debug.log("   - #run <filename>");
+            Debug.log("   - #clr (clears global context)");
+            Debug.log("\n  use qonfig('log', '4'); for verbose output\n");
 
             defineKeywords();
             defineOperators();
