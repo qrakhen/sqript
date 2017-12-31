@@ -54,22 +54,32 @@ namespace Qrakhen.Sqript
         }
 
         public override Reference get(string key) {
-            if (key.Contains(MEMBER_DELIMITER)) return query(key);
+            //if (key.Contains(MEMBER_DELIMITER)) return query(key);
+            if (Keywords.isAlias(key, Keyword.PARENT_CONTEXT)) return new Reference(parent);
             else if (value.ContainsKey(key)) return value[key];
             else return null;
         }
 
         public Reference query(string query, bool safe = true, bool autoCreate = true) {
+            int index = 0;
+            Reference r;
             string[] keys = query.Split(MEMBER_DELIMITER.ToCharArray());
-            Reference r = get(keys[0]);
+            if (Keywords.isAlias(keys[index], Keyword.CURRENT_CONTEXT)) index++;
+
+            r = get(keys[index]);
             if (r == null) {
-                if (autoCreate) {
-                    r = new Reference();
-                    set(keys[0], r);
-                } else if (safe) throw new Exception("tried to access undefined name '" + keys[0] + "'");
-                else return null;
+                if (index > 0) {
+                    if (safe) throw new Exception("tried to access undefined member '" + keys[index] + "'");
+                    else return null;
+                } else {
+                    r = lookup(keys[index]);
+                    if (r == null)
+                        if (safe) throw new Exception("tried to access undefined or inaccessible identifier '" + keys[index] + "'");
+                        else if (!safe) return null;
+                }
             }
-            for (int i = 1; i < keys.Length; i++) {
+
+            for (int i = ++index; i < keys.Length; i++) {
                 string key = keys[i];
                 Value v = r.getReference();
                 if (v == null) throw new Exception("tried to access member of empty reference '" + keys[i - 1] + ":" + keys[i] + "'");
@@ -99,13 +109,14 @@ namespace Qrakhen.Sqript
         }
 
         public override string ToString() {
-            string r = "{";
-            foreach (var v in value) {
-                if (v.Value.getValue() == this) continue;
-                r += "\n" + v.Key + " = " + v.Value.ToString() + ",";
+            string r = "{\n";
+            foreach (var reference in value) {
+                if (reference.Value.getReference() == (Context) this) continue;
+                string[] lines = reference.Value.getReference().ToString().Split('\n');
+                r += "    " + reference.Key + ": " + lines[0] + "\n";
+                for (int i = 1; i < lines.Length; i++) r += "    " + lines[i] + "\n";
             }
-            if (r.Length > 1) r = r.Substring(0, r.Length - 1);
-            return r + "\n}";
+            return r + "}";
         }
 
         public override string toDebug() {

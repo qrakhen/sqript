@@ -16,7 +16,8 @@ namespace Qrakhen.Sqript
             PUBLIC = "PUBLIC",
             PROTECTED = "PROTECTED",
             PRIVATE = "PRIVATE",
-            CURRENT_CONTEXT = "CURRENT_CONTEXT";
+            CURRENT_CONTEXT = "CURRENT_CONTEXT",
+            PARENT_CONTEXT = "PARENT_CONTEXT";
 
 
         public string name { get; private set; }
@@ -50,6 +51,16 @@ namespace Qrakhen.Sqript
                 }
             }
             return null;
+        }
+
+        public static bool isAlias(string key, string name) {
+            if (keywords.ContainsKey(key)) return (keywords[key].name == name);
+            foreach (Keyword keyword in keywords.Values) {
+                foreach (string alias in keyword.aliases) {
+                    if (alias == key) return (keyword.name == name);
+                }
+            }
+            return false;
         }
 
         public static void define(string name, params string[] aliases) {

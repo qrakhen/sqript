@@ -169,8 +169,8 @@ fq multiply(<decimal>a <int>b <int>{
 multiply(4, 'hello', 3); // would result in:
  ~>     hello
         hello
-		hello
-		hello
+        hello
+        hello
 ```
 
 #### The Global Context

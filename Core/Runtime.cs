@@ -336,7 +336,7 @@ namespace Qrakhen.Sqript
         }
 
         static void Main(string[] args) {
-            Debug.setLoggingLevel(Debug.Level.INFO);
+            Debug.setLoggingLevel(Debug.Level.VERBOSE);
             Debug.write("\n" + Sqript.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
 
             defineKeywords();
@@ -377,15 +377,17 @@ namespace Qrakhen.Sqript
                     GlobalContext.getInstance().queue(new Statementizer(stack).parse(GlobalContext.getInstance()));
                     GlobalContext.getInstance().execute();
                 } catch (Exception e) {
+                    GlobalContext.getInstance().clearQueue();
                     Debug.error("exception thrown in file " + reader.file + " at " + e.getLocation());
                     if (e.cause != null) Debug.log("caused by token " + e.cause.toDebug() + e.cause.getLocation());
                     else if (reader.token != null) Debug.log("cause unknown - last read token: " + reader.token.toDebug() + reader.token.getLocation());
                     Debug.error("[" + e.GetType().ToString() + "] " + e.Message);
                     Debug.log(e.StackTrace);
                 } catch (System.Exception e) {
+                    GlobalContext.getInstance().clearQueue();
                     Debug.error("!SYS_EXCEPTION! [" + e.GetType().ToString() + "] " + e.Message);
                     Debug.log(e.StackTrace);
-                } 
+                }
             } while (content != "exit");
         }
 
@@ -397,6 +399,7 @@ namespace Qrakhen.Sqript
             Keywords.define(Keyword.FUNQTION, "funqtion", "fq", "function", "func", "*:");
             Keywords.define(Keyword.RETURN, "return", "<~");
             Keywords.define(Keyword.CURRENT_CONTEXT, "this", "self", ".~");
+            Keywords.define(Keyword.PARENT_CONTEXT, "parent", ".<");
         }
 
         static void defineOperators() {

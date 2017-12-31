@@ -14,6 +14,7 @@ namespace Qrakhen.Sqript
             Reference target = null;
             Value result = null;
             string declaredName = "";
+            string identifier = "";
             bool
                 declaring = false,
                 returning = false;
@@ -31,9 +32,11 @@ namespace Qrakhen.Sqript
                     }
                     if (target != null) declaring = true;
                 } else if (t.type == ValueType.IDENTIFIER) {
-                    string identifier = digest().str();
-                    if (target == null) target = context.query(identifier);
-                    else if (declaring && !identifier.Contains(Context.MEMBER_DELIMITER)) declaredName = identifier;
+                    identifier = digest().str();
+                    if (target == null) {
+                        target = context.query(identifier, false, false);
+                        result = target;
+                    } else if (declaring && !identifier.Contains(Context.MEMBER_DELIMITER)) declaredName = identifier;
                     else throw new Exception("unexpected identifier or context query '" + identifier + "'", t);
                 } else if (t.check(Funqtionizer.FQ_OPEN)) {
                     if (declaring) {
@@ -49,6 +52,9 @@ namespace Qrakhen.Sqript
                     // assignment operators need to be treated in a special way like this, 
                     // there's no other way i could think of and yes, i thought about that a lot.
                     // i deemed consistency among the rest of my code as more important.
+                    if (target == null) target = context.query(identifier, false);
+                    if (target == null) target = context.lookupOrThrow(identifier);
+
                     Operator op = digest().getValue<Operator>();
                     Token[] right = new Token[(stack.Length - position)];
                     for (int i = 0; i < right.Length; i++) right[i] = digest();
@@ -80,8 +86,8 @@ namespace Qrakhen.Sqript
             string str = "";
             foreach (Token token in stack) {
                 str += token.getValue().ToString() + " ";
-            } 
-            return str.Substring(0, str.Length - 1) + ";";
+            }
+            return str;
         }
     }
 }

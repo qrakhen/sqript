@@ -9,6 +9,10 @@ namespace Qrakhen.Sqript
         public GlobalFunqtion() : base(GlobalContext.getInstance()) {
 
         }
+
+        public override string ToString() {
+            return "()";
+        }
     }
 
     public class QonfigFunqtion : GlobalFunqtion
@@ -22,6 +26,10 @@ namespace Qrakhen.Sqript
                     parameters[1].getValue().ToString());
             }
             return null;
+        }
+
+        public override string ToString() {
+            return "(key, value)";
         }
     }
 
@@ -41,8 +49,12 @@ namespace Qrakhen.Sqript
         public static void setValue(string key, string value) {
             Debug.log("setting value <" + value + "> for qonfig entry '" + key + "'");
             switch (key) {
+                case "log":
                 case "logLevel":
-                    Debug.setLoggingLevel((Debug.Level) Enum.Parse(typeof(Debug.Level), value));
+                    int i = 0;
+                    if (Int32.TryParse(value, out i)) {
+                        Debug.setLoggingLevel((Debug.Level) i);
+                    } else Debug.setLoggingLevel((Debug.Level) Enum.Parse(typeof(Debug.Level), value));
                     break;
             }
         }
@@ -58,22 +70,19 @@ namespace Qrakhen.Sqript
 
         private List<Statement> queued;
 
-        static GlobalContext() {
-            getInstance().set("qonfig", new Reference(new QonfigFunqtion()));
-            getInstance().set("global", new Reference(getInstance()));
+        public GlobalContext() : base(null) {
+            queued = new List<Statement>();
         }
 
         public static GlobalContext getInstance() {
-            if (instance == null) instance = new GlobalContext();
+            if (instance == null) resetInstance();
             return instance;
         }
 
         public static void resetInstance() {
             instance = new GlobalContext();
-        }
-
-        public GlobalContext() : base(null) {
-            queued = new List<Statement>();
+            getInstance().set("qonfig", new Reference(new QonfigFunqtion()));
+            getInstance().set("global", new Reference(getInstance()));
         }
 
         public void queue(Statement[] statements) {
@@ -86,31 +95,32 @@ namespace Qrakhen.Sqript
             queue(new Statement[] { statement });
         }
 
+        public void clearQueue() {
+            queued.Clear();
+        }
+
         public void execute() {
             if (queued.Count > 0) {
             Debug.spam("main context processing " + queued.Count + " queued statements...");
                 foreach (Statement statement in queued) {
-                    try {
-                        Value r = statement.execute(this, true);
-                        if (r != null) Debug.log(r.ToString(), ConsoleColor.Green);
-                        statements.Add(statement);
-                    } catch (Exception e) {
-                        Debug.warn("encountered exception while trying to execute statement queue:");
-                        queued.Clear();
-                        throw e;
-                    } catch (System.Exception e) {
-                        Debug.warn("encountered system exception while trying to execute statement queue:");
-                        queued.Clear();
-                        throw e;
-                    }
+                    Value r = statement.execute(this, true);
+                    if (r != null) Debug.log(r.ToString(), ConsoleColor.Green);
+                    statements.Add(statement);
                 }
-                queued.Clear();
+                clearQueue();
             }
             Debug.spam("main context total executed statement amount: " + statements.Count);
         }
 
         public override string ToString() {
-            string r = "GLOBAL {\n";
+            string r = "{\n";
+            foreach (var reference in value) {
+                if (reference.Value.getReference() == this) continue;
+                string[] lines = reference.Value.getReference().ToString().Split('\n');
+                r += "    " + reference.Key + ": " + lines[0] + "\n";
+                for (int i = 1; i < lines.Length; i++) r += "    " + lines[i] + ",\n";
+            }
+            if (r.EndsWith(",\n")) r = r.Substring(0, r.Length - 2) + "\n";
             return r + "}";
         }
 

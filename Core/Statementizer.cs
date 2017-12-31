@@ -22,8 +22,22 @@ namespace Qrakhen.Sqript
                     buffer.Clear();
                 } else {
                     if (t.check(Context.CHAR_OPEN)) level++;
-                    else if (t.check(Context.CHAR_OPEN)) level--;
+                    else if (t.check(Context.CHAR_CLOSE)) level--;
                     buffer.Add(t);
+                    /*if (t.check(Context.CHAR_OPEN)) {
+                        if (peek().check(Context.CHAR_CLOSE)) {
+                            buffer.Add(t);
+                            buffer.Add(digest());
+                        } else {
+                            level++;
+                            buffer.Add(t);
+                        }
+                    } else if (t.check(Context.CHAR_CLOSE)) {
+                        level--;
+                        buffer.Add(t);
+                    } else {
+                        buffer.Add(t);
+                    }*/
                     if (endOfStack()) statements.Add(new Statement(buffer.ToArray()));
                 }
             } while (!endOfStack());
