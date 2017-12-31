@@ -38,7 +38,7 @@ namespace Qrakhen.Sqript
                         result = target;
                     } else if (declaring && !identifier.Contains(Context.MEMBER_DELIMITER)) declaredName = identifier;
                     else throw new Exception("unexpected identifier or context query '" + identifier + "'", t);
-                } else if (t.check(Funqtionizer.FQ_OPEN)) {
+                } else if (t.check(Funqtionizer.FQ_DECLARE_OPEN)) {
                     if (declaring) {
                         Funqtion fq = Funqtionizer.parse(context, readBody(true));
                         target.assign(fq, true);
@@ -49,6 +49,12 @@ namespace Qrakhen.Sqript
                         result = (target.getReference() as Funqtion).execute(parameters);
                     }
                 } else if (t.check(Operator.ASSIGN_REFERENCE) || t.check(Operator.ASSIGN_VALUE)) {
+                    // if a <~ or <& is detected right at the beginning of the statement,
+                    // we treat it like a return statement. sqript rules.
+                    if (position == 0) {
+                        returning = true;
+                        target = new Reference();
+                    }
                     // assignment operators need to be treated in a special way like this, 
                     // there's no other way i could think of and yes, i thought about that a lot.
                     // i deemed consistency among the rest of my code as more important.
@@ -71,7 +77,7 @@ namespace Qrakhen.Sqript
                 } else Debug.warn("unexpected token: '" + digest() + "'");
             } while (!endOfStack());
 
-            resetStack();
+            reset();
             if (declaring) context.set(declaredName, target);
             if (returning) return result;
             else if (forceReturn) return (result == null ? target : result);

@@ -7,8 +7,8 @@ namespace Qrakhen.Sqript
     public class Operator
     {
         public const string
-            ASSIGN_VALUE = "=",
-            ASSIGN_REFERENCE = "~&",
+            ASSIGN_VALUE = "<~",
+            ASSIGN_REFERENCE = "<&",
             CALCULATE_ADD = "+",
             CALCULATE_SUBTRACT = "-",
             CALCULATE_MULTIPLY = "*",
@@ -17,7 +17,7 @@ namespace Qrakhen.Sqript
             CONDITION_OR = "||",
             CONDITION_EQUALS = "==",
             COLLECTION_ADD = "<+",
-            COLLECTION_REMOVE = "~>",
+            COLLECTION_REMOVE = "->",
             NO_OPERATION = "";
 
         public string symbol { get; protected set; }

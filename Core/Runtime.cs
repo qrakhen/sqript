@@ -398,13 +398,13 @@ namespace Qrakhen.Sqript
 
         static void defineKeywords() {
             Keywords.define(Keyword.REFERENCE, "reference", "declare", "var", "ref", "*~");
-            Keywords.define(Keyword.DESTROY, "destroy", "dereference", "del", "~:");
+            Keywords.define(Keyword.DESTROY, "destroy", "dereference", "del", ":~");
             Keywords.define(Keyword.NEW, "create", "new", "spawn", "~*");
             Keywords.define(Keyword.QLASS, "qlass", "class");
-            Keywords.define(Keyword.FUNQTION, "funqtion", "fq", "function", "func", "*:");
-            Keywords.define(Keyword.RETURN, "return", "<~");
+            Keywords.define(Keyword.FUNQTION, "funqtion", "fq", "function", "func");
+            Keywords.define(Keyword.RETURN, "return", "rightBackAtYou");
             Keywords.define(Keyword.CURRENT_CONTEXT, "this", "self", ".~");
-            Keywords.define(Keyword.PARENT_CONTEXT, "parent", ".<");
+            Keywords.define(Keyword.PARENT_CONTEXT, "parent", "^~");
         }
 
         static void defineOperators() {

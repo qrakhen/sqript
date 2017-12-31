@@ -7,18 +7,19 @@ namespace Qrakhen.Sqript
     public class Funqtionizer : Interpretoken
     {
         public const string
-            FQ_OPEN = "(",
+            FQ_DECLARE_OPEN = ":(",
+            FQ_CALL_OPEN = "(",
             FQ_CLOSE = ")",
             FQ_BODY_OPEN = "{",
             FQ_BODY_CLOSE = "}",
-            FQ_OVERLOAD_DELIMITER = ",",
+            FQ_OVERLOAD_DELIMITER = "",
             FQ_PARAMETER_LIMITER = ",";
 
         public Funqtionizer(Token[] stack) : base(stack) { }
 
         public Funqtion parse(Context context) {
             Token t = digest();
-            if (t.check(FQ_OPEN)) {
+            if (t.check(FQ_DECLARE_OPEN)) {
                 Funqtion fq = new Funqtion(context);
                 do {
                     t = peek();
@@ -48,7 +49,7 @@ namespace Qrakhen.Sqript
         public Value[] parseParameters(Context context) {
             List<Value> parameters = new List<Value>();
             Token t = digest();
-            if (t.check(FQ_OPEN)) {
+            if (t.check(FQ_CALL_OPEN)) {
                 t = peek();
                 if (t.check(FQ_CLOSE)) return new Value[0];
                 else do {

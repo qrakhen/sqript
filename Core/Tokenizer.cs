@@ -67,6 +67,10 @@ namespace Qrakhen.Sqript
             return base.peek().ToString();
         }
 
+        protected new string peek(int shift) {
+            return base.peek(shift).ToString();
+        }
+
         protected new string digest() {
             __col++;
             return base.digest().ToString();
@@ -83,7 +87,20 @@ namespace Qrakhen.Sqript
                         __line++;
                         __col = 0;
                     }
-                } else if (Is.Structure(cur)) addToken(digest(), ValueType.STRUCTURE);
+                } else if (Is.Comment(cur)) {
+                    string start = digest();
+                    string close = "\n";
+                    if (peek() == "/") close = "/#";
+                    string s = digest();
+                    do {
+                        s = digest();
+                        if (close == "/#" && s == "/" && peek() == "#") {
+                            peek();
+                            digest();
+                            break;
+                        } else if (s == close) break;
+                    } while (!endOfStack());
+                } else if (Is.Structure(cur)) addToken(readStructure(), ValueType.STRUCTURE);
                 else if (Is.Operator(cur)) addToken(readOperator(), ValueType.OPERATOR);
                 else if (Is.String(cur)) addToken(readString(), ValueType.STRING);
                 else if (Is.Number(cur)) addToken(readNumber(), ValueType.NUMBER);
@@ -98,7 +115,26 @@ namespace Qrakhen.Sqript
             else if (type != ValueType.STRING && Operators.get(value) != null) type = ValueType.OPERATOR;
             else if (type == ValueType.NUMBER) type = (value.IndexOf(".") < 0 ? ValueType.INTEGER : ValueType.DECIMAL);
             result.Add(Token.create(type, value, __line, __col));
-            Debug.write(Debug.Level.VERBOSE, "[" + type.ToString() + "] " + value + (value == ";" || peek() == null ? Environment.NewLine : " >> "));
+            Debug.spam("[" + type.ToString() + "] > '" + value + "'");
+        }
+
+        private string[] SQR_SPECIAL = new string[] {
+            ":(", ".~", ":~"
+        };            
+
+        private string readStructure() {
+            string buffer = digest();
+            do {
+                string next = peek();
+                foreach (string s in SQR_SPECIAL) {
+                    if (buffer + next == s) {
+                        buffer += digest();
+                        break;
+                    }
+                }
+                break;
+            } while (!endOfStack());
+            return buffer;
         }
 
         private string readOperator() {
@@ -126,9 +162,11 @@ namespace Qrakhen.Sqript
             do {
                 if (Is.Identifier(peek()) || Is.Number(peek())) buffer += digest();
                 else if (peek() == Context.MEMBER_DELIMITER
-                    && buffer.Length > 0
-                    && buffer.Substring(buffer.Length - 1) != Context.MEMBER_DELIMITER) buffer += digest();
-                else break;
+                        && buffer.Length > 0
+                        && buffer.Substring(buffer.Length - 1) != Context.MEMBER_DELIMITER) {
+                    if (Is.Identifier(peek(1))) buffer += digest();
+                    else break;
+                } else break;
             } while (!endOfStack());
             return buffer;
         }
@@ -146,7 +184,7 @@ namespace Qrakhen.Sqript
         static class Is
         {
             public static bool Operator(string c) {
-                return Regex.IsMatch(c, @"[\/\-\*+=&<>~]");
+                return Regex.IsMatch(c, @"[\/\-\*+=&<>~^]");
             }
 
             public static bool Structure(string c) {

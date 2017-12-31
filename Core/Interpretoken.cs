@@ -27,10 +27,15 @@ namespace Qrakhen.Sqript
             if (includeBrackets) buffer.Add(peek());
             string
                 ascend = digest().str(),
-                descend = (ascend == "{" ? "}" : (ascend == "(" ? ")" : (ascend == "[" ? "]" : "")));
-            if (descend == "") throw new ParseException("could not find closing element for opened '" + ascend + "'", peek());
-
-            do {
+                descend = "";
+            switch (ascend) {
+                case "(": descend = ")"; break;
+                case ":(": descend = ")"; break;
+                case "{": descend = "}"; break;
+                case "[": descend = "]"; break;
+                case "<": descend = ">"; break;
+                default: throw new ParseException("could not find closing element for opened '" + ascend + "'", peek());
+            } do {
                 string cur = (peek().type == ValueType.STRUCTURE ? peek().getValue<string>() : "");
                 if (cur == descend) depth--;
                 else if (cur == ascend) depth++;
