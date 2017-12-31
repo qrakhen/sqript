@@ -152,7 +152,7 @@ fq multiply(a b {
 }, a b c {
 	<~ a * b * c;
 });
-```
+
 Yes, that's right: funqtion overloads work exactly like this and are all declared in one body.
 Of course overloaded funqtions don't make much sense without types, so here's a (pretty pointless) typed version:
 ```javascript
@@ -163,7 +163,7 @@ fq multiply(<decimal>a <int>b <int>{
 	step (i; 0; c) {
 		str = str + (" ":pad(a) + b) + "\n";
 	}
-	<~ str;
+	<~ str; 
 });
 
 multiply(4, 'hello', 3); // would result in:
