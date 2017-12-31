@@ -39,15 +39,15 @@ ref<NUMBER> num = 12.74;
 str = num * 2; // throws Sqript.OperationException
 
 // typeless function
-function concat(str1, str2) {
+function concat(str1 str2 {
 	<~ str1 + str2; // <~ is a return keyword
-}
+});
 concat(str, num); // would return "I'm a string!12.72";
 
 // fixed type function
-function<STRING> concat(STRING:str1, STRING:str2) {
+function concat(<string>str1 <string>str2 {
 	<~ str1 + str2;
-}
+});
 concat(str, num); // throws Sqript.FunctionParameterViolation
 
 // classes
@@ -87,7 +87,8 @@ Dynamic number type, can represent an integer or a decimal number.
 
 ### Collection Types
 #### Array
-Integer indexed lists that stores references to any value type
+Integer indexed lists that store references to any value type.
+Items can be accessed using the ` : ` delimiter.
 ```javascript
 [(<any>, ...)];
 ref array = [3, 'str', { a = 'b' }];
