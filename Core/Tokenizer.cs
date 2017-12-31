@@ -98,13 +98,14 @@ namespace Qrakhen.Sqript
             else if (type != ValueType.STRING && Operators.get(value) != null) type = ValueType.OPERATOR;
             else if (type == ValueType.NUMBER) type = (value.IndexOf(".") < 0 ? ValueType.INTEGER : ValueType.DECIMAL);
             result.Add(Token.create(type, value, __line, __col));
-            Debug.spam("{ " + type.ToString() + " [ " + value + " ] }" + (value == ";" || peek() == null ? Environment.NewLine : " >> "));
+            Debug.write(Debug.Level.VERBOSE, "[" + type.ToString() + "] " + value + (value == ";" || peek() == null ? Environment.NewLine : " >> "));
         }
 
         private string readOperator() {
             string buffer = "";
             do {
                 if (Is.Operator(peek())) buffer += digest();
+                else if (Is.Structure(peek())) buffer += digest(); // only needed for special snowflake sqript aliases
                 else break;
             } while (!endOfStack());
             return buffer;
@@ -124,6 +125,9 @@ namespace Qrakhen.Sqript
             string buffer = "";
             do {
                 if (Is.Identifier(peek()) || Is.Number(peek())) buffer += digest();
+                else if (peek() == Context.MEMBER_DELIMITER
+                    && buffer.Length > 0
+                    && buffer.Substring(buffer.Length - 1) != Context.MEMBER_DELIMITER) buffer += digest();
                 else break;
             } while (!endOfStack());
             return buffer;
@@ -142,7 +146,7 @@ namespace Qrakhen.Sqript
         static class Is
         {
             public static bool Operator(string c) {
-                return Regex.IsMatch(c, @"[\/\-\*~+=&<>]");
+                return Regex.IsMatch(c, @"[\/\-\*+=&<>~]");
             }
 
             public static bool Structure(string c) {

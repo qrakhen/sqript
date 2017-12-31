@@ -6,6 +6,8 @@ namespace Qrakhen.Sqript
 {
     public class Collection<K, T> : Value<Dictionary<K, T>>
     {
+        public const string MEMBER_DELIMITER = ":";
+
         public int size {
             get { return (value as Dictionary<K, T>).Count; }
         }
@@ -27,7 +29,12 @@ namespace Qrakhen.Sqript
         public virtual T get(K key) {
             return value.ContainsKey(key) ? value[key] : default(T);
         }
-        
+
+        public virtual T getOrThrow(K key) {
+            if (value.ContainsKey(key)) return value[key];
+            else throw new ContextException("unkown identifier or index '" + key + "' in given context or array");
+        }
+
         /*public virtual Value get(object[] keys) {
             if (keys.Length < 1) throw new Exception("trying to access collection member with empty set of keys");
             Value v = null;

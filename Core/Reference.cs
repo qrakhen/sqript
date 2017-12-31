@@ -23,7 +23,7 @@ namespace Qrakhen.Sqript
             if (reference) setValue(value, type);
             else {
                 if (this.value == null || this.value.type == ValueType.NULL) setValue(value, type);
-                else setValue(new Value(value.getValue(), value.type), type);
+                else setValue(value.clone(), type);
             }
         }
 

@@ -30,7 +30,7 @@ namespace Qrakhen.Sqript
         public static Dictionary<string, string> defaultValues = new Dictionary<string, string>();
 
         static Qonfig() {
-            defaultValues.Add("logLevel", "DEVELOPMENT");
+            defaultValues.Add("logLevel", "INFO");
         }
 
         public static string getDefaultValue(string key) {

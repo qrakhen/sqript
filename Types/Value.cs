@@ -19,6 +19,10 @@ namespace Qrakhen.Sqript
             this.value = value;
         }
 
+        public virtual Value clone() {
+            return new Value(value, type);
+        }
+
         public virtual object getValue() {
             return value;
         }

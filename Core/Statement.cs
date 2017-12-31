@@ -13,6 +13,7 @@ namespace Qrakhen.Sqript
             Debug.spam("executing statement:\n" + ToString());
             Reference target = null;
             Value result = null;
+            string declaredName = "";
             bool
                 declaring = false,
                 returning = false;
@@ -21,45 +22,19 @@ namespace Qrakhen.Sqript
                 if (t.check(ValueType.KEYWORD)) {
                     Keyword keyword = digest().getValue<Keyword>();
                     switch (keyword.name) {
-                        case Keyword.DECLARE: target = declareReference(context, digest().str()); break;
-                        case Keyword.FUNQTION: target = declareReference(context, digest().str()); break;
-                        case Keyword.QLASS: target = declareReference(context, digest().str()); break;
+                        case Keyword.REFERENCE: target = new Reference(); break; // declareReference(context, digest().str()); break;
+                        case Keyword.FUNQTION: target = new Reference(); break; // declareReference(context, digest().str()); break;
+                        case Keyword.QLASS: target = new Reference(); break; //declareReference(context, digest().str()); break;
+                        case Keyword.CURRENT_CONTEXT: target = new Reference(); break;
                         case Keyword.RETURN: returning = true; break;
                         default: throw new Exception("unexpected or not yet supported keyword '" + keyword.name + "'", peek());
                     }
                     if (target != null) declaring = true;
                 } else if (t.type == ValueType.IDENTIFIER) {
-                    if (target == null) target = getReference(context, digest().getValue<string>());
-                    if (peek().check(Structure.MEMBER_KEY_DELIMITER)) {
-                        digest();
-                        List<object> buffer = new List<object>();
-                        do {
-                            if (peek().type == ValueType.IDENTIFIER && target.getValueType() == ValueType.OBQECT) {
-                                string key = digest().getValue<string>();
-                                Reference r = (target.getReference() == null ? null : (target.getReference() as Obqect).get(key));
-                                if (r == null) {
-                                    r = new Reference(null);
-                                    (target.getReference() as Obqect).set(key, r);
-                                }
-                                target = r;
-                            } else if (peek().isType((int)ValueType.NUMBER) && target.getValueType() == ValueType.ARRAY) {
-                                int key = digest().getValue<int>();
-                                Reference r = (target.getReference() == null ? null : (target.getReference() as Array).get(key));
-                                if (r == null) {
-                                    r = new Reference(null);
-                                    (target.getReference() as Array).set(key, r);
-                                }
-                                target = r;
-                            } else {
-                                throw new Exception("unexpected token when trying to resolve member tree", peek());
-                            }
-                            if (peek().type == ValueType.STRUCTURE && peek().getValue<string>() == Structure.MEMBER_KEY_DELIMITER) {
-                                digest();
-                                continue;
-                            } else break;
-                        } while (!endOfStack());
-                        //select = new Reference.MemberSelect(target, buffer.ToArray()); 
-                    }
+                    string identifier = digest().str();
+                    if (target == null) target = context.query(identifier);
+                    else if (declaring && !identifier.Contains(Context.MEMBER_DELIMITER)) declaredName = identifier;
+                    else throw new Exception("unexpected identifier or context query '" + identifier + "'", t);
                 } else if (t.check(Funqtionizer.FQ_OPEN)) {
                     if (declaring) {
                         Funqtion fq = Funqtionizer.parse(context, readBody(true));
@@ -70,7 +45,10 @@ namespace Qrakhen.Sqript
                         Value[] parameters = Funqtionizer.parseParameters(context, readBody(true));
                         result = (target.getReference() as Funqtion).execute(parameters);
                     }
-                } else if (t.type == ValueType.OPERATOR) {
+                } else if (t.check(Operator.ASSIGN_REFERENCE) || t.check(Operator.ASSIGN_VALUE)) {
+                    // assignment operators need to be treated in a special way like this, 
+                    // there's no other way i could think of and yes, i thought about that a lot.
+                    // i deemed consistency among the rest of my code as more important.
                     Operator op = digest().getValue<Operator>();
                     Token[] right = new Token[(stack.Length - position)];
                     for (int i = 0; i < right.Length; i++) right[i] = digest();
@@ -86,16 +64,12 @@ namespace Qrakhen.Sqript
                     result = expr.execute();
                 } else Debug.warn("unexpected token: '" + digest() + "'");
             } while (!endOfStack());
-            resetStack();
-            if (returning || forceReturn) return result;
-            else return null;
-        }
 
-        private Reference declareReference(Context context, string name) {
-            Reference r = new Reference();
-            context.set(name, r);
-            Debug.spam("reference '" + name + "' declared!");
-            return r;
+            resetStack();
+            if (declaring) context.set(declaredName, target);
+            if (returning) return result;
+            else if (forceReturn) return (result == null ? target : result);
+            else return null;
         }
 
         private Reference getReference(Context context, string name) {

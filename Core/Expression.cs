@@ -19,14 +19,16 @@ namespace Qrakhen.Sqript
             this.context = context;
         }
 
-        private Value recursiveCast(object value) {
+        private Value getTrueValue(object value) {
             if (value == null) throw new OperationException("value to be casted is null");
             if (value.GetType() == typeof(Reference)) {
                 return ((value as Reference).getReference() as Value);
             } else if (value.GetType() == typeof(Reference.MemberSelect)) {
                 return (value as Reference.MemberSelect).getMember();
             } else if (value.GetType() == typeof(Expression)) {
-                return recursiveCast((value as Expression).execute());
+                return getTrueValue((value as Expression).execute());
+            //} else if (value is Funqtion) {
+                //return (value as Funqtion).execute();
             } else if (value is Value) {
                 if ((value as Value).type == ValueType.IDENTIFIER) return context.lookup((value as Value).getValue<string>()).getReference();
                 else return (value as Value);
@@ -37,11 +39,11 @@ namespace Qrakhen.Sqript
             Value result = null;
 
             if (left == null) return null;
-            else if (right == null) return recursiveCast(left); // maybe add manipulator
+            else if (right == null) return getTrueValue(left); // maybe add manipulator
 
             Value
-                l = recursiveCast(left),
-                r = recursiveCast(right);
+                l = getTrueValue(left),
+                r = getTrueValue(right);
             if (left.GetType() == typeof(Reference)) Debug.spam("operation.execute() { " + (left as Reference).getValue() + " " + op.symbol + " " + r.ToString() + " }");
             else Debug.spam("operation.execute() { " + l.getValue() + " " + op.symbol + " " + r.getValue() + " } ");
             switch (op.symbol) {

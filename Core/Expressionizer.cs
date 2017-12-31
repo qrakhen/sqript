@@ -25,7 +25,7 @@ namespace Qrakhen.Sqript
             }
         }
 
-        public Expression parse(Context context) {
+        public Expression _parse(Context context) {
             Expression prev = null;
             Expr buffer = new Expr();
             do {
@@ -73,6 +73,67 @@ namespace Qrakhen.Sqript
                 }
             } while (!endOfStack());
             return prev;
+        }
+
+        public Expression parse(Context context) {
+            Expression head = null;
+            Expr expr = new Expr();
+            do {
+                Token t = digest();
+                Value v = null;
+                if (t.type == ValueType.OPERATOR) {
+                    if (head != null) expr.left = head;
+                    else if (expr.left == null) throw new Exception("manipulation operators (-1, i++) are not yet implemented. thank you for your patience.", t);
+                    else expr.op = t.getValue<Operator>();
+                } else if (t.check(ValueType.IDENTIFIER)) {
+                    Reference r = context.query(t.str());
+                    if (peek().check(Funqtionizer.FQ_OPEN) && (r.getReference().isType(ValueType.FUNQTION))) {
+                        Value[] p = Funqtionizer.parseParameters(context, readBody(true));
+                        v = (r.getReference() as Funqtion).execute(p);
+                    } else v = r.getReference();
+                } else if (t.check(ValueType.KEYWORD)) {
+
+                } else if (t.check(ValueType.STRUCTURE)) {
+                    if (t.check("(")) {
+                        object sub = parse(context).execute();
+                        if (expr.left == null) expr.left = sub;
+                        else if (expr.right == null) expr.right = sub;
+                    } else if (t.check(")")) {
+                        return (head == null ? new Expression(expr.op, expr.left, expr.right, context) : head);
+                    } else if (t.getValue<string>() == "[") {
+                        Array array = new Array();
+                        do {
+                            t = digest();
+                            if (t.type == ValueType.STRUCTURE && t.getValue<string>() == "]") break;
+                            array.add(t);
+                        } while (!endOfStack());
+                        v = array;
+                    } else if (t.getValue<string>() == "{") {
+                        Obqect obqect = new Obqect(context);
+                        do {
+                            t = digest();
+                            if (t.type == ValueType.STRUCTURE && t.getValue<string>() == "}") break;
+                            else if (t.type == ValueType.IDENTIFIER) {
+                                string key = t.getValue<string>();
+                            }
+                        } while (!endOfStack());
+                        v = obqect;
+                    }
+                } else if (t.isType(ValueType.ANY_VALUE)) {
+                    v = t.makeValue();
+                }
+
+                if (v != null) {
+                    if (expr.left == null) expr.left = v;
+                    else if (expr.right == null) expr.right = v;
+                }
+
+                if (expr.ready() || endOfStack()) {
+                    head = new Expression(expr.op, expr.left, expr.right, context);
+                    expr = new Expr();
+                }
+            } while (!endOfStack());
+            return head;
         }
     }
 }
