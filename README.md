@@ -56,76 +56,152 @@ concat(str, num); // throws Sqript.FunctionParameterViolation
 // to be continued, lots more to be written
 ```
 
-### Types
+### Primitive Types
 #### STRING
 ```javascript
 <string> ['abc', "abc"]
 <str>
 ```
+
 Strings, yea. Can be concatinated using a + b;
 #### NUMBER
 ```javascript
 <num> [0.0, 0]
 ```
+
 Dynamic number type, can represent an integer or a decimal number.
-##### INTEGER
+#### INTEGER
 ```javascript
 <int> [0]
 ```
-##### DECIMAL
+
+#### DECIMAL
 ```javascript
 <dec> [0.0]
 ```
+
 #### BOOLEAN
 ```javascript
 <bool> [true|false]
 ```
-#### COLLECTION
+
+### Collection Types
+#### Array
+Integer indexed lists that stores references to any value type
 ```javascript
-<collection> [*]
+[(<any>, ...)];
+ref array = [3, 'str', { a = 'b' }];
+array:0		// -> 3
+array:2:a	// -> 'b'
 ```
-Abstract type, inherited by Array and Obqect.
-##### Array
+
+### Context Types
+Context types store properties indexed by keys that can be accessed via the ` : ` delimiter:
 ```javascript
-<array> [index:*]
-<arr>
+ref ctx = {};
+ctx:a = 'apple';
+ctx:b = 5 + 3;
+{
+	a = 'apple',
+	b = 8
+}
 ```
-##### Obqect
+Every context can always look up recursively to its parents for identifiers.
+
+#### Obqects
+Yes, I called objects obqects.
+But no worries, you'll never have to actually type that.
+String indexed collection that stored references to any value type
 ```javascript
-<object> [key:*]
-<obq> 
+ref obqect = { a = 5, b = 'c' };
+
+*~ obj = {};
+obj:name = 'Elephant';
+obj:child = {};
+obj:child:name = 'Noodles';
 ```
-#### NULL
-Yes that's a type.
-No it can not be declared.
+
+#### Qlasses
+Yes, that's the word i chose for classes. Problem?
+Don't worry, you can still use the 'class' keyword alternative.
+```javascript
+soon(tm);
+```
+
+#### Funqtions
+And again. That's how real my naming is.
+The default keyword aliases are ` function | func | fq | *:`.
+
+It is nothing but a container that literally stores statements for later execution.
+
+The funqtion syntax might seem uncommon:
+```javascript
+function multiply(a b {
+	<~ a * b;
+});
+```
+This is a simple form a funqtion with two parameters and a return statement (` <~ ` is a return alias).
+Notice that there's no comma between the parameters? Yes. That's because you don't need them, ever.
+You might also wonder why the entire funqtion body is wrapped in ` () `.
+
+Here's why:
+```javascript
+fq multiply(a b {
+	<~ a * b;
+}, a b c {
+	<~ a * b * c;
+});
+```
+Yes, that's right: funqtion overloads work exactly like this and are all declared in one body.
+Of course overloaded funqtions don't make much sense without types, so here's a (pretty pointless) typed version:
+```javascript
+fq multiply(<decimal>a <int>b <int>{
+	<~ (int)math.floor(a * (decimal)b);
+}, <int>a <string>b <int>c <string>{
+	ref<string> str = "";
+	step (i; 0; c) {
+		str = str + (" ":pad(a) + b) + "\n";
+	}
+	<~ str;
+});
+
+multiply(4, 'hello', 3); // would result in:
+ ~>     hello
+        hello
+		hello
+		hello
+```
+
+#### The Global Context
+The Global Context is is a static funqtion type context that loads the initial file (or dynamically reads from a text stream like a command line).
+It only has very few funqtions assigned, such as ` qonfig(); ` or ` include(); ` which can be renamed or even removed if wanted.
+
+#### Namespace Context
+Coming soon (tm)
 
 ### Keywords
-#### Reference
+#### Reference & Dereference
+The reference keyword is used to declare variables that can store any value type per default
 ```javascript
 reference | ref | declare | *~
+dereference | del | destroy | ~:
 
 // dynamic declaration
 *~ name = 'Max';
+// Max
 
-// static declaration
+*~ name = 123;
+// Exception thrown at stdin 0:4, cannot redeclare reference 'name'
+
+~: name;
+// print(name) Exception thrown at stdin 0:4, undefined reference 'name' detected
+
+// static typed declaration
 ref<int> number = 10;
 
 // or with the special *~ alternative
 *dec~ number = 3.72;
 ```
-
-### Qlasses
-Yes, that's the word i chose for classes. Problem?
-Don't worry, you can still use the 'class' keyword alternative :)
-
-
-### Funqtions
-And again. That's how real this is.
-Yes, you can also use the keywords "function", "fn", "fq" or even "()~>" here.
-Don't ask how I came up with `()~>`.
-
-### Obqects
-:)
 
 ### Operators
 #### Assign (by Value or Reference)
@@ -137,19 +213,8 @@ name = 'Foo'; // would result in
 (nameReference == 'Foo');
 ```
 
-### Syntax
-#### Obqect Syntax
-```javascript
-// :  -> key delimiter
-// {} -> object declaration
 
-*~ obj = {};
-obj:name = 'Elephant';
-obj:child = {};
-obj:child:name = 'Noodles';
-```
-
-### Configuration
+### Qonfiguration
 ```javascript
 :qonfig(configKey, value);
 
@@ -187,9 +252,9 @@ suppressErrors  | false			| false, true (does not throw exceptions)
 ##### logLevel
 Can be set to one of these values:
 ```javascript
-    MUFFLE		//disable all output
-    CRITICAL	//critical errors, such as program termination
-    WARNINGS	//warnings such as redeclaration of references
-    INFO		//default logs
-    VERBOSE		//verbose mode, spits out everything ever
+    0 = MUFFLE		//disable all output
+    1 = CRITICAL	//critical errors, such as program termination
+    2 = WARNINGS	//warnings such as redeclaration of references
+    3 = INFO		//default logs
+    4 = VERBOSE		//verbose mode, spits out everything ever
 ```
