@@ -23,7 +23,7 @@ namespace Qrakhen.Sqript
         }
 
         public bool check(string value) {
-            return (this.value.ToString() == value);
+            return (this.value?.ToString() == value);
         }
 
         public bool check(ValueType type) {
@@ -119,7 +119,7 @@ namespace Qrakhen.Sqript
         }
 
         private string[] SQR_SPECIAL = new string[] {
-            ":(", ".~", ":~"
+            ":(", ".~", ":~", "*~", "*:"
         };            
 
         private string readStructure() {
@@ -141,8 +141,16 @@ namespace Qrakhen.Sqript
             string buffer = "";
             do {
                 if (Is.Operator(peek())) buffer += digest();
-                else if (Is.Structure(peek())) buffer += digest(); // only needed for special snowflake sqript aliases
-                else break;
+                else if (Is.Structure(peek())) {
+                    string next = peek();
+                    foreach (string s in SQR_SPECIAL) {
+                        if (buffer + next == s) {
+                            buffer += digest();
+                            break;
+                        }
+                    }
+                    break;
+                } else break;
             } while (!endOfStack());
             return buffer;
         }

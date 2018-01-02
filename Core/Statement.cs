@@ -69,7 +69,7 @@ namespace Qrakhen.Sqript
                     if (right.Length == 1) expr = new Expression(op, target, digest(), context);
                     else expr = new Expression(op, target, new Expressionizer(right).parse(context), context);
                     result = expr.execute();
-                } else if (t.isType(ValueType.ANY_VALUE)) {
+                } else if (t.isType(ValueType.ANY_VALUE) || t.check("(")) {
                     Token[] remaining = new Token[(stack.Length - position)];
                     for (int i = 0; i < remaining.Length; i++) remaining[i] = digest();
                     Expression expr = new Expressionizer(remaining).parse(context);

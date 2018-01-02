@@ -34,7 +34,8 @@ namespace Qrakhen.Sqript
                 if (t.type == ValueType.OPERATOR) {
                     if (head != null) expr.left = head;
                     else if (expr.left == null) throw new Exception("manipulation operators (-1, i++) are not yet implemented. thank you for your patience.", t);
-                    else expr.op = t.getValue<Operator>();
+                    if (expr.right == null) expr.op = t.getValue<Operator>();
+                    else throw new Exception("unexpected operator after left and right token have been read: " + expr.left.ToString() + " " + expr.right.ToString(), t);
                 } else if (t.check(ValueType.IDENTIFIER)) {
                     Reference r = context.query(t.str());
                     if (peek().check(Funqtionizer.FQ_CALL_OPEN) && (r.getReference().isType(ValueType.FUNQTION))) {
