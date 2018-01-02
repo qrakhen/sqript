@@ -16,14 +16,18 @@ namespace Qrakhen.Sqript
             CONDITION_AND = "&&",
             CONDITION_OR = "||",
             CONDITION_EQUALS = "==",
+            CONDITION_SMALLER = "<",
+            CONDITION_SMALLER_EQUAL = "<=",
+            CONDITION_BIGGER = ">",
+            CONDITION_BIGGER_EQUAL = ">=",
             COLLECTION_ADD = "<+",
             COLLECTION_REMOVE = "->",
             NO_OPERATION = "";
 
         public string symbol { get; protected set; }
-        public Action<Value, Value, Value> calculate { get; protected set; }
+        public Func<Value, Value, Value> calculate { get; protected set; }
 
-        public Operator(string symbol, Action<Value, Value, Value> calculate) {
+        public Operator(string symbol, Func<Value, Value, Value> calculate = null) {
             this.symbol = symbol;
             this.calculate = calculate;
         }
@@ -42,7 +46,7 @@ namespace Qrakhen.Sqript
             return null;
         }
 
-        public static void define(string symbol, Action<Value, Value, Value> calculate) {
+        public static void define(string symbol, Func<Value, Value, Value> calculate = null) {
             if (get(symbol) != null) throw new InvalidOperationException("operator with given name already exists");
             operators.Add(symbol, new Operator(symbol, calculate));
         }

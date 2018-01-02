@@ -408,12 +408,23 @@ namespace Qrakhen.Sqript
         }
 
         static void defineOperators() {
-            Operators.define(Operator.CALCULATE_ADD, delegate (Value a, Value b, Value r) {});
-            Operators.define(Operator.CALCULATE_SUBTRACT, delegate (Value a, Value b, Value r) {});
-            Operators.define(Operator.CALCULATE_DIVIDE, delegate (Value a, Value b, Value r) {});
-            Operators.define(Operator.CALCULATE_MULTIPLY, delegate (Value a, Value b, Value r) {});
-            Operators.define(Operator.ASSIGN_VALUE, delegate (Value a, Value b, Value r) {});
-            Operators.define(Operator.ASSIGN_REFERENCE, delegate (Value a, Value b, Value r) { });
+            Operators.define(Operator.CALCULATE_ADD, delegate (Value a, Value b) {
+                return new Value(a.getValue<int>() + b.getValue<int>(), ValueType.INTEGER);
+            });
+            Operators.define(Operator.CALCULATE_SUBTRACT);
+            Operators.define(Operator.CALCULATE_DIVIDE);
+            Operators.define(Operator.CALCULATE_MULTIPLY);
+            Operators.define(Operator.ASSIGN_VALUE);
+            Operators.define(Operator.ASSIGN_REFERENCE);
+            Operators.define(Operator.CONDITION_AND);
+            Operators.define(Operator.CONDITION_OR);
+            Operators.define(Operator.CONDITION_EQUALS);
+            Operators.define(Operator.CONDITION_SMALLER);
+            Operators.define(Operator.CONDITION_SMALLER_EQUAL);
+            Operators.define(Operator.CONDITION_BIGGER);
+            Operators.define(Operator.CONDITION_BIGGER_EQUAL);
+            Operators.define(Operator.COLLECTION_ADD);
+            Operators.define(Operator.COLLECTION_REMOVE);
         }
     }
 

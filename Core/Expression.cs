@@ -46,6 +46,9 @@ namespace Qrakhen.Sqript
                 r = getTrueValue(right);
             if (left.GetType() == typeof(Reference)) Debug.spam("operation.execute() { " + (left as Reference).getValue() + " " + op.symbol + " " + r.ToString() + " }");
             else Debug.spam("operation.execute() { " + l.getValue() + " " + op.symbol + " " + r.getValue() + " } ");
+
+            if (op.calculate != null) return op.calculate(l, r);
+
             switch (op.symbol) {
                 case Operator.ASSIGN_VALUE:
                     if (left.GetType() == typeof(Reference)) {
