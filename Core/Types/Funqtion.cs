@@ -26,10 +26,12 @@ namespace Qrakhen.Sqript
             // we need to store all references in a temporary xfq (execution funqtion) so that the original funqtion is not mutated
             Debug.spam("executing function:\n" + this.ToString());
             Funqtion xfq = new Funqtion(parent);
-            for (int i = 0; i < parameters.Length; i++) {
-                if (i >= this.parameters.Count) throw new Exception("more parameters provided than funqtion accepts");
-                Debug.spam(this.parameters[i] + " = " + parameters[i].str());
-                xfq.set(this.parameters[i], new Reference(parameters[i]));
+            if (parameters != null) {
+                for (int i = 0; i < parameters.Length; i++) {
+                    if (i >= this.parameters.Count) throw new Exception("more parameters provided than funqtion accepts");
+                    Debug.spam(this.parameters[i] + " = " + parameters[i].str());
+                    xfq.set(this.parameters[i], new Reference(parameters[i]));
+                }
             }
             foreach (Statement statement in statements) {
                 Value r = statement.execute(xfq);

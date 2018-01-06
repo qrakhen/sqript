@@ -26,12 +26,15 @@ namespace Qrakhen.Sqript
         }
 
         public override Value execute(Value[] parameters = null) {
-            Value p = premise.execute();
-            if (!p.isType(ValueType.BOOLEAN)) throw new ConditionException("expression for if condition has to return a value of type BOOL, got " + p.type.ToString() + " instead.");
-            if (p.getValue<bool>()) {
-                base.execute(null);
-            } else {
-                elseCondition.execute();
+            if (premise == null) base.execute(null);
+            else {
+                Value p = premise.execute();
+                if (!p.isType(ValueType.BOOLEAN)) throw new ConditionException("expression for if condition has to return a value of type BOOL, got " + p.type.ToString() + " instead.");
+                if (p.getValue<bool>()) {
+                    base.execute(null);
+                } else {
+                    elseCondition.execute();
+                }
             }
             return null;
         }

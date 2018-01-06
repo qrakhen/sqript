@@ -22,23 +22,29 @@ namespace Qrakhen.Sqript
                 if (keyword.name == Keyword.CONDITION_LOOP) return parse(LoopCondition.LoopType.FooterCondition, context);
                 else if (keyword.name == Keyword.CONDITION_IF) return parse(context);
                 else throw new ParseException("unexpected keyword when parsing condition: " + keyword.name, t);
-            } else if (t.check(CF_BODY_OPEN) && keyword.name == Keyword.CONDITION_LOOP) {
-                if (keyword.name == Keyword.CONDITION_LOOP) return parse(LoopCondition.LoopType.FooterCondition, context);
-                else if (keyword.name == Keyword.CONDITION_IF) throw new ParseException("missing condition expression", t);
-                else throw new ParseException("unexpected keyword when parsing condition: " + keyword.name, t);
+            } else if (t.check(CF_BODY_OPEN)) {
+                if (keyword.name == Keyword.CONDITION_LOOP) {
+                    return parse(LoopCondition.LoopType.FooterCondition, context);                    
+                } else if (keyword.name == Keyword.CONDITION_ELSE) {
+                    return parse(context);
+                } else throw new ParseException("unexpected keyword when parsing condition: " + keyword.name, t);
             } else throw new ParseException("unexpected token when parsing condition", t);
         }
 
         private IfCondition parse(Context context) {
-            Expression expr = Expressionizer.parse(context, readBody());
+            Expression expr;
+            if (peek().check(CF_EXPR_OPEN)) expr = Expressionizer.parse(context, readBody());
+            else expr = null;
             IfCondition c = new IfCondition(context, expr);
-            Token t = peek();
             do {
-                if (Keywords.get(t.str()).name == Keyword.CONDITION_ELSE) {
+                Token t = peek();
+                Keyword k = Keywords.get(t.str());
+                if (k != null && k.name == Keyword.CONDITION_ELSE) {
                     digest();
-                    Keyword k = Keywords.get(digest().str());
+                    k = Keywords.get(peek().str());
                     if (k == null) k = Keywords.get(Keyword.CONDITION_ELSE);
-                    c.setElse(Conditionizer.parse(k, context, remaining()));
+                    else digest();
+                    c.setElse(parse(k, context, remaining()));
                 } else {
                     if (t.check(CF_BODY_OPEN)) c.statements.AddRange(Statementizer.parse(c, readBody()));
                     else c.statements.AddRange(Statementizer.parse(c, readBody(false, ";")));
