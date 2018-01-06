@@ -59,6 +59,13 @@ namespace Qrakhen.Sqript
             public override Value execute(Value[] parameters) {
                 return call.execute(parameters);
             }
+
+            public override string ToString() {
+                string r = "(";
+                foreach (string parameter in call.parameters) r += parameter + ", ";
+                if (r.EndsWith(", ")) r = r.Substring(0, r.Length - 2);
+                return r + ")";
+            }
         }
 
         public Obqect createInterfaceContext() {
