@@ -362,6 +362,7 @@ namespace Qrakhen.Sqript
             Debug.setLoggingLevel(Debug.Level.INFO);
             Debug.write("\n" + SQRIPT.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
             Debug.log("  available cli commands:");
+            Debug.log("   - #help");
             Debug.log("   - #run <filename>");
             Debug.log("   - #clr (clears global context)");
             Debug.log("\n  use qonfig:('log', '4'); for verbose output\n");
