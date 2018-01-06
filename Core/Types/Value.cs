@@ -6,6 +6,14 @@ namespace Qrakhen.Sqript
 {
     public class Value
     {
+        public static Value TRUE {
+            get { return new Value(true, ValueType.BOOLEAN); }
+            private set { }
+        }
+        public static Value FALSE {
+            get { return new Value(false, ValueType.BOOLEAN); }
+            private set { }
+        }
         public static Value NULL {
             get { return new Value(null, ValueType.NULL); }
             private set { }

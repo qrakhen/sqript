@@ -80,6 +80,9 @@ namespace Qrakhen.Sqript
             Interface stdout = new ConsoleInterface();
             stdout.load();
             set("stdout", new Reference(stdout.createInterfaceContext()));
+            Interface file = new FileInterface();
+            file.load();
+            set("file", new Reference(file.createInterfaceContext()));
         }
 
         public static GlobalContext getInstance() {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Qrakhen.Sqript
@@ -92,6 +93,36 @@ namespace Qrakhen.Sqript
 
         public override void load() {
             define(new Call("write", new string[] { "value" }, write));
+        }
+    }
+
+    public class FileInterface : Interface
+    {
+        public FileInterface() : base("file") {
+
+        }
+
+        public Value exists(Dictionary<string, Value> parameters) {
+            return new Value(File.Exists(parameters["file"].str()), ValueType.BOOLEAN);
+        }
+
+        public Value read(Dictionary<string, Value> parameters) {
+            if (!File.Exists(parameters["file"].str())) throw new Exception("could not find file '" + parameters["file"] + "'");
+            else return new Value(File.ReadAllText(parameters["file"].str()), ValueType.STRING);
+        }
+
+        public Value write(Dictionary<string, Value> parameters) {
+            string content;
+            if (parameters["content"].getValue() == null) content = "";
+            else content = parameters["content"].str();
+            File.WriteAllText(parameters["file"].str(), content);
+            return Value.TRUE;
+        }
+
+        public override void load() {
+            define(new Call("read", new string[] { "file" }, read));
+            define(new Call("write", new string[] { "file", "content" }, write));
+            define(new Call("exists", new string[] { "file" }, exists));
         }
     }
 }
