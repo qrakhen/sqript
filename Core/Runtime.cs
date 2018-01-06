@@ -342,7 +342,7 @@ namespace Qrakhen.Sqript
             Debug.log("  available cli commands:");
             Debug.log("   - #run <filename>");
             Debug.log("   - #clr (clears global context)");
-            Debug.log("\n  use qonfig('log', '4'); for verbose output\n");
+            Debug.log("\n  use qonfig:('log', '4'); for verbose output\n");
 
             defineKeywords();
             defineOperators();
@@ -405,6 +405,9 @@ namespace Qrakhen.Sqript
             Keywords.define(Keyword.RETURN, "return", "rightBackAtYou");
             Keywords.define(Keyword.CURRENT_CONTEXT, "this", "self", ".~");
             Keywords.define(Keyword.PARENT_CONTEXT, "parent", "^~");
+            Keywords.define(Keyword.CONDITION_IF, "if", "when", "~?");
+            Keywords.define(Keyword.CONDITION_ELSE, "else", "otherwise", "?~");
+            Keywords.define(Keyword.CONDITION_LOOP, "do", "while", "for", "loop", "repeat");
         }
 
         static void defineOperators() {
@@ -496,6 +499,11 @@ namespace Qrakhen.Sqript
             Operators.define(Operator.COLLECTION_ADD);
             Operators.define(Operator.COLLECTION_REMOVE);
         }
+    }
+
+    public class ConditionException : Exception
+    {
+        public ConditionException(string message, Token cause = null) : base(message, cause) { }
     }
 
     public class ReferenceException : Exception

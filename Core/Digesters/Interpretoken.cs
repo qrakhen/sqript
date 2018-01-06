@@ -21,14 +21,23 @@ namespace Qrakhen.Sqript
             return t;
         }
 
-        public Token[] readBody(bool includeBrackets = false) {
+        public Token[] remaining() {
+            List<Token> buffer = new List<Token>();
+            while (!endOfStack()) { 
+                buffer.Add(digest());
+            } 
+            return buffer.ToArray();
+        }
+
+        public Token[] readBody(bool includeBrackets = false, string until = "") {
             List<Token> buffer = new List<Token>();
             int depth = 1;
             if (includeBrackets) buffer.Add(peek());
             string
                 ascend = digest().str(),
                 descend = "";
-            switch (ascend) {
+            if (until != "") descend = until;
+            else switch (ascend) {
                 case "(": descend = ")"; break;
                 case ":(": descend = ")"; break;
                 case "{": descend = "}"; break;

@@ -13,8 +13,10 @@ namespace Qrakhen.Sqript
             Debug.spam("executing statement:\n" + ToString());
             Reference target = null;
             Value result = null;
-            string declaredName = "";
-            string identifier = "";
+            Condition condition = null;
+            string 
+                declaredName = "",
+                identifier = "";
             bool
                 declaring = false,
                 returning = false;
@@ -23,10 +25,12 @@ namespace Qrakhen.Sqript
                 if (t.check(ValueType.KEYWORD)) {
                     Keyword keyword = digest().getValue<Keyword>();
                     switch (keyword.name) {
-                        case Keyword.REFERENCE: target = new Reference(); break; // declareReference(context, digest().str()); break;
-                        case Keyword.FUNQTION: target = new Reference(); break; // declareReference(context, digest().str()); break;
-                        case Keyword.QLASS: target = new Reference(); break; //declareReference(context, digest().str()); break;
+                        case Keyword.REFERENCE: target = new Reference(); break;
+                        case Keyword.FUNQTION: target = new Reference(); break; 
+                        case Keyword.QLASS: target = new Reference(); break; 
                         case Keyword.CURRENT_CONTEXT: target = new Reference(); break;
+                        case Keyword.CONDITION_IF: condition = Conditionizer.parse(keyword, context, remaining()); break;
+                        case Keyword.CONDITION_LOOP: condition = Conditionizer.parse(keyword, context, remaining()); break;
                         case Keyword.RETURN: returning = true; break;
                         default: throw new Exception("unexpected or not yet supported keyword '" + keyword.name + "'", peek());
                     }
@@ -78,7 +82,11 @@ namespace Qrakhen.Sqript
             } while (!endOfStack());
 
             reset();
+
+            if (condition != null) return condition.execute();
+
             if (declaring) context.set(declaredName, target);
+            
             if (returning) return result;
             else if (forceReturn) return (result == null ? target : result);
             else return null;

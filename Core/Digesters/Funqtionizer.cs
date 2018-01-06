@@ -17,6 +17,10 @@ namespace Qrakhen.Sqript
 
         public Funqtionizer(Token[] stack) : base(stack) { }
 
+        public static Funqtion parse(Context context, Token[] stack) {
+            return new Funqtionizer(stack).parse(context);
+        }
+
         public Funqtion parse(Context context) {
             Token t = digest();
             if (t.check(FQ_DECLARE_OPEN)) {
@@ -40,10 +44,6 @@ namespace Qrakhen.Sqript
                     } else throw new ParseException("unexpected token found when trying to parse funqtion body definition", peek());
                 }
             } else throw new ParseException("unexpected funqtion parameter opening, expected '('", t);
-        }
-
-        public static Funqtion parse(Context context, Token[] stack) {
-            return new Funqtionizer(stack).parse(context);
         }
 
         public Value[] parseParameters(Context context) {
