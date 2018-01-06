@@ -6,6 +6,10 @@ Sqript is an interpreting programming language written in C#.
 It comes with it's very own syntax, data types, workflow and behaviours.
 Can be built for - and also runs on - all platforms, including your microwave.
 
+### Philosophy
+
+Quak
+
 ### Some Features:
  * type-less, comparable to JavaScript, but CAN be typed if wanted.
  * encapsulation (private, protected, public)

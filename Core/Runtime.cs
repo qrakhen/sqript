@@ -336,7 +336,29 @@ namespace Qrakhen.Sqript
 
         }
 
-        static void Main(string[] args) {
+        static void execute(string indexFile) {
+            try {
+                reader.file = indexFile;
+                var content = File.ReadAllText(indexFile);
+                var nizer = new Tokenizer(content);
+                var stack = nizer.parse();
+                GlobalContext.getInstance().queue(new Statementizer(stack).parse(GlobalContext.getInstance()));
+                GlobalContext.getInstance().execute();
+            } catch (Exception e) {
+                GlobalContext.getInstance().clearQueue();
+                Debug.error("exception thrown in file " + reader.file + " at " + e.getLocation());
+                if (e.cause != null) Debug.log("caused by token " + e.cause.toDebug() + e.cause.getLocation());
+                else if (reader.token != null) Debug.log("cause unknown - last read token: " + reader.token.toDebug() + reader.token.getLocation());
+                Debug.error("[" + e.GetType().ToString() + "] " + e.Message);
+                Debug.log(e.StackTrace);
+            } catch (System.Exception e) {
+                GlobalContext.getInstance().clearQueue();
+                Debug.error("!SYS_EXCEPTION! [" + e.GetType().ToString() + "] " + e.Message);
+                Debug.log(e.StackTrace);
+            }
+        }
+
+        static void cli() {
             Debug.setLoggingLevel(Debug.Level.INFO);
             Debug.write("\n" + SQRIPT.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
             Debug.log("  available cli commands:");
@@ -344,39 +366,37 @@ namespace Qrakhen.Sqript
             Debug.log("   - #clr (clears global context)");
             Debug.log("\n  use qonfig:('log', '4'); for verbose output\n");
 
-            defineKeywords();
-            defineOperators();
-
-            KeyState.run();
-
             string content = "";
             do {
                 try {
-                    if (args.Length > 0) {
-                        reader.file = args[0];
-                        content = File.ReadAllText(args[0]);
-                    } else {
-                        reader.file = "stdin";
-                        content = "";
-                        Debug.write(" <~ ", ConsoleColor.White, "");
-                        ConsoleKeyInfo c;
-                        do {
-                            string line = Console.ReadLine();
-                            if (line == "" && content == "") {
-                                Console.SetCursorPosition(4, Console.CursorTop - 1);
-                            } else {
-                                content += line;
-                                if (!KeyState.keyDown((int)KeyState.Keys.ShiftKey)) break;
-                                content += "\n";
-                                Debug.write("    ", ConsoleColor.White, "");
-                            }
-                        } while (c.Key != ConsoleKey.Escape);
-                        if (content.StartsWith("#run")) content = File.ReadAllText(content.Substring(5) + (content.EndsWith(".sq") ? "" : ".sq"));
-                        else if (content == "#clr") {
-                            GlobalContext.resetInstance();
-                            continue;
-                        } else if (content == "#exit") break;
-                    }
+                    reader.file = "stdin";
+                    content = "";
+                    Debug.write(" <~ ", ConsoleColor.White, "");
+                    ConsoleKeyInfo c;
+                    do {
+                        string line = Console.ReadLine();
+                        if (line == "" && content == "") {
+                            Console.SetCursorPosition(4, Console.CursorTop - 1);
+                        } else {
+                            content += line;
+                            if (!KeyState.keyDown((int)KeyState.Keys.ShiftKey)) break;
+                            content += "\n";
+                            Debug.write("    ", ConsoleColor.White, "");
+                        }
+                    } while (c.Key != ConsoleKey.Escape);
+                    if (content.StartsWith("#run")) content = File.ReadAllText(content.Substring(5) + (content.EndsWith(".sq") ? "" : ".sq"));
+                    else if (content == "#clr") {
+                        GlobalContext.resetInstance();
+                        continue;
+                    } else if (content == "#help") {
+                        Debug.log("~ HELP ~\n");
+                        Debug.log("~ Keywords:");
+                        foreach (var keyword in Keywords.get()) {
+                            Debug.log("  > " + keyword.name + ":\n    aliases:");
+                            foreach (var alias in keyword.aliases) Debug.log("    - " + alias);
+                            Debug.log(" ----- ");
+                        }
+                    } else if (content == "#exit") break;
                     var nizer = new Tokenizer(content);
                     var stack = nizer.parse();
                     GlobalContext.getInstance().queue(new Statementizer(stack).parse(GlobalContext.getInstance()));
@@ -396,108 +416,12 @@ namespace Qrakhen.Sqript
             } while (content != "exit");
         }
 
-        static void defineKeywords() {
-            Keywords.define(Keyword.REFERENCE, "reference", "declare", "var", "ref", "*~");
-            Keywords.define(Keyword.DESTROY, "destroy", "dereference", "del", ":~");
-            Keywords.define(Keyword.NEW, "create", "new", "spawn", "~*");
-            Keywords.define(Keyword.QLASS, "qlass", "class");
-            Keywords.define(Keyword.FUNQTION, "funqtion", "fq", "function", "func");
-            Keywords.define(Keyword.RETURN, "return", "rightBackAtYou");
-            Keywords.define(Keyword.CURRENT_CONTEXT, "this", "self", ".~");
-            Keywords.define(Keyword.PARENT_CONTEXT, "parent", "^~");
-            Keywords.define(Keyword.CONDITION_IF, "if", "when", "~?");
-            Keywords.define(Keyword.CONDITION_ELSE, "else", "otherwise", "?~");
-            Keywords.define(Keyword.CONDITION_LOOP, "do", "while", "for", "loop", "repeat");
-        }
-
-        static void defineOperators() {
-            Operators.define(Operator.ASSIGN_VALUE);
-            Operators.define(Operator.ASSIGN_REFERENCE);
-
-            Operators.define(Operator.CALCULATE_ADD, delegate (Value a, Value b) {
-                if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
-                    return new Value(Convert.ToDecimal(a.getValue()) + Convert.ToDecimal(b.getValue()), ValueType.DECIMAL);
-                } else if(a.isType(ValueType.STRING) || b.isType(ValueType.STRING)) {
-                    return new Value(a.str() + b.str(), ValueType.STRING);
-                } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {
-                    return new Value(a.getValue<int>() + b.getValue<int>(), ValueType.INTEGER);
-                } else throw new OperationException("can not add values of types " + a.type.ToString() + " and " + b.type.ToString());
-            });
-
-            Operators.define(Operator.CALCULATE_SUBTRACT, delegate (Value a, Value b) {
-                if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
-                    return new Value(Convert.ToDecimal(a.getValue()) - Convert.ToDecimal(b.getValue()), ValueType.DECIMAL);
-                } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {
-                    return new Value(a.getValue<int>() - b.getValue<int>(), ValueType.INTEGER);
-                } else throw new OperationException("can not substract values of types " + a.type.ToString() + " and " + b.type.ToString());
-            });
-
-            Operators.define(Operator.CALCULATE_DIVIDE, delegate (Value a, Value b) {
-                if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
-                    return new Value(Convert.ToDecimal(a.getValue()) / Convert.ToDecimal(b.getValue()), ValueType.DECIMAL);
-                } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {
-                    return new Value(a.getValue<int>() / b.getValue<int>(), ValueType.INTEGER);
-                } else throw new OperationException("can not divide values of types " + a.type.ToString() + " and " + b.type.ToString());
-            });
-
-            Operators.define(Operator.CALCULATE_MULTIPLY, delegate (Value a, Value b) {
-                if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
-                    return new Value(Convert.ToDecimal(a.getValue()) * Convert.ToDecimal(b.getValue()), ValueType.DECIMAL);
-                } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {
-                    return new Value(a.getValue<int>() * b.getValue<int>(), ValueType.INTEGER);
-                } else throw new OperationException("can not multiply values of types " + a.type.ToString() + " and " + b.type.ToString());
-            });
-
-            Operators.define(Operator.CONDITION_AND, delegate (Value a, Value b) {
-                if (a.isType(ValueType.BOOLEAN) && b.isType(ValueType.BOOLEAN)) {
-                    return new Value(a.getValue<bool>() && b.getValue<bool>(), ValueType.BOOLEAN);
-                } else throw new OperationException("can not compare types for " + a.type.ToString() + " AND " + b.type.ToString());
-            });
-
-            Operators.define(Operator.CONDITION_OR, delegate (Value a, Value b) {
-                if (a.isType(ValueType.BOOLEAN) && b.isType(ValueType.BOOLEAN)) {
-                    return new Value(a.getValue<bool>() || b.getValue<bool>(), ValueType.BOOLEAN);
-                } else throw new OperationException("can not compare types for " + a.type.ToString() + " OR " + b.type.ToString());
-            });
-
-            Operators.define(Operator.CONDITION_EQUALS, delegate (Value a, Value b) {
-                return new Value(a.getValue().Equals(b.getValue()), ValueType.BOOLEAN);
-            });
-
-            Operators.define(Operator.CONDITION_SMALLER, delegate (Value a, Value b) {
-                if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
-                    return new Value((Convert.ToDecimal(a.getValue()) < Convert.ToDecimal(b.getValue())), ValueType.BOOLEAN);
-                } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {
-                    return new Value((a.getValue<int>() < b.getValue<int>()), ValueType.BOOLEAN);
-                } else throw new OperationException("can not compare types for " + a.type.ToString() + " SMALLER " + b.type.ToString());
-            });
-
-            Operators.define(Operator.CONDITION_SMALLER_EQUAL, delegate (Value a, Value b) {
-                if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
-                    return new Value((Convert.ToDecimal(a.getValue()) <= Convert.ToDecimal(b.getValue())), ValueType.BOOLEAN);
-                } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {
-                    return new Value((a.getValue<int>() <= b.getValue<int>()), ValueType.BOOLEAN);
-                } else throw new OperationException("can not compare types for " + a.type.ToString() + " SMALLER_EQUAL " + b.type.ToString());
-            });
-
-            Operators.define(Operator.CONDITION_BIGGER, delegate (Value a, Value b) {
-                if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
-                    return new Value((Convert.ToDecimal(a.getValue()) > Convert.ToDecimal(b.getValue())), ValueType.BOOLEAN);
-                } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {
-                    return new Value((a.getValue<int>() > b.getValue<int>()), ValueType.BOOLEAN);
-                } else throw new OperationException("can not compare types for " + a.type.ToString() + " BIGGER " + b.type.ToString());
-            });
-
-            Operators.define(Operator.CONDITION_BIGGER_EQUAL, delegate (Value a, Value b) {
-                if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
-                    return new Value((Convert.ToDecimal(a.getValue()) >= Convert.ToDecimal(b.getValue())), ValueType.BOOLEAN);
-                } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {
-                    return new Value((a.getValue<int>() >= b.getValue<int>()), ValueType.BOOLEAN);
-                } else throw new OperationException("can not compare types for " + a.type.ToString() + " BIGGER_EQUAL " + b.type.ToString());
-            });
-
-            Operators.define(Operator.COLLECTION_ADD);
-            Operators.define(Operator.COLLECTION_REMOVE);
+        static void Main(string[] args) {
+            Core.defineKeywords();
+            Core.defineOperators();
+            KeyState.run();
+            if (args.Length == 0) cli();
+            else execute(args[0]);           
         }
     }
 

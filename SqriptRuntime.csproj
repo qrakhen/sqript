@@ -5,6 +5,14 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <AssemblyName>SqriptRuntime</AssemblyName>
     <RootNamespace>Qrakhen.Sqript</RootNamespace>
+    <Version>0.1.12</Version>
+    <Authors>Qrakhen</Authors>
+    <Product>Sqript</Product>
+    <PackageId>Sqript.CLI</PackageId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>

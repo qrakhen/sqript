@@ -56,6 +56,12 @@ namespace Qrakhen.Sqript
             return null;
         }
 
+        public static Keyword[] get() {
+            List<Keyword> keywords = new List<Keyword>();
+            foreach (var keyword in Keywords.keywords) keywords.Add(keyword.Value);
+            return keywords.ToArray();
+        }
+
         public static bool isAlias(string key, string name) {
             if (keywords.ContainsKey(key)) return (keywords[key].name == name);
             foreach (Keyword keyword in keywords.Values) {
