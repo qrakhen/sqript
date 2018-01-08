@@ -193,7 +193,7 @@ namespace Qrakhen.Sqript
         static class Is
         {
             public static bool Operator(string c) {
-                return Regex.IsMatch(c, @"[\/\-\*+=&<>~^]");
+                return Regex.IsMatch(c, @"[\/\-\*+=&<>~^?!]");
             }
 
             public static bool Structure(string c) {

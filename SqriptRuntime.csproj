@@ -5,10 +5,19 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <AssemblyName>Qrakhen.Sqript</AssemblyName>
     <RootNamespace>Qrakhen.Sqript</RootNamespace>
-    <Version>0.1.12</Version>
+    <Version>0.2.0</Version>
     <Authors>Qrakhen</Authors>
     <Product>Sqript</Product>
     <PackageId>Sqript.Runtime</PackageId>
+    <Description>QrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhen</Description>
+    <Copyright>Qrakhen</Copyright>
+    <PackageLicenseUrl>Qrakhen</PackageLicenseUrl>
+    <PackageProjectUrl>https://www.github.com/qrakhen/sqript</PackageProjectUrl>
+    <PackageIconUrl />
+    <RepositoryType>Qrakhen</RepositoryType>
+    <PackageTags>Qrakhen</PackageTags>
+    <PackageReleaseNotes>QrakhenQrakhenQrakhenQrakhenQrakhen</PackageReleaseNotes>
+    <NeutralLanguage>en-CC</NeutralLanguage>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

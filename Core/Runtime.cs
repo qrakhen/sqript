@@ -398,6 +398,7 @@ namespace Qrakhen.Sqript
                             foreach (var alias in keyword.aliases) Debug.log("    - " + alias);
                             Debug.log(" ----- ");
                         }
+                        Debug.log("\n~ Tip: type 'global' to print out the global context");
                     } else if (content == "#exit") break;
                     var nizer = new Tokenizer(content);
                     var stack = nizer.parse();
