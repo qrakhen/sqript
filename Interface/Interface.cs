@@ -41,11 +41,12 @@ namespace Qrakhen.Sqript
             else throw new InterfaceException("could not find interface call '" + name + "'", this);
         }
 
-        public class Call
+        public sealed class Call
         {
-            public Func<Dictionary<string, Value>, Value> callback { get; protected set; }
-            public string name { get; protected set; }
-            public string[] parameters { get; protected set; }
+            public Func<Dictionary<string, Value>, Value> callback { get; private set; }
+            public string name { get; private set; }
+            public string[] parameters { get; private set; }
+            public ValueType returnType { get; private set; }
 
             /// <summary>
             /// 
@@ -56,10 +57,11 @@ namespace Qrakhen.Sqript
             /// the actual function, provide any method that accepts a Dictionary as parameter and returns a Sqript.Value
             /// all provided parameters will be accessible using the dictionary (i.e. string key = parameters["key"];)
             /// </param>
-            public Call(string name, string[] parameters, Func<Dictionary<string, Value>, Value> callback) {
+            public Call(string name, string[] parameters, Func<Dictionary<string, Value>, Value> callback, ValueType returnType = ValueType.ANY_VALUE) {
                 this.name = name;
                 this.parameters = parameters;
                 this.callback = callback;
+                this.returnType = returnType;
             }
 
             public Value execute(Value[] parameters) {
@@ -85,7 +87,7 @@ namespace Qrakhen.Sqript
             }
 
             public override string ToString() {
-                string r = "(";
+                string r = "<" + call.returnType + ">(";
                 foreach (string parameter in call.parameters) r += parameter + ", ";
                 if (r.EndsWith(", ")) r = r.Substring(0, r.Length - 2);
                 return r + ")";
@@ -109,23 +111,5 @@ namespace Qrakhen.Sqript
             this.intf = intf;
             this.call = call;
         }
-    }
-
-    public class ConsoleInterface : Interface
-    {
-        public ConsoleInterface() : base("console") {
-
-        }
-
-        public Value write(Dictionary<string, Value> parameters) {
-            Console.Write(parameters["value"].getValue());
-            return null;
-        }
-
-        public override void load() {
-            define(new Call("write", new string[] { "value" }, write));
-        }
-    }
-
-    
+    }    
 }
