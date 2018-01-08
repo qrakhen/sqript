@@ -29,6 +29,11 @@ namespace Qrakhen.Sqript
             VERBOSE = 4
         }
 
+        public static void logToFile(string name, string content) {
+            if (!Directory.Exists("log")) Directory.CreateDirectory("log");
+            File.WriteAllText("log\\" + name + "_" + DateTime.Now.ToFileTimeUtc(), content);
+        }
+
         public static void setLoggingLevel(Level level) {
             loggingLevel = level;
         }
@@ -55,11 +60,11 @@ namespace Qrakhen.Sqript
         }
 
         public static void error(object message, ConsoleColor color = ConsoleColor.Red) {
-            if (((int)loggingLevel >= (int) Level.CRITICAL)) writeOut("ERROR " + message, color);
+            if (((int)loggingLevel >= (int) Level.CRITICAL)) writeOut("ERR " + message, color);
         }
 
         public static void warn(object message, ConsoleColor color = ConsoleColor.Yellow) {
-            if (((int)loggingLevel >= (int)Level.WARNINGS)) writeOut("WARN " + message, color);
+            if (((int)loggingLevel >= (int)Level.WARNINGS)) writeOut("WRN " + message, color);
         }
 
         public static void log(object message, ConsoleColor color = ConsoleColor.White) {
@@ -336,10 +341,8 @@ namespace Qrakhen.Sqript
 
         }
 
-        static void execute(string indexFile) {
+        static void execute(string content) {
             try {
-                reader.file = indexFile;
-                var content = File.ReadAllText(indexFile);
                 var nizer = new Tokenizer(content);
                 var stack = nizer.parse();
                 GlobalContext.getInstance().queue(new Statementizer(stack).parse(GlobalContext.getInstance()));
@@ -353,7 +356,10 @@ namespace Qrakhen.Sqript
                 Debug.log(e.StackTrace);
             } catch (System.Exception e) {
                 GlobalContext.getInstance().clearQueue();
-                Debug.error("!SYS_EXCEPTION! [" + e.GetType().ToString() + "] " + e.Message);
+                //Debug.error("!SYS_EXCEPTION! [" + e.GetType().ToString() + "] " + e.Message);
+                Debug.error("exception thrown in file " + reader.file);
+                Debug.error("this is a system exception and should not happen - writing to logs.");
+                Debug.logToFile("sys_err", e.ToString());
                 Debug.log(e.StackTrace);
             }
         }
@@ -370,52 +376,36 @@ namespace Qrakhen.Sqript
             string content = "";
             GlobalContext.resetInstance();
             do {
-                try {
-                    reader.file = "stdin";
-                    content = "";
-                    Debug.write(" <~ ", ConsoleColor.White, "");
-                    ConsoleKeyInfo c;
-                    do {
-                        string line = Console.ReadLine();
-                        if (line == "" && content == "") {
-                            Console.SetCursorPosition(4, Console.CursorTop - 1);
-                        } else {
-                            content += line;
-                            if (!KeyState.keyDown((int)KeyState.Keys.ShiftKey)) break;
-                            content += "\n";
-                            Debug.write("    ", ConsoleColor.White, "");
-                        }
-                    } while (c.Key != ConsoleKey.Escape);
-                    if (content.StartsWith("#run")) content = File.ReadAllText(content.Substring(5) + (content.EndsWith(".sq") ? "" : ".sq"));
-                    else if (content == "#clr") {
-                        GlobalContext.resetInstance();
-                        continue;
-                    } else if (content == "#help") {
-                        Debug.log("~ HELP ~\n");
-                        Debug.log("~ Keywords:");
-                        foreach (var keyword in Keywords.get()) {
-                            Debug.log("  > " + keyword.name + ":\n    aliases:");
-                            foreach (var alias in keyword.aliases) Debug.log("    - " + alias);
-                            Debug.log(" ----- ");
-                        }
-                        Debug.log("\n~ Tip: type 'global' to print out the global context");
-                    } else if (content == "#exit") break;
-                    var nizer = new Tokenizer(content);
-                    var stack = nizer.parse();
-                    GlobalContext.getInstance().queue(new Statementizer(stack).parse(GlobalContext.getInstance()));
-                    GlobalContext.getInstance().execute();
-                } catch (Exception e) {
-                    GlobalContext.getInstance().clearQueue();
-                    Debug.error("exception thrown in file " + reader.file + " at " + e.getLocation());
-                    if (e.cause != null) Debug.log("caused by token " + e.cause.toDebug() + e.cause.getLocation());
-                    else if (reader.token != null) Debug.log("cause unknown - last read token: " + reader.token.toDebug() + reader.token.getLocation());
-                    Debug.error("[" + e.GetType().ToString() + "] " + e.Message);
-                    Debug.log(e.StackTrace);
-                } catch (System.Exception e) {
-                    GlobalContext.getInstance().clearQueue();
-                    Debug.error("!SYS_EXCEPTION! [" + e.GetType().ToString() + "] " + e.Message);
-                    Debug.log(e.StackTrace);
-                }
+                reader.file = "stdin";
+                content = "";
+                Debug.write(" <~ ", ConsoleColor.White, "");
+                ConsoleKeyInfo c;
+                do {
+                    string line = Console.ReadLine();
+                    if (line == "" && content == "") {
+                        Console.SetCursorPosition(4, Console.CursorTop - 1);
+                    } else {
+                        content += line;
+                        if (!KeyState.keyDown((int)KeyState.Keys.ShiftKey)) break;
+                        content += "\n";
+                        Debug.write("    ", ConsoleColor.White, "");
+                    }
+                } while (c.Key != ConsoleKey.Escape);
+                if (content.StartsWith("#run")) content = File.ReadAllText(content.Substring(5) + (content.EndsWith(".sq") ? "" : ".sq"));
+                else if (content == "#clr") {
+                    GlobalContext.resetInstance();
+                    continue;
+                } else if (content == "#help") {
+                    Debug.log("~ HELP ~\n");
+                    Debug.log("~ Keywords:");
+                    foreach (var keyword in Keywords.get()) {
+                        Debug.log("  > " + keyword.name + ":\n    aliases:");
+                        foreach (var alias in keyword.aliases) Debug.log("    - " + alias);
+                        Debug.log(" ----- ");
+                    }
+                    Debug.log("\n~ Tip: type 'global' to print out the global context");
+                } else if (content == "#exit") break;
+                execute(content);
             } while (content != "exit");
         }
 
@@ -424,7 +414,7 @@ namespace Qrakhen.Sqript
             Core.defineOperators();
             KeyState.run();
             if (args.Length == 0) cli();
-            else execute(args[0]);           
+            else execute(File.ReadAllText(args[0]));           
         }
     }
 
