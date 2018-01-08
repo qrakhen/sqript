@@ -77,12 +77,13 @@ namespace Qrakhen.Sqript
         private void init() {
             set("qonfig", new Reference(new QonfigFunqtion()));
             set("global", new Reference(getInstance()));
-            Interface stdout = new ConsoleInterface();
-            stdout.load();
-            set("stdout", new Reference(stdout.createInterfaceContext()));
-            Interface file = new FileInterface();
-            file.load();
-            set("file", new Reference(file.createInterfaceContext()));
+            Interface[] libs = Loader.loadDirectory(AppContext.BaseDirectory + "\\lib\\");
+            foreach (var lib in libs) {
+                lib.load();
+                set(lib.name, new Reference(lib.createInterfaceContext()));
+                Debug.spam("loaded external library component '" + lib.name + "' into global context");
+            }
+            Debug.log("successfully loaded " + libs.Length + " external libraries.");
         }
 
         public static GlobalContext getInstance() {

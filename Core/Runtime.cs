@@ -368,6 +368,7 @@ namespace Qrakhen.Sqript
             Debug.log("\n  use qonfig:('log', '4'); for verbose output\n");
 
             string content = "";
+            GlobalContext.resetInstance();
             do {
                 try {
                     reader.file = "stdin";

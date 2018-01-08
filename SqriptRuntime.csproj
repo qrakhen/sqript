@@ -3,12 +3,12 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp1.1</TargetFramework>
-    <AssemblyName>SqriptRuntime</AssemblyName>
+    <AssemblyName>Qrakhen.Sqript</AssemblyName>
     <RootNamespace>Qrakhen.Sqript</RootNamespace>
     <Version>0.1.12</Version>
     <Authors>Qrakhen</Authors>
     <Product>Sqript</Product>
-    <PackageId>Sqript.CLI</PackageId>
+    <PackageId>Sqript.Runtime</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -21,6 +21,14 @@
 
   <ItemGroup>
     <None Include="fqtest.sq" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
   </ItemGroup>
 
 </Project>
