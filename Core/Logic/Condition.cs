@@ -6,9 +6,13 @@ namespace Qrakhen.Sqript
 {
     internal abstract class Condition : Funqtion
     {
-        public Expression premise { get; protected set; }
+        protected Expressionizer premise;
 
-        public Condition(Context parent, Expression premise = null) : base(parent) {
+        public Condition(Context parent, Expressionizer premise = null) : base(parent) {
+            this.premise = premise;
+        }
+
+        public void setPremise(Expressionizer premise) {
             this.premise = premise;
         }
     }
@@ -17,7 +21,7 @@ namespace Qrakhen.Sqript
     {
         public Condition elseCondition { get; protected set; }
 
-        public IfCondition(Context parent, Expression premise = null) : base(parent, premise) {
+        public IfCondition(Context parent, Expressionizer premise = null) : base(parent, premise) {
 
         }
 
@@ -28,7 +32,7 @@ namespace Qrakhen.Sqript
         public override Value execute(Value[] parameters = null) {
             if (premise == null) base.execute(null);
             else {
-                Value p = premise.execute();
+                Value p = premise.parse(parent).execute();
                 if (!p.isType(ValueType.BOOLEAN)) throw new ConditionException("expression for if condition has to return a value of type BOOL, got " + p.type.ToString() + " instead.");
                 if (p.getValue<bool>()) {
                     base.execute(null);
@@ -51,18 +55,18 @@ namespace Qrakhen.Sqript
 
         public LoopType loopType { get; protected set; }
 
-        public LoopCondition(Context parent, LoopType loopType, Expression premise = null) : base(parent, premise) {
+        public LoopCondition(Context parent, LoopType loopType, Expressionizer premise = null) : base(parent, premise) {
             this.loopType = loopType;
         }
 
         public override Value execute(Value[] parameters = null) {
             Value p = new Value(true, ValueType.BOOLEAN);
             do {
-                if (loopType == LoopType.HeaderCondition) p = premise.execute();
+                if (loopType == LoopType.HeaderCondition) p = premise.parse(parent).execute();
                 if (!p.isType(ValueType.BOOLEAN)) throw new ConditionException("expression for loop condition has to return a value of type BOOL, got " + p.type.ToString() + " instead.");
                 if (p.getValue<bool>()) base.execute(null);
                 else break;
-                if (loopType == LoopType.FooterCondition) p = premise.execute();
+                if (loopType == LoopType.FooterCondition) p = premise.parse(parent).execute();
             } while (true);
             return null;
         }

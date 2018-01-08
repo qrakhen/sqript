@@ -91,6 +91,7 @@ namespace Qrakhen.Sqript
                     expr = new Expr();
                 }
             } while (!endOfStack());
+            reset();
             return head;
         }
     }
