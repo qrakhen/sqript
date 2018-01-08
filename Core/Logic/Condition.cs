@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public abstract class Condition : Funqtion
+    internal abstract class Condition : Funqtion
     {
         public Expression premise { get; protected set; }
 
@@ -13,7 +13,7 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public class IfCondition : Condition
+    internal class IfCondition : Condition
     {
         public Condition elseCondition { get; protected set; }
 
@@ -40,7 +40,7 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public class LoopCondition : Condition
+    internal class LoopCondition : Condition
     {
         public enum LoopType
         {

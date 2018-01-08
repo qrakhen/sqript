@@ -6,7 +6,7 @@ namespace Qrakhen.Sqript
 {
     public static class Core
     {
-        public static void defineKeywords() {
+        internal static void defineKeywords() {
             Keywords.define(Keyword.REFERENCE, "reference", "declare", "var", "ref", "*~");
             Keywords.define(Keyword.DESTROY, "destroy", "dereference", "del", ":~");
             Keywords.define(Keyword.NEW, "create", "new", "spawn", "~*");
@@ -20,7 +20,7 @@ namespace Qrakhen.Sqript
             Keywords.define(Keyword.CONDITION_LOOP, "do", "while", "for", "loop", "repeat");
         }
 
-        public static void defineOperators() {
+        internal static void defineOperators() {
             Operators.define(Operator.ASSIGN_VALUE);
             Operators.define(Operator.ASSIGN_REFERENCE);
 

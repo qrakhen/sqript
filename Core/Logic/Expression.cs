@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public class Expression
+    internal class Expression
     {
         private Context context;
 

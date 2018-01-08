@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public abstract class Context : Collection<string, Reference>
+    internal abstract class Context : Collection<string, Reference>
     {
         public const string
             CHAR_OPEN = "{",

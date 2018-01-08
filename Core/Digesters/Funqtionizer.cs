@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Qrakhen.Sqript
 {
-    public class Funqtionizer : Interpretoken
+    internal class Funqtionizer : Interpretoken
     {
         public const string
             FQ_DECLARE_OPEN = ":(",
@@ -71,7 +71,7 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public class FunqtionizerException : Exception
+    internal class FunqtionizerException : Exception
     {
         public FunqtionizerException(string message, Token cause = null) : base(message, cause) { }
     }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public abstract class GlobalFunqtion : Funqtion
+    internal abstract class GlobalFunqtion : Funqtion
     {
         public GlobalFunqtion() : base(GlobalContext.getInstance()) {
 
@@ -15,7 +15,7 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public class QonfigFunqtion : GlobalFunqtion
+    internal class QonfigFunqtion : GlobalFunqtion
     {
         public override Value execute(Value[] parameters = null) {
             if (parameters.Length == 1) {
@@ -33,7 +33,7 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public static class Qonfig
+    internal static class Qonfig
     {
         public static Dictionary<string, string> defaultValues = new Dictionary<string, string>();
 
@@ -64,7 +64,7 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public class GlobalContext : Funqtion
+    internal class GlobalContext : Funqtion
     {
         private static GlobalContext instance;
 

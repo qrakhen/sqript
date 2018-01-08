@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Qrakhen.Sqript
 {
-    public static class SQRIPT
+    internal static class SQRIPT
     {
         public const string asciiLogo =
             "  _______/ ^ \\___.___,\n" +
@@ -426,12 +426,12 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public class ConditionException : Exception
+    internal class ConditionException : Exception
     {
         public ConditionException(string message, Token cause = null) : base(message, cause) { }
     }
 
-    public class ReferenceException : Exception
+    internal class ReferenceException : Exception
     {
         private Reference reference;
 
@@ -444,13 +444,13 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public class OperationException : Exception
+    internal class OperationException : Exception
     {
         public OperationException(string message, Token cause = null) : base(message, cause) {
         }
     }
 
-    public class ParseException : Exception
+    internal class ParseException : Exception
     {
         public ParseException(string message, Token cause = null) : base(message, cause) {
         }

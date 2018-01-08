@@ -6,7 +6,8 @@ using System.Text.RegularExpressions;
 
 namespace Qrakhen.Sqript
 {
-    public class Token : Value {
+    public class Token : Value
+    {
         public readonly int line, col;
 
         private Token(ValueType type, object value, int line = -1, int col = -1) : base(value, type) {
@@ -54,7 +55,7 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public class Tokenizer : Digester<char>
+    internal class Tokenizer : Digester<char>
     {
         private List<Token> result;
         private int __line = 0, __col = 0;

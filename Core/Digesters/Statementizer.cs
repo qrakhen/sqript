@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Qrakhen.Sqript
 {
-    public class Statementizer : Interpretoken
+    internal class Statementizer : Interpretoken
     {
         public Statementizer(Token[] stack) : base(stack) { }
 

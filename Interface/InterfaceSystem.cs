@@ -5,23 +5,38 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
+    /// <summary>
+    /// The Interface class is used to create libraries, for example custom networking implementations.
+    /// All default Sqript libraries (i.e. sqlib.base.dll) are made by extending this class.
+    /// </summary>
     public abstract class Interface
     {
         public string name { get; private set; }
         public Dictionary<string, Call> calls;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
         public Interface(string name) {
             this.name = name;
             calls = new Dictionary<string, Call>();
         }
 
+        /// <summary>
+        /// The load method should use define() to register all interface calls.
+        /// </summary>
         public abstract void load();
 
+        /// <summary>
+        /// defines an interface Call, see the Call class for more information
+        /// </summary>
+        /// <param name="call"></param>
         public void define(Call call) {
             calls.Add(call.name, call);
         }
 
-        public Value call(string name, Value[] parameters) {
+        internal Value call(string name, Value[] parameters) {
             if (calls.ContainsKey(name)) return calls[name].execute(parameters);
             else throw new InterfaceException("could not find interface call '" + name + "'", this);
         }
@@ -32,6 +47,15 @@ namespace Qrakhen.Sqript
             public string name { get; protected set; }
             public string[] parameters { get; protected set; }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="name">function name, as used in code</param>
+            /// <param name="parameters">parameter names to later be able to identify them inside the callback</param>
+            /// <param name="callback">
+            /// the actual function, provide any method that accepts a Dictionary as parameter and returns a Sqript.Value
+            /// all provided parameters will be accessible using the dictionary (i.e. string key = parameters["key"];)
+            /// </param>
             public Call(string name, string[] parameters, Func<Dictionary<string, Value>, Value> callback) {
                 this.name = name;
                 this.parameters = parameters;
@@ -48,7 +72,7 @@ namespace Qrakhen.Sqript
             }
         }
 
-        public class Funqtion : Sqript.Funqtion
+        internal class Funqtion : Sqript.Funqtion
         {
             public Call call { get; private set; }
 
@@ -68,7 +92,7 @@ namespace Qrakhen.Sqript
             }
         }
 
-        public Obqect createInterfaceContext() {
+        internal Obqect createInterfaceContext() {
             Obqect context = new Obqect(null);
             foreach (var call in calls) {
                 context.set(call.Key, new Reference(new Funqtion(context, call.Value)));

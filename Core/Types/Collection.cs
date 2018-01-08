@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public class Collection<K, T> : Value<Dictionary<K, T>>
+    internal class Collection<K, T> : Value<Dictionary<K, T>>
     {
         public const string MEMBER_DELIMITER = ":";
 

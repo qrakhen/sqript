@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public class Reference : Value<Value>
+    internal class Reference : Value<Value>
     {        
         public Reference(Value value) : base(ValueType.REFERENCE, value) {
 

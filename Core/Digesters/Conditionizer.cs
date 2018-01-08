@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public class Conditionizer : Interpretoken
+    internal class Conditionizer : Interpretoken
     {
         public const string
             CF_EXPR_OPEN = "(",

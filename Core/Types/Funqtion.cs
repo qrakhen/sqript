@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public class Funqtion : Context
+    internal class Funqtion : Context
     {
         public List<Statement> statements { get; protected set; }
         public List<string> parameters { get; protected set; }

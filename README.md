@@ -6,17 +6,34 @@ Sqript is an interpreting programming language written in C#.
 It comes with it's very own syntax, data types, workflow and behaviours.
 Can be built for - and also runs on - all platforms, including your microwave.
 
-### Philosophy
+## Philosophy
 
-Quak
+With Sqript, I wanted to create something that is new and different,
+but still logical and not too alien.
+My very first idea was mostly concerned about the looks - hence why we have ` *~ a <~ 5 `.
+More and more ideas came together, and as stuff started to work, 
+I created a concept that now is called ` Sqript `. 
+Sqript fixes logical issues that other languages (in my opinion) suffer from,
+and takes the best parts of what I personally like the most, sticking them together - 
+whilst trying to make the result as consistent as possible.
+It was never intended to be used as an actual thing used in real productive scenarios,
+but it definitely has the power to do so.
+
+Please keep in mind that Sqript is still very young and will suffer from child disease - 
+but as I am constantly working on it, even these things will fade.
 
 ### Some Features:
  * type-less, comparable to JavaScript, but CAN be typed if wanted.
+ * easily extendendable - missing a feature? implement it!
+ * pointers. just in easy-to-understand and hard-to-fuck-up.
  * encapsulation (private, protected, public)
  * namespaces, classes, inheritation
- * C++ like pointers, just in easy-to-understand and hard-to-fuck-up.
  * configurable keyword alternatives
+ * operator overloads, custom operator declaration and definition
  * custom 'native' types, extendable native types
+
+# OUTDATED
+## Please be patient while I am working on an actual documentation for this.
 
 ### Example Code
 ```javascript

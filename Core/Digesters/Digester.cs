@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    public abstract class Digester<T>
+    internal abstract class Digester<T>
     {
         protected T[] stack;
         protected int position;

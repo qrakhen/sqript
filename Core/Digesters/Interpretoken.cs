@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Qrakhen.Sqript
 {
-    public class Interpretoken : Digester<Token>
+    internal class Interpretoken : Digester<Token>
     {
         public Interpretoken(Token[] stack) : base(stack) { }
 
