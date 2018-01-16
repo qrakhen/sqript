@@ -23,8 +23,6 @@ namespace Qrakhen.Sqript
             if (value == null) throw new OperationException("value to be casted is null");
             if (value.GetType() == typeof(Reference)) {
                 return ((value as Reference).getReference() as Value);
-            } else if (value.GetType() == typeof(Reference.MemberSelect)) {
-                return (value as Reference.MemberSelect).getMember();
             } else if (value.GetType() == typeof(Expression)) {
                 return getTrueValue((value as Expression).execute());
             //} else if (value is Funqtion) {
@@ -53,8 +51,6 @@ namespace Qrakhen.Sqript
                 case Operator.ASSIGN_VALUE:
                     if (left.GetType() == typeof(Reference)) {
                         (left as Reference).assign(r, false);
-                    } else if (left.GetType() != typeof(Reference.MemberSelect)) {
-                        (left as Reference.MemberSelect).assign(r, false);
                     } else throw new OperationException("only references as left-hand values allowed for assignment");
                     result = r;
                     break;
@@ -62,8 +58,6 @@ namespace Qrakhen.Sqript
                 case Operator.ASSIGN_REFERENCE:
                     if (left.GetType() == typeof(Reference)) {
                         (left as Reference).assign(r, true);
-                    } else if (left.GetType() != typeof(Reference.MemberSelect)) {
-                        (left as Reference.MemberSelect).assign(r, true);
                     } else throw new OperationException("only references as left-hand values allowed for assignment");
                     result = r;
                     break;

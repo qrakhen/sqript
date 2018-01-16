@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Qrakhen.Sqript
+﻿namespace Qrakhen.Sqript
 {
     internal class Reference : Value<Value>
     {        
@@ -46,39 +42,22 @@ namespace Qrakhen.Sqript
         public override string ToString() {
             return getReference().ToString();
         }
+    }
 
-        public class MemberSelect
-        {
-            public Reference reference;
-            public object[] select;
-
-            public MemberSelect(Reference reference, object[] select) {
-                this.reference = reference;
-                this.select = select;
+    internal class TypeReference : Reference
+    {
+        public ValueType forcedType {
+            get {
+                return forcedType;
             }
-
-            public Value getMember(bool parent = false) {
-                /*if (reference.getReference().isType((int)ValueType.ARRAY)) {
-                    int[] __keys = new int[select.Length - (parent ? 1 : 0)];
-                    for (int i = 0; i < __keys.Length; i++) __keys[i] = (int)select[i];
-                    return reference.getValue<Array>().get(__keys);
-                } else if (reference.getReference().isType((int)ValueType.OBQECT)) {
-                    string[] __keys = new string[select.Length - (parent ? 1 : 0)];
-                    for (int i = 0; i < __keys.Length; i++) __keys[i] = (string)select[i];
-                    return reference.getValue<Obqect>().get(__keys);
-                } else throw new Exception("can not get member of non-collection");*/
-                return null;
-            }
-
-            public void assign(Value value, bool reference = false) {
-                /*if (!reference) getMember().setValue(value.getValue(), value.type);
-                else {
-                    object parent = getMember(true);
-                    if ((parent as Value).type == ValueType.ARRAY) (parent as Array).set((int)select[select.Length - 1], value);
-                    else if((parent as Value).type == ValueType.OBQECT)(parent as Obqect).set((string)select[select.Length - 1], value);
-                    else throw new Exception("can not set member of non-collection");
-                }*/
+            private set {
+                if (forcedType == ValueType.NULL) forcedType = value;
+                else throw new Exception("can not redefine static reference type");
             }
         }
-    }    
+
+        public TypeReference(Value value, ValueType forcedType) : base(value) {
+            this.forcedType = forcedType;
+        }
+    }
 }

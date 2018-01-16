@@ -96,7 +96,6 @@ namespace Qrakhen.Sqript
     {
         public new T value {
             get { return (T)base.value; }
-            // set { } should still be read only.
         }
 
         public Value(ValueType type, T value) : base(value, type) {
@@ -132,6 +131,6 @@ namespace Qrakhen.Sqript
         NUMBER = INTEGER + DECIMAL,
         PRIMITIVE = NUMBER + BOOLEAN + STRING,
         CONTEXT = QLASS + FUNQTION + OBQECT,
-        ANY_VALUE = PRIMITIVE + ARRAY + CONTEXT,
+        ANY_VALUE = PRIMITIVE + ARRAY + CONTEXT   
     }
 }
