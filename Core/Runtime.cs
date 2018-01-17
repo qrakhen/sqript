@@ -16,7 +16,7 @@ namespace Qrakhen.Sqript
             "     qrakhen.net       \n\n";
     }
 
-    public static class Debug
+    internal static class Log
     {
         private static Level loggingLevel = Level.INFO;
 
@@ -26,7 +26,8 @@ namespace Qrakhen.Sqript
             CRITICAL = 1,
             WARNINGS = 2,
             INFO = 3,
-            VERBOSE = 4
+            DEBUG = 4,
+            VERBOSE = 5
         }
 
         public static void logToFile(string name, string content) {
@@ -67,11 +68,15 @@ namespace Qrakhen.Sqript
             if (((int)loggingLevel >= (int)Level.WARNINGS)) writeOut("WRN " + message, color);
         }
 
-        public static void log(object message, ConsoleColor color = ConsoleColor.White) {
+        public static void info(object message, ConsoleColor color = ConsoleColor.White) {
             if (((int)loggingLevel >= (int)Level.INFO)) writeOut(message, color);
         }
 
-        public static void spam(object message, ConsoleColor color = ConsoleColor.Gray) {
+        public static void debug(object message, ConsoleColor color = ConsoleColor.Gray) {
+            if (((int)loggingLevel >= (int)Level.INFO)) writeOut(message, color);
+        }
+
+        public static void spam(object message, ConsoleColor color = ConsoleColor.DarkGray) {
             if (((int)loggingLevel >= (int)Level.VERBOSE)) writeOut(message, color);
         }
     }
@@ -349,36 +354,36 @@ namespace Qrakhen.Sqript
                 GlobalContext.getInstance().execute();
             } catch (Exception e) {
                 GlobalContext.getInstance().clearQueue();
-                Debug.error("exception thrown in file " + reader.file + " at " + e.getLocation());
-                if (e.cause != null) Debug.log("caused by token " + e.cause.toDebug() + e.cause.getLocation());
-                else if (reader.token != null) Debug.log("cause unknown - last read token: " + reader.token.toDebug() + reader.token.getLocation());
-                Debug.error("[" + e.GetType().ToString() + "] " + e.Message);
-                Debug.log(e.StackTrace);
+                Log.error("exception thrown in file " + reader.file + " at " + e.getLocation());
+                if (e.cause != null) Log.debug("caused by token " + e.cause.ToString() + e.cause.getLocation());
+                else if (reader.token != null) Log.debug("cause unknown - last read token: " + reader.token.ToString() + reader.token.getLocation());
+                Log.error("[" + e.GetType().ToString() + "] " + e.Message);
+                Log.debug(e.StackTrace);
             } catch (System.Exception e) {
                 GlobalContext.getInstance().clearQueue();
                 //Debug.error("!SYS_EXCEPTION! [" + e.GetType().ToString() + "] " + e.Message);
-                Debug.error("exception thrown in file " + reader.file);
-                Debug.error("this is a system exception and should not happen - writing to logs.");
-                Debug.logToFile("sys_err", e.ToString());
-                Debug.log(e.StackTrace);
+                Log.error("exception thrown in file " + reader.file);
+                Log.error("this is a system exception and should not happen - writing to logs.");
+                Log.logToFile("sys_err", e.ToString());
+                Log.debug(e.StackTrace);
             }
         }
 
         static void cli() {
-            Debug.setLoggingLevel(Debug.Level.INFO);
-            Debug.write("\n" + SQRIPT.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
-            Debug.log("  available cli commands:");
-            Debug.log("   - #help");
-            Debug.log("   - #run <filename>");
-            Debug.log("   - #clr (clears global context)");
-            Debug.log("\n  use qonfig:('log', '4'); for verbose output\n");
+            Log.setLoggingLevel(Log.Level.INFO);
+            Log.write("\n" + SQRIPT.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
+            Log.debug("  available cli commands:");
+            Log.debug("   - #help");
+            Log.debug("   - #run <filename>");
+            Log.debug("   - #clr (clears global context)");
+            Log.debug("\n  use qonfig:('log', '5'); for verbose output\n");
 
             string content = "";
             GlobalContext.resetInstance();
             do {
                 reader.file = "stdin";
                 content = "";
-                Debug.write(" <~ ", ConsoleColor.White, "");
+                Log.write(" <~ ", ConsoleColor.White, "");
                 ConsoleKeyInfo c;
                 do {
                     string line = Console.ReadLine();
@@ -388,7 +393,7 @@ namespace Qrakhen.Sqript
                         content += line;
                         if (!KeyState.keyDown((int)KeyState.Keys.ShiftKey)) break;
                         content += "\n";
-                        Debug.write("    ", ConsoleColor.White, "");
+                        Log.write("    ", ConsoleColor.White, "");
                     }
                 } while (c.Key != ConsoleKey.Escape);
                 if (content.StartsWith("#run")) content = File.ReadAllText(content.Substring(5) + (content.EndsWith(".sq") ? "" : ".sq"));
@@ -396,14 +401,14 @@ namespace Qrakhen.Sqript
                     GlobalContext.resetInstance();
                     continue;
                 } else if (content == "#help") {
-                    Debug.log("~ HELP ~\n");
-                    Debug.log("~ Keywords:");
+                    Log.debug("~ HELP ~\n");
+                    Log.debug("~ Keywords:");
                     foreach (var keyword in Keywords.get()) {
-                        Debug.log("  > " + keyword.name + ":\n    aliases:");
-                        foreach (var alias in keyword.aliases) Debug.log("    - " + alias);
-                        Debug.log(" ----- ");
+                        Log.debug("  > " + keyword.name + ":\n    aliases:");
+                        foreach (var alias in keyword.aliases) Log.debug("    - " + alias);
+                        Log.debug(" ----- ");
                     }
-                    Debug.log("\n~ Tip: type 'global' to print out the global context");
+                    Log.debug("\n~ Tip: type 'global' to print out the global context");
                 } else if (content == "#exit") break;
                 execute(content);
             } while (content != "exit");

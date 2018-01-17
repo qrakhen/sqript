@@ -54,19 +54,21 @@ namespace Qrakhen.Sqript
         }
 
         public override Reference get(string key) {
-            //if (key.Contains(MEMBER_DELIMITER)) return query(key);
             if (Keywords.isAlias(key, Keyword.PARENT_CONTEXT)) return new Reference(parent);
+            else if (Keywords.isAlias(key, Keyword.CURRENT_CONTEXT)) return new Reference(this);
             else if (value.ContainsKey(key)) return value[key];
             else return null;
         }
 
         public Reference query(string query, bool safe = true, bool autoCreate = true) {
-            int index = 0;
-            Reference r;
+            Log.error("I SHOULD STOP USING CONTEXT QUERY, IS THERE REALLY ANY SPOT WHERE I'D REALLY NEED THIS? USE RESREFREC");
+            Log.spam("called context::query with parameters: '" + query + "', '" + safe + "', '" + autoCreate + "'.");
             string[] keys = query.Split(MEMBER_DELIMITER.ToCharArray());
-            if (Keywords.isAlias(keys[index], Keyword.CURRENT_CONTEXT)) index++;
 
-            r = get(keys[index]);
+            int index = 0;
+            Reference r = get(keys[index++]);
+
+            /*r = get(keys[index]);
             if (r == null) {
                 if (index > 0) {
                     if (safe) throw new Exception("tried to access undefined member '" + keys[index] + "'");
@@ -77,9 +79,9 @@ namespace Qrakhen.Sqript
                         if (safe) throw new Exception("tried to access undefined or inaccessible identifier '" + keys[index] + "'");
                         else if (!safe) return null;
                 }
-            }
+            }*/
 
-            for (int i = ++index; i < keys.Length; i++) {
+            for (int i = index; i < keys.Length; i++) {
                 string key = keys[i];
                 Value v = r.getReference();
                 if (v == null) throw new Exception("tried to access member of empty reference '" + keys[i - 1] + ":" + keys[i] + "'");
@@ -117,15 +119,6 @@ namespace Qrakhen.Sqript
                 for (int i = 1; i < lines.Length; i++) r += "    " + lines[i] + "\n";
             }
             return r + "}";
-        }
-
-        public override string toDebug() {
-            string r = base.toDebug() + "{";
-            foreach (var v in value) {
-                if (v.Value.getValue() == this) continue;
-                r += "\n" + v.Key + " = " + v.Value.toDebug() + ",";
-            }
-            return r.Substring(0, r.Length - 1) + "\n}";
         }
     }
 

@@ -70,9 +70,5 @@ namespace Qrakhen.Sqript
         public override string ToString() {
             return "[" + type.ToString() + "] (" + size + ")";
         }
-
-        public override string toDebug() {
-            return "[" + type.ToString() + "] (" + size + ")";
-        }
     }
 }

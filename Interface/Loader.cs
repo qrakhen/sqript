@@ -25,7 +25,7 @@ namespace Qrakhen.Sqript
 
         public static Interface[] loadDirectory(string path, string filter = "*.dll") {
             if (!Directory.Exists(path)) {
-                Debug.warn("default library folder lib/ not found - could not load external libraries.");
+                Log.warn("default library folder lib/ not found - could not load external libraries.");
                 return new Interface[0];
             }
             var r = new List<Interface>();
@@ -34,7 +34,7 @@ namespace Qrakhen.Sqript
                 try {
                     r.AddRange(loadLibrary(file));
                 } catch(Exception e) {
-                    Debug.error("error while trying to load external library '" + file + "':\n" + e);
+                    Log.error("error while trying to load external library '" + file + "':\n" + e);
                 }
             }
             return r.ToArray();

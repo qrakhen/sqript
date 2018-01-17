@@ -24,35 +24,25 @@ namespace Qrakhen.Sqript
 
         public virtual Value execute(Value[] parameters = null) {
             // we need to store all references in a temporary xfq (execution funqtion) so that the original funqtion is not mutated
-            Debug.spam("executing function:\n" + this.ToString());
+            Log.spam("executing function:\n" + this.ToString());
             Funqtion xfq = new Funqtion(parent);
             if (parameters != null) {
                 for (int i = 0; i < parameters.Length; i++) {
                     if (i >= this.parameters.Count) throw new Exception("more parameters provided than funqtion accepts");
-                    Debug.spam(this.parameters[i] + " = " + parameters[i].str());
+                    Log.spam(this.parameters[i] + " = " + parameters[i].str());
                     xfq.set(this.parameters[i], new Reference(parameters[i]));
                 }
             }
             foreach (Statement statement in statements) {
                 Value r = statement.execute(xfq);
                 if (r == null) continue;
-                Debug.spam("reached return statement, returning " + r.str());
+                Log.spam("reached return statement, returning " + r.str());
                 return r;
             }
             return null;
         }
 
         public override string ToString() {
-            string r = "(";
-            foreach (string parameter in parameters) r += parameter + " ";
-            r = r + "{\n";
-            foreach (Statement statement in statements) {
-                r += "    " + statement.ToString() + "\n";
-            }
-            return r + "})";
-        }
-
-        public override string toDebug() {
             string r = "(";
             foreach (string parameter in parameters) r += parameter + " ";
             r = r + "{\n";

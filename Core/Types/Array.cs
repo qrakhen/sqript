@@ -69,13 +69,5 @@ namespace Qrakhen.Sqript
             }
             return r.Substring(0, r.Length - 1) + "\n]";
         }
-
-        public override string toDebug() {
-            string r = base.toDebug() + " [ ";
-            foreach (var v in value) {
-                r += "\n" + v.Key + " = " + v.Value.toDebug() + ",";
-            }
-            return r.Substring(0, r.Length - 1) + "\n]";
-        }
     }
 }

@@ -42,8 +42,8 @@ namespace Qrakhen.Sqript
             Value
                 l = getTrueValue(left),
                 r = getTrueValue(right);
-            if (left.GetType() == typeof(Reference)) Debug.spam("operation.execute() { " + (left as Reference).getValue() + " " + op.symbol + " " + r.ToString() + " }");
-            else Debug.spam("operation.execute() { " + l.getValue() + " " + op.symbol + " " + r.getValue() + " } ");
+            if (left.GetType() == typeof(Reference)) Log.spam("operation.execute() { " + (left as Reference).getValue() + " " + op.symbol + " " + r.ToString() + " }");
+            else Log.spam("operation.execute() { " + l.getValue() + " " + op.symbol + " " + r.getValue() + " } ");
 
             if (op.calculate != null) return op.calculate(l, r);
 

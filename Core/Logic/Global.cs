@@ -47,14 +47,14 @@ namespace Qrakhen.Sqript
         }
 
         public static void setValue(string key, string value) {
-            Debug.log("setting value <" + value + "> for qonfig entry '" + key + "'");
+            Log.debug("setting value <" + value + "> for qonfig entry '" + key + "'");
             switch (key) {
                 case "log":
                 case "logLevel":
                     int i = 0;
                     if (Int32.TryParse(value, out i)) {
-                        Debug.setLoggingLevel((Debug.Level) i);
-                    } else Debug.setLoggingLevel((Debug.Level) Enum.Parse(typeof(Debug.Level), value));
+                        Log.setLoggingLevel((Log.Level) i);
+                    } else Log.setLoggingLevel((Log.Level) Enum.Parse(typeof(Log.Level), value));
                     break;
             }
         }
@@ -83,9 +83,9 @@ namespace Qrakhen.Sqript
                 foreach (var lib in libs) {
                     lib.load();
                     set(lib.name, new Reference(lib.createInterfaceContext()));
-                    Debug.spam("loaded external library component '" + lib.name + "' into global context");
+                    Log.spam("loaded external library component '" + lib.name + "' into global context");
                 }
-                Debug.log("successfully loaded " + libs.Length + " external libraries.");
+                Log.debug("successfully loaded " + libs.Length + " external libraries.");
             }
         }
 
@@ -115,15 +115,15 @@ namespace Qrakhen.Sqript
 
         public void execute() {
             if (queued.Count > 0) {
-            Debug.spam("main context processing " + queued.Count + " queued statements...");
+            Log.spam("main context processing " + queued.Count + " queued statements...");
                 foreach (Statement statement in queued) {
                     Value r = statement.execute(this, true);
-                    if (r != null) Debug.log(r.ToString(), ConsoleColor.Green);
+                    if (r != null) Log.debug(r.ToString(), ConsoleColor.Green);
                     statements.Add(statement);
                 }
                 clearQueue();
             }
-            Debug.spam("main context total executed statement amount: " + statements.Count);
+            Log.spam("main context total executed statement amount: " + statements.Count);
         }
 
         public override string ToString() {
@@ -135,11 +135,6 @@ namespace Qrakhen.Sqript
                 for (int i = 1; i < lines.Length; i++) r += "    " + lines[i] + ",\n";
             }
             if (r.EndsWith(",\n")) r = r.Substring(0, r.Length - 2) + "\n";
-            return r + "}";
-        }
-
-        public override string toDebug() {
-            string r = "GLOBAL {\n";
             return r + "}";
         }
     }

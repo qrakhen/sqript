@@ -116,11 +116,11 @@ namespace Qrakhen.Sqript
             else if (type != ValueType.STRING && Operators.get(value) != null) type = ValueType.OPERATOR;
             else if (type == ValueType.NUMBER) type = (value.IndexOf(".") < 0 ? ValueType.INTEGER : ValueType.DECIMAL);
             result.Add(Token.create(type, value, __line, __col));
-            Debug.spam("[" + type.ToString() + "] > '" + value + "'");
+            Log.spam("[" + type.ToString() + "] > '" + value + "'");
         }
 
         private string[] SQR_SPECIAL = new string[] {
-            ":(", ".~", ":~", "*~", "*:"
+            ":(", ".~", ":~", "*~", "*:", "^~"
         };            
 
         private string readStructure() {
@@ -170,12 +170,12 @@ namespace Qrakhen.Sqript
             string buffer = "";
             do {
                 if (Is.Identifier(peek()) || Is.Number(peek())) buffer += digest();
-                else if (peek() == Context.MEMBER_DELIMITER
+                /*else if (peek() == Context.MEMBER_DELIMITER
                         && buffer.Length > 0
                         && buffer.Substring(buffer.Length - 1) != Context.MEMBER_DELIMITER) {
                     if (Is.Identifier(peek(1))) buffer += digest();
-                    else break;
-                } else break;
+                    else break; }*/
+                else break;
             } while (!endOfStack());
             return buffer;
         }

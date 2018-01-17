@@ -66,11 +66,7 @@ namespace Qrakhen.Sqript
 
         public override string ToString() {
             return (value != null ? value.ToString() : (type == ValueType.NULL ? "null" : "undefined"));
-        }
-
-        public virtual string toDebug() {
-            return "[" + type.ToString() + "] " + this.ToString();
-        }    
+        } 
 
         public static Type getSystemType(ValueType type) {
             switch (type) {

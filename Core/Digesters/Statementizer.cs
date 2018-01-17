@@ -13,14 +13,14 @@ namespace Qrakhen.Sqript
         }
 
         public Statement[] parse(Funqtion context) {
-            Debug.spam("Funqtionizer.execute()");
+            Log.spam("Statementizer.execute()");
             if (stack.Length == 0) return new Statement[0]; 
             List<Token> buffer = new List<Token>();
             List<Statement> statements = new List<Statement>();
             int level = 0;
             do {
                 Token t = digest();
-                Debug.spam(t.ToString());
+                Log.spam(t.ToString());
                 if (t.check(";") && level == 0) {
                     statements.Add(new Statement(buffer.ToArray()));
                     buffer.Clear();

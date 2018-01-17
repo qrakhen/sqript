@@ -41,13 +41,18 @@ namespace Qrakhen.Sqript
                     if (expr.right == null) expr.op = t.getValue<Operator>();
                     else throw new Exception("unexpected operator after left and right token have been read: " + expr.left.ToString() + " " + expr.right.ToString(), t);
                 } else if (t.check(ValueType.IDENTIFIER)) {
-                    Reference r = context.query(t.str());
+                    shift(-1); // this, sadly, is necessary ._.
+                    Reference r = resRefrec(context); // context.query(t.str(), true, false);
                     if (peek().check(Funqtionizer.FQ_CALL_OPEN) && (r.getReference().isType(ValueType.FUNQTION))) {
                         Value[] p = Funqtionizer.parseParameters(context, readBody(true));
                         v = (r.getReference() as Funqtion).execute(p);
-                    } else v = r.getReference();
+                    } else v = r?.getReference();
                 } else if (t.check(ValueType.KEYWORD)) {
-
+                    if (t.check(Keyword.CURRENT_CONTEXT) || t.check(Keyword.PARENT_CONTEXT)) {
+                        shift(-1); // this, sadly, is necessary again ._.
+                        Reference r = resRefrec(context);
+                        v = r?.getReference();
+                    }
                 } else if (t.check(ValueType.STRUCTURE)) {
                     if (t.check(Funqtionizer.FQ_DECLARE_OPEN)) {
                         shift(-1);

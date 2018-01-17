@@ -10,7 +10,8 @@ namespace Qrakhen.Sqript
         public Statement(Token[] stack) : base(stack) { }
 
         public Value execute(Funqtion context, bool forceReturn = false) {
-            Debug.spam("executing statement:\n" + ToString());
+            reset();
+            Log.spam("executing statement:\n" + ToString());
             Reference target = null;
             Value result = null;
             Condition condition = null;
@@ -28,26 +29,28 @@ namespace Qrakhen.Sqript
                         case Keyword.REFERENCE: target = new Reference(); break;
                         case Keyword.FUNQTION: target = new Reference(); break; 
                         case Keyword.QLASS: target = new Reference(); break; 
-                        case Keyword.CURRENT_CONTEXT: target = new Reference(); break;
                         case Keyword.CONDITION_IF: condition = Conditionizer.parse(keyword, context, remaining()); break;
                         case Keyword.CONDITION_LOOP: condition = Conditionizer.parse(keyword, context, remaining()); break;
                         case Keyword.RETURN: returning = true; break;
+                        case Keyword.CURRENT_CONTEXT: target = resRefrec(context, -1); break;
+                        case Keyword.PARENT_CONTEXT: target = resRefrec(context, -1); break;
                         default: throw new Exception("unexpected or not yet supported keyword '" + keyword.name + "'", peek());
                     }
                     if (target != null) declaring = true;
                 } else if (t.type == ValueType.IDENTIFIER) {
-                    identifier = digest().str();
                     if (target == null) {
-                        target = context.query(identifier, false, false);
+                        target = resRefrec(context); //context.query(identifier, false, false);
                         result = target;
-                    } else if (declaring && !identifier.Contains(Context.MEMBER_DELIMITER)) declaredName = identifier;
-                    else throw new Exception("unexpected identifier or context query '" + identifier + "'", t);
+                    } else if (declaring && !peek().check(Context.MEMBER_DELIMITER)) declaredName = digest().str();
+                    else throw new Exception("unexpected identifier or context query '" + peek().str() + "'", t);
                 } else if (t.check(Funqtionizer.FQ_DECLARE_OPEN)) {
                     if (declaring) {
+                        Log.spam("expecting funqtion declaration next");
                         Funqtion fq = Funqtionizer.parse(context, readBody(true));
                         target.assign(fq, true);
                         result = target;
                     } else {
+                        Log.spam("expecting funqtion call next");
                         if (!target.getReference().isType(ValueType.FUNQTION)) throw new ParseException("trying to execute a non-funqtion", t);
                         Value[] parameters = Funqtionizer.parseParameters(context, readBody(true));
                         result = (target.getReference() as Funqtion).execute(parameters);
@@ -78,11 +81,9 @@ namespace Qrakhen.Sqript
                     for (int i = 0; i < remaining.Length; i++) remaining[i] = digest();
                     Expression expr = new Expressionizer(remaining).parse(context);
                     result = expr.execute();
-                } else Debug.warn("unexpected token: '" + digest() + "'");
+                } else Log.warn("unexpected token: '" + digest() + "'");
             } while (!endOfStack());
-
-            reset();
-
+            Log.spam("statement result:\n - target: " + target?.ToString() + "\n - result: " + result?.ToString());
             if (condition != null) return condition.execute();
 
             if (declaring) context.set(declaredName, target);
