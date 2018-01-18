@@ -4,23 +4,26 @@ using System.Text;
 
 namespace Qrakhen.Sqript.Core.Digesters
 {
-    internal class Qreator : Interpretoken
+    internal class Vactory : Interpretoken
     {
-        public Qreator(Token[] stack) : base(stack) {
+        public Vactory(Token[] stack) : base(stack) {
 
         }
 
-        public Value readValue(Context context, ValueType expected = ValueType.ANY_VALUE) {
+        public int readNextValue(Context context, out Value result, ValueType expected = ValueType.ANY_VALUE) {
             Value r = Value.NULL;
             do {
                 Token t = peek();
 
             } while (!endOfStack());
-            return r;
+            result = r;
+            return position;
         }
 
-        public static Value readValue(Context context, Token[] stack, ValueType expected = ValueType.ANY_VALUE) {
-            return new Qreator(stack).readValue(context, expected);
+
+
+        public static int readValue(Context context, Token[] stack, out Value result, ValueType expected = ValueType.ANY_VALUE) {
+            return new Vactory(stack).readNextValue(context, out result, expected);
         }
     }
 }

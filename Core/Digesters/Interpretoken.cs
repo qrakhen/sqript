@@ -62,7 +62,7 @@ namespace Qrakhen.Sqript
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public Reference resRefrec(Context context, int adjust = 0) {
+        public Reference rrr(Context context, int adjust = 0) {
             if (adjust != 0) shift(adjust);
             Log.spam("RESREFREC inbound");
             Reference r = null;
@@ -80,7 +80,7 @@ namespace Qrakhen.Sqript
             if (t.check(Structure.MEMBER_KEY_DELIMITER)) { 
                 if (r?.getReference() is Context) {
                     digest(); // <~ into the void!
-                    return resRefrec((Context)r.getReference());
+                    return rrr((Context)r.getReference());
                 } else throw new ParseException("tried to access member of a value that is not a context and thus memberless.", t);
             } else return r;
         }

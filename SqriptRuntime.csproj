@@ -30,6 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Core\Digesters\Vactory.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="fqtest.sq" />
   </ItemGroup>
 

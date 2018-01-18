@@ -32,14 +32,14 @@ namespace Qrakhen.Sqript
                         case Keyword.CONDITION_IF: condition = Conditionizer.parse(keyword, context, remaining()); break;
                         case Keyword.CONDITION_LOOP: condition = Conditionizer.parse(keyword, context, remaining()); break;
                         case Keyword.RETURN: returning = true; break;
-                        case Keyword.CURRENT_CONTEXT: target = resRefrec(context, -1); break;
-                        case Keyword.PARENT_CONTEXT: target = resRefrec(context, -1); break;
+                        case Keyword.CURRENT_CONTEXT: target = rrr(context, -1); break;
+                        case Keyword.PARENT_CONTEXT: target = rrr(context, -1); break;
                         default: throw new Exception("unexpected or not yet supported keyword '" + keyword.name + "'", peek());
                     }
                     if (declaring) target = new Reference();
                 } else if (t.type == ValueType.IDENTIFIER) {
                     if (target == null) {
-                        target = resRefrec(context); //context.query(identifier, false, false);
+                        target = rrr(context); //context.query(identifier, false, false);
                         result = target;
                     } else if (declaring && !peek().check(Context.MEMBER_DELIMITER)) {
                         context.set(digest().str(), target);

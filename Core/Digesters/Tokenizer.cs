@@ -120,7 +120,7 @@ namespace Qrakhen.Sqript
         }
 
         private string[] SQR_SPECIAL = new string[] {
-            ":(", ".~", ":~", "*~", "*:", "^~"
+            "~(", ".~", ":~", "*~", "*:", "^~"
         };            
 
         private string readStructure() {

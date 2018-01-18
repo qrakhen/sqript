@@ -6,6 +6,10 @@ namespace Qrakhen.Sqript
 {
     internal class Array : Collection<int, Reference>
     {
+        public const string
+            CHAR_OPEN = "[",
+            CHAR_CLOSE = "]"; 
+
         public Array(Dictionary<int, Reference> value) : base(ValueType.ARRAY, value) { }
         public Array() : base(ValueType.ARRAY, new Dictionary<int, Reference>()) { }
 
