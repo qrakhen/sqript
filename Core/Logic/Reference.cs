@@ -40,7 +40,7 @@
         }
 
         public override string ToString() {
-            return getReference().ToString();
+            return (getReference() == null ? NULL.ToString() : getReference().ToString());
         }
     }
 

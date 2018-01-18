@@ -7,8 +7,8 @@ namespace Qrakhen.Sqript
     internal class Funqtionizer : Interpretoken
     {
         public const string
-            FQ_DECLARE_OPEN = ":(",
-            FQ_CALL_OPEN = ":(",
+            FQ_DECLARE_OPEN = "(",
+            FQ_CALL_OPEN = "(",
             FQ_CLOSE = ")",
             FQ_BODY_OPEN = "{",
             FQ_BODY_CLOSE = "}",

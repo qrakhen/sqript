@@ -19,12 +19,19 @@ namespace Qrakhen.Sqript
             private set { }
         }
 
+        public static Dictionary<string, Func<Value[], Value, Value>> nativeCalls = new Dictionary<string, Func<Value[], Value, Value>>();
+
         public ValueType type { get; private set; } = ValueType.NULL;
         public object value { get; private set; } = null;
 
         public Value(object value, ValueType type) {
             this.type = type;
             this.value = value;
+            if (type != ValueType.NATIVE_CALL) assignNativeCalls();
+        }
+
+        protected virtual void assignNativeCalls() {
+
         }
 
         public virtual Value clone() {
@@ -40,7 +47,7 @@ namespace Qrakhen.Sqript
         }
 
         public virtual string str() {
-            return getValue().ToString();
+            return ToString();
         }
 
         public virtual void setValue(object value, ValueType type) {
@@ -121,6 +128,7 @@ namespace Qrakhen.Sqript
         ARRAY = 256,
         OBQECT = 512,
         FUNQTION = 1024,
+        NATIVE_CALL = 1337,
         QLASS = 2048,
         REFERENCE = 4096,
         UNDEFINED = 16384,

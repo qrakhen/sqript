@@ -4,16 +4,43 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    internal abstract class Context : Collection<string, Reference>
-    {
+    internal abstract class Context : Collection<string, Reference> {
         public const string
             CHAR_OPEN = "{",
             CHAR_CLOSE = "}";
+
+        static Context() {
+            /*nativeCalls.Add(
+                "toString", 
+                new Func<Value[], Context, Value>(delegate (Value[] parameters, Context caller) {
+                    return new Value(caller.ToString(), ValueType.STRING);
+                })
+            );
+            nativeCalls.Add(
+                "getType",
+                new Func<Value[], Context, Value>(delegate (Value[] parameters, Context caller) {
+                    return new Value(caller.type.ToString(), ValueType.STRING);
+                })
+            );
+            nativeCalls.Add(
+                "equals",
+                new Func<Value[], Context, Value>(delegate (Value[] parameters, Context caller) {
+                    if (parameters.Length < 1) return FALSE;
+                    return new Value(caller.getValue().Equals(parameters[0].getValue()), ValueType.BOOLEAN);
+                })
+            );*/
+        }
 
         public Context parent { get; protected set; }
 
         public Context(Context parent, ValueType type, Dictionary<string, Reference> value) : base(type, value) {
             this.parent = parent;
+        }
+
+        protected override void assignNativeCalls() {
+            foreach (var call in nativeCalls) {
+                set(call.Key, new Reference(new NativeCall(this, call.Key)));
+            }
         }
 
         public override void set(string key, Reference reference) {

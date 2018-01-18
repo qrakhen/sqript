@@ -26,9 +26,9 @@ namespace Qrakhen.Sqript
                 if (t.check(ValueType.KEYWORD)) {
                     Keyword keyword = digest().getValue<Keyword>();
                     switch (keyword.name) {
-                        case Keyword.REFERENCE: target = new Reference(); break;
-                        case Keyword.FUNQTION: target = new Reference(); break; 
-                        case Keyword.QLASS: target = new Reference(); break; 
+                        case Keyword.REFERENCE: declaring = true; break;
+                        case Keyword.FUNQTION: declaring = true; break; 
+                        case Keyword.QLASS: declaring = true; break; 
                         case Keyword.CONDITION_IF: condition = Conditionizer.parse(keyword, context, remaining()); break;
                         case Keyword.CONDITION_LOOP: condition = Conditionizer.parse(keyword, context, remaining()); break;
                         case Keyword.RETURN: returning = true; break;
@@ -36,13 +36,14 @@ namespace Qrakhen.Sqript
                         case Keyword.PARENT_CONTEXT: target = resRefrec(context, -1); break;
                         default: throw new Exception("unexpected or not yet supported keyword '" + keyword.name + "'", peek());
                     }
-                    if (target != null) declaring = true;
+                    if (declaring) target = new Reference();
                 } else if (t.type == ValueType.IDENTIFIER) {
                     if (target == null) {
                         target = resRefrec(context); //context.query(identifier, false, false);
                         result = target;
-                    } else if (declaring && !peek().check(Context.MEMBER_DELIMITER)) declaredName = digest().str();
-                    else throw new Exception("unexpected identifier or context query '" + peek().str() + "'", t);
+                    } else if (declaring && !peek().check(Context.MEMBER_DELIMITER)) {
+                        context.set(digest().str(), target);
+                    } else throw new Exception("unexpected identifier or context query '" + peek().str() + "'", t);
                 } else if (t.check(Funqtionizer.FQ_DECLARE_OPEN)) {
                     if (declaring) {
                         Log.spam("expecting funqtion declaration next");
@@ -86,7 +87,7 @@ namespace Qrakhen.Sqript
             Log.spam("statement result:\n - target: " + target?.ToString() + "\n - result: " + result?.ToString());
             if (condition != null) return condition.execute();
 
-            if (declaring) context.set(declaredName, target);
+            //if (declaring) context.set(declaredName, target);
             
             if (returning) return result;
             else if (forceReturn) return (result == null ? target : result);

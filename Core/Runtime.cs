@@ -346,31 +346,46 @@ namespace Qrakhen.Sqript
 
         }
 
-        static void execute(string content) {
-            try {
+        static void execute(string content, bool __DEV_DEBUG = false) {
+            if (content.StartsWith("!!")) {
+                content = content.Substring(2);
+                __DEV_DEBUG = true;
+            } else if (content.EndsWith("!!")) {
+                content = content.Substring(0, content.Length - 2);
+                __DEV_DEBUG = true;
+            }
+
+            if (__DEV_DEBUG) {
                 var nizer = new Tokenizer(content);
                 var stack = nizer.parse();
                 GlobalContext.getInstance().queue(new Statementizer(stack).parse(GlobalContext.getInstance()));
                 GlobalContext.getInstance().execute();
-            } catch (Exception e) {
-                GlobalContext.getInstance().clearQueue();
-                Log.error("exception thrown in file " + reader.file + " at " + e.getLocation());
-                if (e.cause != null) Log.debug("caused by token " + e.cause.ToString() + e.cause.getLocation());
-                else if (reader.token != null) Log.debug("cause unknown - last read token: " + reader.token.ToString() + reader.token.getLocation());
-                Log.error("[" + e.GetType().ToString() + "] " + e.Message);
-                Log.debug(e.StackTrace);
-            } catch (System.Exception e) {
-                GlobalContext.getInstance().clearQueue();
-                //Debug.error("!SYS_EXCEPTION! [" + e.GetType().ToString() + "] " + e.Message);
-                Log.error("exception thrown in file " + reader.file);
-                Log.error("this is a system exception and should not happen - writing to logs.");
-                Log.logToFile("sys_err", e.ToString());
-                Log.debug(e.StackTrace);
+            } else {
+                try {
+                    var nizer = new Tokenizer(content);
+                    var stack = nizer.parse();
+                    GlobalContext.getInstance().queue(new Statementizer(stack).parse(GlobalContext.getInstance()));
+                    GlobalContext.getInstance().execute();
+                } catch (Exception e) {
+                    GlobalContext.getInstance().clearQueue();
+                    Log.warn("exception thrown in file " + reader.file + " at " + e.getLocation());
+                    if (e.cause != null) Log.debug("(probably) caused by token " + e.cause.ToString() + e.cause.getLocation());
+                    else if (reader.token != null) Log.debug("cause unknown - last read token: " + reader.token.ToString() + reader.token.getLocation());
+                    Log.error("[" + e.GetType().ToString() + "] " + e.Message);
+                    Log.debug(e.StackTrace);
+                } catch (System.Exception e) {
+                    GlobalContext.getInstance().clearQueue();
+                    //Debug.error("!SYS_EXCEPTION! [" + e.GetType().ToString() + "] " + e.Message);
+                    Log.error("exception thrown in file " + reader.file);
+                    Log.error("this is a system exception and should not happen - writing to logs.");
+                    Log.logToFile("sys_err", e.ToString());
+                    Log.debug(e.StackTrace);
+                }
             }
         }
 
         static void cli() {
-            Log.setLoggingLevel(Log.Level.INFO);
+            Log.setLoggingLevel(Log.Level.VERBOSE);
             Log.write("\n" + SQRIPT.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
             Log.debug("  available cli commands:");
             Log.debug("   - #help");

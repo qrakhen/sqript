@@ -13,10 +13,13 @@ namespace Qrakhen.Sqript
                 Context parent, 
                 Dictionary<string, Reference> references, 
                 List<Statement> statements,
-                List<string> parameters = null) : base(parent, ValueType.FUNQTION, references) {
+                List<string> parameters = null,
+                ValueType type = ValueType.FUNQTION) : base(parent, type, references) {
             this.statements = statements;
             this.parameters = parameters == null ? new List<string>() : parameters;
         }
+
+        public Funqtion(Context parent, ValueType type) : this(parent, null, null, null, type) { }
 
         public Funqtion(Context parent) : this(parent, new Dictionary<string, Reference>(), new List<Statement>()) {}
 
@@ -44,12 +47,36 @@ namespace Qrakhen.Sqript
 
         public override string ToString() {
             string r = "(";
-            foreach (string parameter in parameters) r += parameter + " ";
-            r = r + "{\n";
-            foreach (Statement statement in statements) {
-                r += "    " + statement.ToString() + "\n";
+            if (parameters != null) {
+                foreach (string parameter in parameters)
+                    r += parameter + ", ";
+                if (r.Length > 1) r = r.Substring(0, r.Length - 2);
             }
-            return r + "})";
+            if (statements != null) {
+                r = r + "{\n";
+                foreach (Statement statement in statements) {
+                    r += "    " + statement.ToString() + "\n";
+                }
+                r += "}";
+            }
+            return r + ")";
+        }
+    }
+
+    internal class NativeCall : Funqtion
+    {
+        public string call { get; protected set; }
+
+        public NativeCall(Context parent, string call) : base(parent, ValueType.NATIVE_CALL) {
+            this.call = call;
+        }
+
+        public override Value execute(Value[] parameters = null) {
+            return nativeCalls[call](parameters, parent);
+        }
+
+        public override string ToString() {
+            return "[NATIVE] " + base.ToString();
         }
     }
 }
