@@ -12,7 +12,7 @@ namespace Qrakhen.Sqript
 
         public Obqect(Context parent) : this(parent, new Dictionary<string, Reference>()) {}
 
-        protected void assignNativeCalls() {
+        protected override void assignNativeCalls() {
 
         }
     }

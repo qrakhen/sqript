@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Qrakhen.Sqript.Core.Digesters
+namespace Qrakhen.Sqript
 {
     internal class Vactory : Interpretoken
     {
@@ -11,7 +11,7 @@ namespace Qrakhen.Sqript.Core.Digesters
         }
 
         public int readNextValue(Context context, out Value result, ValueType expected = ValueType.ANY_VALUE) {
-            do {
+            //do {
                 Token t = peek();
                 if ((t.check(ValueType.IDENTIFIER)) || 
                         (t.check(ValueType.KEYWORD) && 
@@ -48,11 +48,11 @@ namespace Qrakhen.Sqript.Core.Digesters
                     }
                 } else if (t.check(ValueType.OPERATOR)) {
                     throw new ParseException("next token was unreadable as value: " + t, t);
-                } else if (t.check(ValueType.ANY_VALUE)) {
+                } else if (t.check(ValueType.PRIMITIVE)) {
                     result = digest().makeValue();
                     return position;
                 }
-            } while (!endOfStack());
+            //} while (!endOfStack());
             result = Value.NULL;
             return position;
         }

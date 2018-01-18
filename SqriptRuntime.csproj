@@ -18,20 +18,12 @@
     <PackageTags>Qrakhen</PackageTags>
     <PackageReleaseNotes>QrakhenQrakhenQrakhenQrakhenQrakhen</PackageReleaseNotes>
     <NeutralLanguage>en-CC</NeutralLanguage>
-    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <ApplicationIcon>sqript.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Core\Context.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Core\Digesters\Vactory.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="fqtest.sq" />

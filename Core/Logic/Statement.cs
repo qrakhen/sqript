@@ -15,9 +15,7 @@ namespace Qrakhen.Sqript
             Reference target = null;
             Value result = null;
             Condition condition = null;
-            string 
-                declaredName = "",
-                identifier = "";
+            string identifier = "";
             bool
                 declaring = false,
                 returning = false;
