@@ -18,7 +18,7 @@ namespace Qrakhen.Sqript
                         (t.check(Keyword.CURRENT_CONTEXT) || 
                         t.check(Keyword.PARENT_CONTEXT)))) {
                     Reference r = rrr(context);
-                    if (peek().check(Funqtionizer.FQ_CALL_OPEN)) {
+                    if (peek().check(Struqture.QALL[OPEN])) {
                         Value[] p = Funqtionizer.parseParameters(context, readBody(true));
                         if (r.getValueType() == ValueType.FUNQTION) {
                             result = (r.getReference() as Funqtion).execute(p);
@@ -29,9 +29,9 @@ namespace Qrakhen.Sqript
                         return position;
                     }
                 } else if (t.check(ValueType.STRUCTURE)) {
-                    if (t.check(Funqtionizer.FQ_DECLARE_OPEN)) {
+                    if (t.check(Struqture.FUNQ[OPEN])) {
                         Funqtion f = Funqtionizer.parse(context, readBody(true));
-                        if (peek().check(Funqtionizer.FQ_CALL_OPEN)) {
+                        if (peek().check(Struqture.QALL[OPEN])) {
                             Value[] p = Funqtionizer.parseParameters(context, readBody(true));
                             result = f.execute(p);
                             return position;
@@ -40,9 +40,9 @@ namespace Qrakhen.Sqript
                             return position;
                         }
                     } else if (t.check(Obqect.CHAR_OPEN)) {
-                        //Obqect o = readBody(true);
+                        // Obqect o = readBody(true);
                     } else if (t.check(Array.CHAR_OPEN)) {
-                        //Array a = readBody(true);
+                        // Array a = readBody(true);
                     } else if (t.check("(")) {
                         Expression e = Expressionizer.parse(context, readBody());
                     }

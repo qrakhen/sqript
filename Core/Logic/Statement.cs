@@ -39,10 +39,10 @@ namespace Qrakhen.Sqript
                     if (target == null) {
                         target = rrr(context); //context.query(identifier, false, false);
                         result = target;
-                    } else if (declaring && !peek().check(Context.MEMBER_DELIMITER)) {
+                    } else if (declaring) {
                         context.set(digest().str(), target);
                     } else throw new Exception("unexpected identifier or context query '" + peek().str() + "'", t);
-                } else if (t.check(Funqtionizer.FQ_DECLARE_OPEN)) {
+                } else if (t.check(Struqture.FUNQ[OPEN])) {
                     if (declaring) {
                         Log.spam("expecting funqtion declaration next");
                         Funqtion fq = Funqtionizer.parse(context, readBody(true));
@@ -60,12 +60,7 @@ namespace Qrakhen.Sqript
                     if (position == 0) {
                         returning = true;
                         target = new Reference();
-                    }
-                    // assignment operators need to be treated in a special way like this, 
-                    // there's no other way i could think of and yes, i thought about that a lot.
-                    // i deemed consistency among the rest of my code as more important.
-                    if (target == null) target = context.query(identifier, false);
-                    if (target == null) target = context.lookupOrThrow(identifier);
+                    } else if (target == null) throw new Exception("assign? assign to WHAT? there's no target reference. ._.");
 
                     Operator op = digest().getValue<Operator>();
                     Token[] right = new Token[(stack.Length - position)];
@@ -85,7 +80,7 @@ namespace Qrakhen.Sqript
             Log.spam("statement result:\n - target: " + target?.ToString() + "\n - result: " + result?.ToString());
             if (condition != null) return condition.execute();
 
-            //if (declaring) context.set(declaredName, target);
+            if (target is FloatingReference) (target as FloatingReference).bind();
             
             if (returning) return result;
             else if (forceReturn) return (result == null ? target : result);

@@ -49,14 +49,14 @@ namespace Qrakhen.Sqript
 
             switch (op.symbol) {
                 case Operator.ASSIGN_VALUE:
-                    if (left.GetType() == typeof(Reference)) {
+                    if (left is Reference) {
                         (left as Reference).assign(r, false);
                     } else throw new OperationException("only references as left-hand values allowed for assignment");
                     result = r;
                     break;
 
                 case Operator.ASSIGN_REFERENCE:
-                    if (left.GetType() == typeof(Reference)) {
+                    if (left is Reference) {
                         (left as Reference).assign(r, true);
                     } else throw new OperationException("only references as left-hand values allowed for assignment");
                     result = r;

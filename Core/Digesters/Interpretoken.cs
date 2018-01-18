@@ -7,6 +7,8 @@ namespace Qrakhen.Sqript
 {
     internal class Interpretoken : Digester<Token>
     {
+        protected const int OPEN = 0x0, CLOSE = 0x1, DEL = 0x2;
+
         public Interpretoken(Token[] stack) : base(stack) { }
 
         protected override Token digest() {
@@ -39,7 +41,7 @@ namespace Qrakhen.Sqript
             if (until != "") descend = until;
             else switch (ascend) {
                 case "(": descend = ")"; break;
-                case ":(": descend = ")"; break;
+                case "~(": descend = ")"; break;
                 case "{": descend = "}"; break;
                 case "[": descend = "]"; break;
                 case "<": descend = ">"; break;
@@ -62,27 +64,50 @@ namespace Qrakhen.Sqript
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public Reference rrr(Context context, int adjust = 0) {
+        public Reference rrr(Context context, int adjust = 0, int __l = 0) {
             if (adjust != 0) shift(adjust);
-            Log.spam("RESREFREC inbound");
+            Log.spam("rrr inbound,\n __level: " + __l);
             Reference r = null;
             Token t = peek();
+            string identifier;
             if (
-                    t.check(ValueType.IDENTIFIER) ||
-                    t.check(Keyword.CURRENT_CONTEXT) ||
-                    t.check(Keyword.PARENT_CONTEXT)) {
-
-                r = context.get(digest().str());
-                Log.spam("RESREFREC found " + r.getReference()?.str());
+                   (Keywords.isAlias(t.str(), Keyword.CURRENT_CONTEXT) && __l == 0) ||
+                    Keywords.isAlias(t.str(), Keyword.PARENT_CONTEXT) ||
+                    t.check(ValueType.IDENTIFIER)) { 
+                identifier = digest().str();
+                r = context.get(identifier);
+                Log.spam("found " + (r == null ? " nothing, lol." : r.getReference()?.str()));
             } else throw new ParseException("tried to resolve reference with unexpected token '" + t + "'", t);
+            if (r == null && __l == 0) r = context.lookupOrThrow(identifier);
 
             t = peek();
-            if (t.check(Structure.MEMBER_KEY_DELIMITER)) { 
+            if (t.check(Struqture.QONT[DEL])) {
                 if (r?.getReference() is Context) {
                     digest(); // <~ into the void!
-                    return rrr((Context)r.getReference());
+                    return rrr((Context)r.getReference(), 0, ++__l);
                 } else throw new ParseException("tried to access member of a value that is not a context and thus memberless.", t);
-            } else return r;
+            } else {
+                if (r == null && identifier != null) {
+                    Log.spam("rrr detected undeclared identifier at the end of the member chain,\nreturning floating reference for possible binding...");
+                    r = new FloatingReference(identifier, context);
+                }
+                return r;
+            }
+        }
+
+        public class FloatingReference : Reference
+        {
+            public string name { get; private set; }
+            public Context owner { get; private set; }
+
+            public FloatingReference(string name, Context owner) : base(NULL) {
+                this.name = name;
+                this.owner = owner;
+            }
+
+            public void bind() {
+                owner.set(name, new Reference(value));
+            }
         }
     }
 }

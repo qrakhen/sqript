@@ -120,7 +120,7 @@ namespace Qrakhen.Sqript
         }
 
         private string[] SQR_SPECIAL = new string[] {
-            ":(", ".~", ":~", "*~", "*:", "^~"
+            "~(", ".~", ":~", "*~", "*:", "^~"
         };            
 
         private string readStructure() {
@@ -197,7 +197,7 @@ namespace Qrakhen.Sqript
             }
 
             public static bool Structure(string c) {
-                return Regex.IsMatch(c, @"[{}()[\].,:;]");
+                return Regex.IsMatch(c, @"[{}()[\].,:;~]");
             }
 
             public static bool String(string c) {

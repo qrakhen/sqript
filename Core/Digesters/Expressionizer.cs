@@ -43,7 +43,7 @@ namespace Qrakhen.Sqript
                 } else if (t.check(ValueType.IDENTIFIER)) {
                     shift(-1); // this, sadly, is necessary ._.
                     Reference r = rrr(context); // context.query(t.str(), true, false);
-                    if (peek().check(Funqtionizer.FQ_CALL_OPEN) && (r.getReference().isType(ValueType.FUNQTION))) {
+                    if (peek().check(Struqture.FUNQ[OPEN]) && (r.getReference().isType(ValueType.FUNQTION))) {
                         Value[] p = Funqtionizer.parseParameters(context, readBody(true));
                         v = (r.getReference() as Funqtion).execute(p);
                     } else v = r?.getReference();
@@ -54,7 +54,7 @@ namespace Qrakhen.Sqript
                         v = r?.getReference();
                     }
                 } else if (t.check(ValueType.STRUCTURE)) {
-                    if (t.check(Funqtionizer.FQ_DECLARE_OPEN)) {
+                    if (t.check(Struqture.FUNQ[OPEN])) {
                         shift(-1);
                         Funqtion fq = Funqtionizer.parse(context, readBody(true));
                         v = fq;
