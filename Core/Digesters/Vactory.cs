@@ -58,6 +58,7 @@ namespace Qrakhen.Sqript
             } else if (t.check(ValueType.PRIMITIVE)) {
                 result = digest().makeValue();
             }
+            t = peek();
             if (t.check(ValueType.OPERATOR)) {
                 Expression e = Expressionizer.parse(context, stack);
                 read = position;

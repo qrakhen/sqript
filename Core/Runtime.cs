@@ -73,7 +73,7 @@ namespace Qrakhen.Sqript
         }
 
         public static void debug(object message, ConsoleColor color = ConsoleColor.Gray) {
-            if (((int)loggingLevel >= (int)Level.INFO)) writeOut(message, color);
+            if (((int)loggingLevel >= (int)Level.DEBUG)) writeOut(message, color);
         }
 
         public static void spam(object message, ConsoleColor color = ConsoleColor.DarkGray) {
