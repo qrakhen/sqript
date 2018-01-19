@@ -21,9 +21,21 @@ namespace Qrakhen.Sqript
 
         public static Dictionary<string, Func<Value[], Value, Value>> nativeCalls = new Dictionary<string, Func<Value[], Value, Value>>();
 
-        public ValueType type { get; private set; } = ValueType.NULL;
-        public object value { get; private set; } = null;
+        /// <summary>
+        /// 
+        /// </summary>
+        public ValueType type { get; private set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public object value { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="type"></param>
         public Value(object value, ValueType type) {
             this.type = type;
             this.value = value;
@@ -72,7 +84,7 @@ namespace Qrakhen.Sqript
         }
 
         public override string ToString() {
-            return (value != null ? value.ToString() : (type == ValueType.NULL ? "null" : "undefined"));
+            return (value != null ? value.ToString() : (type == ValueType.NULL ? "<NULL>" : "undefined"));
         } 
 
         public static Type getSystemType(ValueType type) {

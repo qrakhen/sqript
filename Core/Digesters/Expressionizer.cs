@@ -33,57 +33,16 @@ namespace Qrakhen.Sqript
             Expression head = null;
             Expr expr = new Expr();
             do {
-                Token t = digest();
+                Token t = peek();
                 Value v = null;
                 if (t.type == ValueType.OPERATOR) {
                     if (head != null) expr.left = head;
                     else if (expr.left == null) throw new Exception("manipulation operators (-1, i++) are not yet implemented. thank you for your patience.", t);
-                    if (expr.right == null) expr.op = t.getValue<Operator>();
+                    if (expr.right == null) expr.op = digest().getValue<Operator>();
                     else throw new Exception("unexpected operator after left and right token have been read: " + expr.left.ToString() + " " + expr.right.ToString(), t);
-                } else if (t.check(ValueType.IDENTIFIER)) {
-                    shift(-1); // this, sadly, is necessary ._.
-                    Reference r = rrr(context); // context.query(t.str(), true, false);
-                    if (peek().check(Struqture.FUNQ[OPEN]) && (r.getReference().isType(ValueType.FUNQTION))) {
-                        Value[] p = Funqtionizer.parseParameters(context, readBody(true));
-                        v = (r.getReference() as Funqtion).execute(p);
-                    } else v = r?.getReference();
-                } else if (t.check(ValueType.KEYWORD)) {
-                    if (t.check(Keyword.CURRENT_CONTEXT) || t.check(Keyword.PARENT_CONTEXT)) {
-                        shift(-1); // this, sadly, is necessary again ._.
-                        Reference r = rrr(context);
-                        v = r?.getReference();
-                    }
-                } else if (t.check(ValueType.STRUCTURE)) {
-                    if (t.check(Struqture.FUNQ[OPEN])) {
-                        shift(-1);
-                        Funqtion fq = Funqtionizer.parse(context, readBody(true));
-                        v = fq;
-                    } else if (t.check("(")) {
-                        Value sub = parse(context).execute();
-                        v = sub;
-                    } else if (t.check(")")) {
-                        return (head == null ? new Expression(expr.op, expr.left, expr.right, context) : head);
-                    } else if (t.getValue<string>() == "[") {
-                        Array array = new Array();
-                        do {
-                            t = digest();
-                            if (t.type == ValueType.STRUCTURE && t.getValue<string>() == "]") break;
-                            array.add(t);
-                        } while (!endOfStack());
-                        v = array;
-                    } else if (t.getValue<string>() == "{") {
-                        Obqect obqect = new Obqect(context);
-                        do {
-                            t = digest();
-                            if (t.type == ValueType.STRUCTURE && t.getValue<string>() == "}") break;
-                            else if (t.type == ValueType.IDENTIFIER) {
-                                string key = t.getValue<string>();
-                            }
-                        } while (!endOfStack());
-                        v = obqect;
-                    }
-                } else if (t.isType(ValueType.ANY_VALUE)) {
-                    v = t.makeValue();
+                } else {
+                    int read = Vactory.readNextValue(context, remaining(), out v);
+                    if (v == null) throw new Exception("expected any value while parsing expression, got '" + v + "' instead.");
                 }
 
                 if (v != null) {

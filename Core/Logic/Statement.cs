@@ -42,11 +42,11 @@ namespace Qrakhen.Sqript
                     } else if (declaring) {
                         context.set(digest().str(), target);
                     } else throw new Exception("unexpected identifier or context query '" + peek().str() + "'", t);
-                } else if (t.check(Struqture.FUNQ[OPEN])) {
+                } else if (t.check(Struqture.Funqtion[OPEN])) {
                     if (declaring) {
                         Log.spam("expecting funqtion declaration next");
                         Funqtion fq = Funqtionizer.parse(context, readBody(true));
-                        target.assign(fq, true);
+                        target.assign(fq);
                         result = target;
                     } else {
                         Log.spam("expecting funqtion call next");
@@ -63,13 +63,21 @@ namespace Qrakhen.Sqript
                     } else if (target == null) throw new Exception("assign? assign to WHAT? there's no target reference. ._.");
 
                     Operator op = digest().getValue<Operator>();
+                    Value value = null;
+                    position += Vactory.readNextValue(context, remaining(), out value);
+                    if (value == null) throw new ParseException("could not read value to be " + (returning ? "returned" : "assigned to '" + identifier + ".") + ": unreadable or no value", t);
+
+                    op.execute(target, value);
+
+                    /*
+                    Operator op = digest().getValue<Operator>();
                     Token[] right = new Token[(stack.Length - position)];
                     for (int i = 0; i < right.Length; i++) right[i] = digest();
 
                     Expression expr;
                     if (right.Length == 1) expr = new Expression(op, target, digest(), context);
                     else expr = new Expression(op, target, new Expressionizer(right).parse(context), context);
-                    result = expr.execute();
+                    result = expr.execute();*/
                 } else if (t.isType(ValueType.ANY_VALUE) || t.check("(")) {
                     Token[] remaining = new Token[(stack.Length - position)];
                     for (int i = 0; i < remaining.Length; i++) remaining[i] = digest();
@@ -78,9 +86,9 @@ namespace Qrakhen.Sqript
                 } else Log.warn("unexpected token: '" + digest() + "'");
             } while (!endOfStack());
             Log.spam("statement result:\n - target: " + target?.ToString() + "\n - result: " + result?.ToString());
-            if (condition != null) return condition.execute();
-
             if (target is FloatingReference) (target as FloatingReference).bind();
+
+            if (condition != null) return condition.execute();
             
             if (returning) return result;
             else if (forceReturn) return (result == null ? target : result);

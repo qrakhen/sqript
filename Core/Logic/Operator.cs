@@ -25,11 +25,11 @@ namespace Qrakhen.Sqript
             NO_OPERATION = "";
 
         public string symbol { get; protected set; }
-        public Func<Value, Value, Value> calculate { get; protected set; }
+        public Func<Value, Value, Value> execute { get; protected set; }
 
         public Operator(string symbol, Func<Value, Value, Value> calculate = null) {
             this.symbol = symbol;
-            this.calculate = calculate;
+            this.execute = calculate;
         }
 
         public override string ToString() {

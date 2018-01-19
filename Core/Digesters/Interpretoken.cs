@@ -41,7 +41,7 @@ namespace Qrakhen.Sqript
             if (until != "") descend = until;
             else switch (ascend) {
                 case "(": descend = ")"; break;
-                case "~(": descend = ")"; break;
+                case ":(": descend = ")"; break;
                 case "{": descend = "}"; break;
                 case "[": descend = "]"; break;
                 case "<": descend = ">"; break;
@@ -81,7 +81,7 @@ namespace Qrakhen.Sqript
             if (r == null && __l == 0) r = context.lookupOrThrow(identifier);
 
             t = peek();
-            if (t.check(Struqture.QONT[DEL])) {
+            if (t.check(Struqture.MEMBER)) {
                 if (r?.getReference() is Context) {
                     digest(); // <~ into the void!
                     return rrr((Context)r.getReference(), 0, ++__l);

@@ -14,11 +14,11 @@ namespace Qrakhen.Sqript
 
         public Funqtion parse(Context context) {
             Token t = digest();
-            if (t.check(Struqture.FUNQ[OPEN])) {
+            if (t.check(Struqture.Funqtion[OPEN])) {
                 Funqtion fq = new Funqtion(context);
                 do {
                     t = peek();
-                    if (t.check(Struqture.QONT[OPEN])) break;
+                    if (t.check(Struqture.Context[OPEN])) break;
                     else if (t.check(ValueType.IDENTIFIER)) {
                         fq.parameters.Add(t.str());
                         digest();
@@ -28,9 +28,9 @@ namespace Qrakhen.Sqript
                 else {
                     Token[] body = readBody();
                     fq.statements.AddRange(new Statementizer(body).parse(fq));
-                    if (peek().check(Struqture.FUNQ[CLOSE])) {
+                    if (peek().check(Struqture.Funqtion[CLOSE])) {
                         return fq;
-                    } else if (peek().check(Struqture.FUNQ[DEL])) {
+                    } else if (peek().check(Struqture.Funqtion[DEL])) {
                         throw new FunqtionizerException("funqtions overloads not yet implemented", peek());
                     } else throw new ParseException("unexpected token found when trying to parse funqtion body definition", peek());
                 }
@@ -40,17 +40,17 @@ namespace Qrakhen.Sqript
         public Value[] parseParameters(Context context) {
             List<Value> parameters = new List<Value>();
             Token t = digest();
-            if (t.check(Struqture.QALL[OPEN])) {
+            if (t.check(Struqture.Call[OPEN])) {
                 t = peek();
-                if (t.check(Struqture.FUNQ[CLOSE])) return new Value[0];
+                if (t.check(Struqture.Funqtion[CLOSE])) return new Value[0];
                 else do {
                         t = digest();
                         if (t.isType(ValueType.ANY_VALUE)) parameters.Add(t.makeValue());
                         else if (t.isType(ValueType.IDENTIFIER)) parameters.Add(context.getOrThrow(t.str()).getReference());
                         else throw new ParseException("unexpected token found when trying to parse funqtion call", t);
                         t = digest();
-                        if (t.check(Struqture.QALL[DEL])) continue;
-                        else if (t.check(Struqture.QALL[CLOSE])) break;
+                        if (t.check(Struqture.Call[DEL])) continue;
+                        else if (t.check(Struqture.Call[CLOSE])) break;
                         else throw new ParseException("unexpected token found when trying to parse funqtion call", t);
                     } while (!endOfStack());
                 return parameters.ToArray();

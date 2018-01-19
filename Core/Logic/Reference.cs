@@ -10,21 +10,16 @@
 
         }
 
-        /// <summary>
-        /// Care, brainfuck ahead
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="reference"></param>
-        public virtual void assign(Value value, bool reference = false) {
-            if (reference) setValue(value, type);
-            else {
-                if (this.value == null || this.value.type == ValueType.NULL) setValue(value, type);
-                else setValue(value.clone(), type);
-            }
+        public virtual void assign(Value value) { 
+            setReference(value);
         }
 
         public virtual Value getReference() {
             return value;
+        }
+
+        public virtual void setReference(Value value) {
+            setValue(value, type);
         }
 
         public new virtual T getValue<T>() {

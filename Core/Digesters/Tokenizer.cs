@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Qrakhen.Sqript
@@ -28,7 +27,7 @@ namespace Qrakhen.Sqript
         }
 
         public bool check(ValueType type) {
-            return (this.type == type);
+            return isType(type);
         }
 
         public Value makeValue() {
