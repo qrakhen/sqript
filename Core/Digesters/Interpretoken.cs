@@ -40,8 +40,8 @@ namespace Qrakhen.Sqript
                 descend = "";
             if (until != "") descend = until;
             else switch (ascend) {
+                case "~(": descend = ")"; break;
                 case "(": descend = ")"; break;
-                case ":(": descend = ")"; break;
                 case "{": descend = "}"; break;
                 case "[": descend = "]"; break;
                 case "<": descend = ">"; break;

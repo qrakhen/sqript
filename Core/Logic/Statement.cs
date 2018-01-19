@@ -25,8 +25,8 @@ namespace Qrakhen.Sqript
                     Keyword keyword = digest().getValue<Keyword>();
                     switch (keyword.name) {
                         case Keyword.REFERENCE: declaring = true; break;
-                        case Keyword.FUNQTION: declaring = true; break; 
-                        case Keyword.QLASS: declaring = true; break; 
+                        case Keyword.FUNQTION: declaring = true; break;
+                        case Keyword.QLASS: declaring = true; break;
                         case Keyword.CONDITION_IF: condition = Conditionizer.parse(keyword, context, remaining()); break;
                         case Keyword.CONDITION_LOOP: condition = Conditionizer.parse(keyword, context, remaining()); break;
                         case Keyword.RETURN: returning = true; break;
@@ -37,8 +37,13 @@ namespace Qrakhen.Sqript
                     if (declaring) target = new Reference();
                 } else if (t.type == ValueType.IDENTIFIER) {
                     if (target == null) {
-                        target = rrr(context); //context.query(identifier, false, false);
+                        target = rrr(context);
                         result = target;
+                        if (peek().check(Struqture.Call[OPEN])) {
+                            if (!target.getReference().isType(ValueType.FUNQTION)) throw new ParseException("trying to execute a non-funqtion", t);
+                            Value[] parameters = Funqtionizer.parseParameters(context, readBody(true));
+                            result = (target.getReference() as Funqtion).execute(parameters);
+                        }
                     } else if (declaring) {
                         context.set(digest().str(), target);
                     } else throw new Exception("unexpected identifier or context query '" + peek().str() + "'", t);
@@ -48,12 +53,7 @@ namespace Qrakhen.Sqript
                         Funqtion fq = Funqtionizer.parse(context, readBody(true));
                         target.assign(fq);
                         result = target;
-                    } else {
-                        Log.spam("expecting funqtion call next");
-                        if (!target.getReference().isType(ValueType.FUNQTION)) throw new ParseException("trying to execute a non-funqtion", t);
-                        Value[] parameters = Funqtionizer.parseParameters(context, readBody(true));
-                        result = (target.getReference() as Funqtion).execute(parameters);
-                    }
+                    } else throw new ParseException("unexpected funqtion declaration start: not currently declaring anything.", t);
                 } else if (t.check(Operator.ASSIGN_REFERENCE) || t.check(Operator.ASSIGN_VALUE)) {
                     // if a <~ or <& is detected right at the beginning of the statement,
                     // we treat it like a return statement. sqript rules.
@@ -63,21 +63,10 @@ namespace Qrakhen.Sqript
                     } else if (target == null) throw new Exception("assign? assign to WHAT? there's no target reference. ._.");
 
                     Operator op = digest().getValue<Operator>();
-                    Value value = null;
-                    position += Vactory.readNextValue(context, remaining(), out value);
+                    Value value = Vactory.readNextValue(context, remaining());
                     if (value == null) throw new ParseException("could not read value to be " + (returning ? "returned" : "assigned to '" + identifier + ".") + ": unreadable or no value", t);
 
                     op.execute(target, value);
-
-                    /*
-                    Operator op = digest().getValue<Operator>();
-                    Token[] right = new Token[(stack.Length - position)];
-                    for (int i = 0; i < right.Length; i++) right[i] = digest();
-
-                    Expression expr;
-                    if (right.Length == 1) expr = new Expression(op, target, digest(), context);
-                    else expr = new Expression(op, target, new Expressionizer(right).parse(context), context);
-                    result = expr.execute();*/
                 } else if (t.isType(ValueType.ANY_VALUE) || t.check("(")) {
                     Token[] remaining = new Token[(stack.Length - position)];
                     for (int i = 0; i < remaining.Length; i++) remaining[i] = digest();

@@ -1,8 +1,8 @@
-﻿*~ obj = {};
-obj:sub = {};
-obj:sub:a = 500;
+﻿*~ obj <~ {};
+obj:sub <~ {};
+obj:sub:a <~ 500;
 
-fq f({
+fq f~({
 	<~ obj:sub:a;
 });
 

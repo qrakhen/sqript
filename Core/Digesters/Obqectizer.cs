@@ -25,8 +25,7 @@ namespace Qrakhen.Sqript
                         t = peek();
                         if (t.check(Operator.ASSIGN_REFERENCE) || t.check(Operator.ASSIGN_VALUE)) {
                             Operator op = Operators.get(digest().ToString());
-                            Value value = null;
-                            position += Vactory.readNextValue(o, remaining(), out value);
+                            Value value = Vactory.readNextValue(context, remaining());
                             if (value == null) throw new ParseException("could not read value for '" + key + "': unreadable or no value.", t);
                             o.set(key, new Reference(value));
                             t = digest();

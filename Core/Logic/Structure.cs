@@ -14,7 +14,7 @@ namespace Qrakhen.Sqript
             DELIMITER = 0x2;
 
         public static readonly string[] Context = new string[3] { "{", "}", "," };
-        public static readonly string[] Funqtion = new string[3] { ":(", ")", " " };
+        public static readonly string[] Funqtion = new string[3] { "~(", ")", " " };
         public static readonly string[] Call = new string[3] { "(", ")", "," };
         public static readonly string[] Collection = new string[3] { "[", "]", "," };
         public static readonly string[] TypeWrapper = new string[3] { "<", ">", "," };
