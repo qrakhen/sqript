@@ -32,6 +32,11 @@ namespace Qrakhen.Sqript
             this.execute = calculate;
         }
 
+        public static Value getRealValue(Value v) {
+            if (v is Reference) return (v as Reference).getReference();
+            else return v;
+        }
+
         public override string ToString() {
             return symbol;
         }

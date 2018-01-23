@@ -53,7 +53,7 @@ namespace Qrakhen.Sqript
         }
 
         public override string ToString() {
-            return "0x" + id.ToString("X") + ":" + name;
+            return name;
         }
 
         public bool isType(KeywordType type) {

@@ -8,11 +8,22 @@ namespace Qrakhen.Sqript
     {
         protected Node head;
 
-        public Segment(Token[] stack) : base(stack) {
-
+        public SegmentType type { get; protected set; }
+        public enum SegmentType
+        {
+            UNDEFINED = 0x00,
+            EXPRESSION = 0x01,
+            REFERENCE = 0x02,
+            CONDITION = 0x04,
+            FUNQTION = 0x08,
+            CLASS = 0x10
         }
 
-        /**
+        public Segment(Token[] stack, SegmentType type = SegmentType.UNDEFINED) : base(stack) {
+            this.type = type;
+        }
+
+        /************************************
          *  *~ a <~ 5 + (8 / 2);
          *  
          *     { <- head node
@@ -22,21 +33,77 @@ namespace Qrakhen.Sqript
          *              }
          *          }
          *     }
-         * */
+         **/
         public Value execute(Context context) {
-            return build(context).execute();
+            Log.spam("segment.execute()");
+            head = null;
+            Node end = build(context);
+            Value r = Value.NULL;
+            if (end.empty() && head != null && !head.empty()) {
+                r = head.execute();
+            } else {
+                r = end.execute();
+                if (head != null && !head.empty()) {
+                    head.right = r;
+                    head.execute();
+                }
+            }
+            if (head.left is FloatingReference) (head.left as FloatingReference).bind();
+            return r;
         }
 
-        protected virtual Node build(Context context, Node pre = null) {
+        protected virtual Node build(Context context, Node node = null) {
             do {
-                if (pre == null) pre = new Node();
-                int p = position;
-                Value v = Vactory.readNextValue(context, stack, out p);
+                if (node == null) node = new Node();
+                Log.spam("now building node: " + node);
+                Token t = peek();
+                if (t.check(ValueType.KEYWORD)) {
+                    if (t.check(Keyword.REFERENCE)) {
+                        if (node.left != null) throw new ParseException("can not declare a new reference here ._.", t);
+                        type = SegmentType.REFERENCE;
+                        digest();
+                        t = peek();
+                        if (t.check(ValueType.IDENTIFIER)) {
+                            head = new Node(new FloatingReference(digest().str(), context), null, null);
+                        } else throw new ParseException("expected identifier after new reference keyword, got '" + t + "' instead", t);
+                    } else if (t.check(Keyword.CURRENT_CONTEXT) || t.check(Keyword.PARENT_CONTEXT)) {
+                        if (head == null) {
+                            head = new Node(rrr(context), null, null);
+                        } else {
+                            node.put(rrr(context));
+                        }
+                    } else throw new Exception("check me");
+                } else if (t.check(ValueType.OPERATOR)) {
+                    Operator op = digest().getValue<Operator>();
+                    if (node.ready()) {
+                        // explanation: move right node side to the new node and make that the right side of the current node
+                        // let's call it node stack rotation or something, sounds pretty cool
+                        Node next = new Node(node, null, op);
+                        node = build(context, next);
+                    } else if (node.left != null) {
+                        node.op = op;
+                    } else if (head.op == null) {
+                        head.op = op;
+                    } else throw new ParseException("sorry, manipulation operators (operators without left-hand value) are not yet implemented. :/", t);
+                } else if (t.check(ValueType.STRUCTURE, "(")) {
+                    if (node.ready()) throw new ParseException("can not open new segment without prior operator.", t);
+                    Segment sub = new Segment(readBody());
+                    node.put(sub.execute(context));
+                } else {
+                    if (t.check(";") || endOfStack()) {
+                        Log.spam("end of node chain reached: ';'");
+                        digest();
+                        break;
+                    }
+                    if (node.ready()) throw new ParseException("can not add another value to finished new segment node without prior operator.", t);
+                    Value v = readNextValue(context);
+                    node.put(v);
+                }
             } while (!endOfStack());
-            return null;
+            return node;
         }
 
-        protected class Node 
+        protected class Node
         {
             public object left { get; set; }
             public object right { get; set; }
@@ -51,21 +118,27 @@ namespace Qrakhen.Sqript
             public Value execute() {
                 if (left != null) {
                     if (op != null && right != null) {
-                        Value _left = (Value)left;
+                        Value _left;
                         Value _right;
                         if (right is Node) _right = (right as Node).execute();
                         else _right = (Value)right;
+                        if (left is Node) _left = (left as Node).execute();
+                        else _left = (Value)left;
                         return op.execute(_left, _right);
                     } else {
                         return (Value)left;
                     }
                 } else {
-                    throw new OperationException("tried to execute empty SegmentNode");
+                    return Value.NULL;
                 }
             }
 
             public bool ready() {
                 return (left != null && right != null && op != null);
+            }
+
+            public bool empty() {
+                return (left == null && right == null && op == null);
             }
 
             public bool put(object value) {
@@ -76,15 +149,18 @@ namespace Qrakhen.Sqript
             }
 
             public override string ToString() {
+                if (empty()) return "{ }";
                 string r = "{\n";
-                r += "    " + left?.ToString() + " " + op?.symbol;
-                string[] s = right?.ToString().Split(new char[] { '\n' });
-                r += " " + s[0] + " ";
-                for (int i = 1; i < s.Length; i++) r += "    " + s[i];
+                r += "   " + (right is Node ? left?.ToString() : right?.ToString()) + " " + op?.symbol;
+                if (ready()) {
+                    string[] s = (right is Node ? right?.ToString() : left?.ToString()).Split(new char[] { '\n' });
+                    r += " " + s[0] + " ";
+                    for (int i = 1; i < s.Length; i++) r += "\n    " + s[i];
+                }
                 return r += "\n}";
             }
         }
-    }    
+    }
 
     internal class TypeDefinition : Segment
     {
@@ -109,4 +185,5 @@ namespace Qrakhen.Sqript
 
         }
     }
+
 }

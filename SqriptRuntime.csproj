@@ -32,7 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Core\Logic\Segment.cs" />
+    <Compile Remove="Core\Digesters\Segment.cs" />
+    <Compile Remove="Core\Logic\Statement.cs" />
   </ItemGroup>
 
   <ItemGroup>

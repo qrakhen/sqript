@@ -38,6 +38,8 @@ namespace Qrakhen.Sqript
             });
 
             Operators.define(Operator.CALCULATE_ADD, delegate (Value a, Value b) {
+                a = Operator.getRealValue(a);
+                b = Operator.getRealValue(b);
                 if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
                     return new Value(Convert.ToDecimal(a.getValue()) + Convert.ToDecimal(b.getValue()), ValueType.DECIMAL);
                 } else if (a.isType(ValueType.STRING) || b.isType(ValueType.STRING)) {
@@ -48,6 +50,8 @@ namespace Qrakhen.Sqript
             });
 
             Operators.define(Operator.CALCULATE_SUBTRACT, delegate (Value a, Value b) {
+                a = Operator.getRealValue(a);
+                b = Operator.getRealValue(b);
                 if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
                     return new Value(Convert.ToDecimal(a.getValue()) - Convert.ToDecimal(b.getValue()), ValueType.DECIMAL);
                 } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {
@@ -56,6 +60,8 @@ namespace Qrakhen.Sqript
             });
 
             Operators.define(Operator.CALCULATE_DIVIDE, delegate (Value a, Value b) {
+                a = Operator.getRealValue(a);
+                b = Operator.getRealValue(b);
                 if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
                     return new Value(Convert.ToDecimal(a.getValue()) / Convert.ToDecimal(b.getValue()), ValueType.DECIMAL);
                 } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {
@@ -64,6 +70,8 @@ namespace Qrakhen.Sqript
             });
 
             Operators.define(Operator.CALCULATE_MULTIPLY, delegate (Value a, Value b) {
+                a = Operator.getRealValue(a);
+                b = Operator.getRealValue(b);
                 if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
                     return new Value(Convert.ToDecimal(a.getValue()) * Convert.ToDecimal(b.getValue()), ValueType.DECIMAL);
                 } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {
@@ -72,12 +80,16 @@ namespace Qrakhen.Sqript
             });
 
             Operators.define(Operator.CONDITION_AND, delegate (Value a, Value b) {
+                a = Operator.getRealValue(a);
+                b = Operator.getRealValue(b);
                 if (a.isType(ValueType.BOOLEAN) && b.isType(ValueType.BOOLEAN)) {
                     return new Value(a.getValue<bool>() && b.getValue<bool>(), ValueType.BOOLEAN);
                 } else throw new OperationException("can not compare types for " + a.type.ToString() + " AND " + b.type.ToString());
             });
 
             Operators.define(Operator.CONDITION_OR, delegate (Value a, Value b) {
+                a = Operator.getRealValue(a);
+                b = Operator.getRealValue(b);
                 if (a.isType(ValueType.BOOLEAN) && b.isType(ValueType.BOOLEAN)) {
                     return new Value(a.getValue<bool>() || b.getValue<bool>(), ValueType.BOOLEAN);
                 } else throw new OperationException("can not compare types for " + a.type.ToString() + " OR " + b.type.ToString());
@@ -88,6 +100,8 @@ namespace Qrakhen.Sqript
             });
 
             Operators.define(Operator.CONDITION_SMALLER, delegate (Value a, Value b) {
+                a = Operator.getRealValue(a);
+                b = Operator.getRealValue(b);
                 if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
                     return new Value((Convert.ToDecimal(a.getValue()) < Convert.ToDecimal(b.getValue())), ValueType.BOOLEAN);
                 } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {
@@ -96,6 +110,8 @@ namespace Qrakhen.Sqript
             });
 
             Operators.define(Operator.CONDITION_SMALLER_EQUAL, delegate (Value a, Value b) {
+                a = Operator.getRealValue(a);
+                b = Operator.getRealValue(b);
                 if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
                     return new Value((Convert.ToDecimal(a.getValue()) <= Convert.ToDecimal(b.getValue())), ValueType.BOOLEAN);
                 } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {
@@ -104,6 +120,8 @@ namespace Qrakhen.Sqript
             });
 
             Operators.define(Operator.CONDITION_BIGGER, delegate (Value a, Value b) {
+                a = Operator.getRealValue(a);
+                b = Operator.getRealValue(b);
                 if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
                     return new Value((Convert.ToDecimal(a.getValue()) > Convert.ToDecimal(b.getValue())), ValueType.BOOLEAN);
                 } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {
@@ -112,6 +130,8 @@ namespace Qrakhen.Sqript
             });
 
             Operators.define(Operator.CONDITION_BIGGER_EQUAL, delegate (Value a, Value b) {
+                a = Operator.getRealValue(a);
+                b = Operator.getRealValue(b);
                 if (a.isType(ValueType.DECIMAL) || b.isType(ValueType.DECIMAL)) {
                     return new Value((Convert.ToDecimal(a.getValue()) >= Convert.ToDecimal(b.getValue())), ValueType.BOOLEAN);
                 } else if (a.isType(ValueType.INTEGER) && b.isType(ValueType.INTEGER)) {

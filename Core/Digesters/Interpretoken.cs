@@ -141,20 +141,5 @@ namespace Qrakhen.Sqript
 
             return result;
         }
-
-        public class FloatingReference : Reference
-        {
-            public string name { get; private set; }
-            public Context owner { get; private set; }
-
-            public FloatingReference(string name, Context owner) : base(NULL) {
-                this.name = name;
-                this.owner = owner;
-            }
-
-            public void bind() {
-                owner.set(name, new Reference(value));
-            }
-        }
     }
 }

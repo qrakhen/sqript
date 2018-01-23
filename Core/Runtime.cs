@@ -353,25 +353,18 @@ namespace Qrakhen.Sqript
             } else if (content.EndsWith("!!")) {
                 content = content.Substring(0, content.Length - 2);
                 __DEV_DEBUG = true;
-            } else if (content.EndsWith("??")) {
-                content = content.Substring(0, content.Length - 2);
-                var nizer = new Tokenizer(content);
-                var stack = nizer.parse();
-                var stuff = new Statementizer(stack).parse(GlobalContext.getInstance(), true);
-                stuff[0].execute(GlobalContext.getInstance());
-                return;
             }
 
             if (__DEV_DEBUG) {
                 var nizer = new Tokenizer(content);
                 var stack = nizer.parse();
-                GlobalContext.getInstance().queue(new Statementizer(stack).parse(GlobalContext.getInstance()));
+                GlobalContext.getInstance().queue(new Segmentizer(stack).parse(GlobalContext.getInstance()));
                 GlobalContext.getInstance().execute();
             } else {
                 try {
                     var nizer = new Tokenizer(content);
                     var stack = nizer.parse();
-                    GlobalContext.getInstance().queue(new Statementizer(stack).parse(GlobalContext.getInstance()));
+                    GlobalContext.getInstance().queue(new Segmentizer(stack).parse(GlobalContext.getInstance()));
                     GlobalContext.getInstance().execute();
                 } catch (Exception e) {
                     GlobalContext.getInstance().clearQueue();

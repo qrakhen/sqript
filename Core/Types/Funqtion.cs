@@ -6,13 +6,13 @@ namespace Qrakhen.Sqript
 {
     internal class Funqtion : Context
     {
-        public List<Statement> statements { get; protected set; }
+        public List<Segment> statements { get; protected set; }
         public List<string> parameters { get; protected set; }
 
         public Funqtion(
                 Context parent, 
                 Dictionary<string, Reference> references, 
-                List<Statement> statements,
+                List<Segment> statements,
                 List<string> parameters = null,
                 ValueType type = ValueType.FUNQTION) : base(parent, type, references) {
             this.statements = statements;
@@ -21,9 +21,9 @@ namespace Qrakhen.Sqript
 
         public Funqtion(Context parent, ValueType type) : this(parent, null, null, null, type) { }
 
-        public Funqtion(Context parent) : this(parent, new Dictionary<string, Reference>(), new List<Statement>()) {}
+        public Funqtion(Context parent) : this(parent, new Dictionary<string, Reference>(), new List<Segment>()) {}
 
-        public Funqtion(Context parent, List<Statement> statements) : this(parent, new Dictionary<string, Reference>(), statements) { }
+        public Funqtion(Context parent, List<Segment> statements) : this(parent, new Dictionary<string, Reference>(), statements) { }
 
         public virtual Value execute(Value[] parameters = null) {
             // we need to store all references in a temporary xfq (execution funqtion) so that the original funqtion is not mutated
@@ -36,7 +36,7 @@ namespace Qrakhen.Sqript
                     xfq.set(this.parameters[i], new Reference(parameters[i]));
                 }
             }
-            foreach (Statement statement in statements) {
+            foreach (Segment statement in statements) {
                 Value r = statement.execute(xfq);
                 if (r == null) continue;
                 Log.spam("reached return statement, returning " + r.str());
@@ -54,7 +54,7 @@ namespace Qrakhen.Sqript
             }
             if (statements != null) {
                 r = r + "{\n";
-                foreach (Statement statement in statements) {
+                foreach (Segment statement in statements) {
                     r += "    " + statement.ToString() + "\n";
                 }
                 r += "}";

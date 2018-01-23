@@ -27,7 +27,7 @@ namespace Qrakhen.Sqript
                 if (endOfStack()) throw new ParseException("unexpected end of stack when trying to parse funqtion parameter declaration", t);
                 else {
                     Token[] body = readBody();
-                    fq.statements.AddRange(new Statementizer(body).parse(fq));
+                    fq.statements.AddRange(new Segmentizer(body).parse(fq));
                     if (peek().check(Struqture.Funqtion[CLOSE])) {
                         return fq;
                     } else if (peek().check(Struqture.Funqtion[DEL])) {

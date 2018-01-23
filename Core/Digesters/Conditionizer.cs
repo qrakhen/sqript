@@ -46,8 +46,8 @@ namespace Qrakhen.Sqript
                     else digest();
                     c.setElse(parse(k, context, remaining()));
                 } else {
-                    if (t.check(CF_BODY_OPEN)) c.statements.AddRange(Statementizer.parse(c, readBody()));
-                    else c.statements.AddRange(Statementizer.parse(c, readBody(false, ";")));
+                    if (t.check(CF_BODY_OPEN)) c.statements.AddRange(Segmentizer.parse(c, readBody()));
+                    else c.statements.AddRange(Segmentizer.parse(c, readBody(false, ";")));
                 }
             } while (!endOfStack());
             return c;
@@ -67,8 +67,8 @@ namespace Qrakhen.Sqript
                     expr = new Expressionizer(readBody());
                     c.setPremise(expr);
                 } else {
-                    if (t.check(CF_BODY_OPEN)) c.statements.AddRange(Statementizer.parse(c, readBody()));
-                    else c.statements.AddRange(Statementizer.parse(c, readBody(false, ";")));
+                    if (t.check(CF_BODY_OPEN)) c.statements.AddRange(Segmentizer.parse(c, readBody()));
+                    else c.statements.AddRange(Segmentizer.parse(c, readBody(false, ";")));
                 }
             } while (!endOfStack());
             return c;
