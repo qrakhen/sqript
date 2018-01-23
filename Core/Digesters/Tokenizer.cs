@@ -30,6 +30,10 @@ namespace Qrakhen.Sqript
             return isType(type);
         }
 
+        public bool check(Keyword.Kwrd kwrd) {
+            return (value?.ToString() == Keywords.get(kwrd.name).ToString());
+        }
+
         public Value makeValue() {
             return new Value(value, type);
         }
@@ -100,21 +104,21 @@ namespace Qrakhen.Sqript
                             break;
                         } else if (s == close) break;
                     } while (!endOfStack());
-                } else if (Is.Structure(cur)) addToken(readStructure(), ValueType.STRUCTURE);
-                else if (Is.Operator(cur)) addToken(readOperator(), ValueType.OPERATOR);
-                else if (Is.String(cur)) addToken(readString(), ValueType.STRING);
-                else if (Is.Number(cur)) addToken(readNumber(), ValueType.NUMBER);
-                else if (Is.Identifier(cur)) addToken(readIdentifier(), ValueType.IDENTIFIER);
+                } else if (Is.Structure(cur)) addToken(readStructure(), ValueType.STRUCTURE, __line, __col);
+                else if (Is.Operator(cur)) addToken(readOperator(), ValueType.OPERATOR, __line, __col);
+                else if (Is.String(cur)) addToken(readString(), ValueType.STRING, __line, __col);
+                else if (Is.Number(cur)) addToken(readNumber(), ValueType.NUMBER, __line, __col);
+                else if (Is.Identifier(cur)) addToken(readIdentifier(), ValueType.IDENTIFIER, __line, __col);
                 else throw new Exception("unreadable symbol " + cur);
             } while (!endOfStack());
             return result.ToArray();
         }
 
-        private void addToken(string value, ValueType type) {
+        private void addToken(string value, ValueType type, int line = 0, int col = 0) {
             if (type != ValueType.STRING && Keywords.get(value) != null) type = ValueType.KEYWORD;
             else if (type != ValueType.STRING && Operators.get(value) != null) type = ValueType.OPERATOR;
             else if (type == ValueType.NUMBER) type = (value.IndexOf(".") < 0 ? ValueType.INTEGER : ValueType.DECIMAL);
-            result.Add(Token.create(type, value, __line, __col));
+            result.Add(Token.create(type, value, line, col));
             Log.spam("[" + type.ToString() + "] > '" + value + "'");
         }
 

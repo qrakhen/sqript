@@ -61,11 +61,11 @@ namespace Qrakhen.Sqript
         }
 
         public static void error(object message, ConsoleColor color = ConsoleColor.Red) {
-            if (((int)loggingLevel >= (int) Level.CRITICAL)) writeOut("ERR " + message, color);
+            if (((int)loggingLevel >= (int) Level.CRITICAL)) writeOut("ERROR " + message, color);
         }
 
         public static void warn(object message, ConsoleColor color = ConsoleColor.Yellow) {
-            if (((int)loggingLevel >= (int)Level.WARNINGS)) writeOut("WRN " + message, color);
+            if (((int)loggingLevel >= (int)Level.WARNINGS)) writeOut("ALERT " + message, color);
         }
 
         public static void info(object message, ConsoleColor color = ConsoleColor.White) {
@@ -73,7 +73,7 @@ namespace Qrakhen.Sqript
         }
 
         public static void debug(object message, ConsoleColor color = ConsoleColor.Gray) {
-            if (((int)loggingLevel >= (int)Level.INFO)) writeOut(message, color);
+            if (((int)loggingLevel >= (int)Level.DEBUG)) writeOut(message, color);
         }
 
         public static void spam(object message, ConsoleColor color = ConsoleColor.DarkGray) {
@@ -358,13 +358,13 @@ namespace Qrakhen.Sqript
             if (__DEV_DEBUG) {
                 var nizer = new Tokenizer(content);
                 var stack = nizer.parse();
-                GlobalContext.getInstance().queue(new Statementizer(stack).parse(GlobalContext.getInstance()));
+                GlobalContext.getInstance().queue(new Segmentizer(stack).parse(GlobalContext.getInstance()));
                 GlobalContext.getInstance().execute();
             } else {
                 try {
                     var nizer = new Tokenizer(content);
                     var stack = nizer.parse();
-                    GlobalContext.getInstance().queue(new Statementizer(stack).parse(GlobalContext.getInstance()));
+                    GlobalContext.getInstance().queue(new Segmentizer(stack).parse(GlobalContext.getInstance()));
                     GlobalContext.getInstance().execute();
                 } catch (Exception e) {
                     GlobalContext.getInstance().clearQueue();

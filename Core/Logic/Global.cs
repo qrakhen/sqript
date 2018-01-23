@@ -68,10 +68,10 @@ namespace Qrakhen.Sqript
     {
         private static GlobalContext instance;
 
-        private List<Statement> queued;
+        private List<Segment> queued;
 
         public GlobalContext() : base(null) {
-            queued = new List<Statement>();
+            queued = new List<Segment>();
         }
 
         private void init() {
@@ -99,14 +99,14 @@ namespace Qrakhen.Sqript
             instance.init();
         }
 
-        public void queue(Statement[] statements) {
-            foreach (Statement statement in statements) {
+        public void queue(Segment[] statements) {
+            foreach (Segment statement in statements) {
                 queued.Add(statement);
             }
         }
 
-        public void queue(Statement statement) {
-            queue(new Statement[] { statement });
+        public void queue(Segment statement) {
+            queue(new Segment[] { statement });
         }
 
         public void clearQueue() {
@@ -116,8 +116,8 @@ namespace Qrakhen.Sqript
         public void execute() {
             if (queued.Count > 0) {
             Log.spam("main context processing " + queued.Count + " queued statements...");
-                foreach (Statement statement in queued) {
-                    Value r = statement.execute(this, true);
+                foreach (Segment statement in queued) {
+                    Value r = statement.execute(this);
                     if (r != null) Log.debug(r.ToString(), ConsoleColor.Green);
                     statements.Add(statement);
                 }

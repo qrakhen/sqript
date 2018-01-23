@@ -6,18 +6,10 @@ namespace Qrakhen.Sqript
 {
     public class Value
     {
-        public static Value TRUE {
-            get { return new Value(true, ValueType.BOOLEAN); }
-            private set { }
-        }
-        public static Value FALSE {
-            get { return new Value(false, ValueType.BOOLEAN); }
-            private set { }
-        }
-        public static Value NULL {
-            get { return new Value(null, ValueType.NULL); }
-            private set { }
-        }
+        public static readonly Value TRUE = new Value(true, ValueType.BOOLEAN);
+        public static readonly Value FALSE = new Value(false, ValueType.BOOLEAN); 
+        public static readonly Value NULL = new Value(null, ValueType.NULL);
+        public static readonly Value UNDEFINED = new Value(null, ValueType.UNDEFINED);
 
         public static Dictionary<string, Func<Value[], Value, Value>> nativeCalls = new Dictionary<string, Func<Value[], Value, Value>>();
 

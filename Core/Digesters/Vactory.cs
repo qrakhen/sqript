@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    internal class Vactory : Interpretoken
+   /* internal class Vactory : Interpretoken
     {
         public Vactory(Token[] stack) : base(stack) {
 
@@ -15,7 +15,8 @@ namespace Qrakhen.Sqript
             return readNextValue(context, out read);
         }
 
-        public Value readNextValue(Context context, out int read, ValueType expected = ValueType.ANY_VALUE) {
+        public Value readNextValue(Context context, out int read, int offset = 0, ValueType expected = ValueType.ANY_VALUE) {
+            shift(offset);
             Log.spam("Vactory.readNextValue()");
             Token t = peek();
             Value result = null;
@@ -58,6 +59,7 @@ namespace Qrakhen.Sqript
             } else if (t.check(ValueType.PRIMITIVE)) {
                 result = digest().makeValue();
             }
+            t = peek();
             if (t.check(ValueType.OPERATOR)) {
                 Expression e = Expressionizer.parse(context, stack);
                 read = position;
@@ -74,5 +76,5 @@ namespace Qrakhen.Sqript
         public static Value readNextValue(Context context, Token[] stack) {
             return new Vactory(stack).readNextValue(context);
         }
-    }
+    }*/
 }

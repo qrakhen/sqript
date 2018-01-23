@@ -19,13 +19,13 @@ namespace Qrakhen.Sqript
         public Condition parse(Keyword keyword, Context context) {
             Token t = peek();
             if (t.check(CF_EXPR_OPEN)) {
-                if (keyword.name == Keyword.CONDITION_LOOP) return parseLoop(context);
-                else if (keyword.name == Keyword.CONDITION_IF) return parseIf(context);
+                if (keyword.name == Keyword.CONDITION_LOOP.name) return parseLoop(context);
+                else if (keyword.name == Keyword.CONDITION_IF.name) return parseIf(context);
                 else throw new ParseException("unexpected keyword when parsing condition: " + keyword.name, t);
             } else if (t.check(CF_BODY_OPEN)) {
-                if (keyword.name == Keyword.CONDITION_LOOP) {
+                if (keyword.name == Keyword.CONDITION_LOOP.name) {
                     return parseLoop(context);                    
-                } else if (keyword.name == Keyword.CONDITION_ELSE) {
+                } else if (keyword.name == Keyword.CONDITION_ELSE.name) {
                     return parseIf(context);
                 } else throw new ParseException("unexpected keyword when parsing condition: " + keyword.name, t);
             } else throw new ParseException("unexpected token when parsing condition", t);
@@ -39,15 +39,15 @@ namespace Qrakhen.Sqript
             do {
                 Token t = peek();
                 Keyword k = Keywords.get(t.str());
-                if (k != null && k.name == Keyword.CONDITION_ELSE) {
+                if (k != null && k.name == Keyword.CONDITION_ELSE.name) {
                     digest();
                     k = Keywords.get(peek().str());
-                    if (k == null) k = Keywords.get(Keyword.CONDITION_ELSE);
+                    if (k == null) k = Keywords.get(Keyword.CONDITION_ELSE.name);
                     else digest();
                     c.setElse(parse(k, context, remaining()));
                 } else {
-                    if (t.check(CF_BODY_OPEN)) c.statements.AddRange(Statementizer.parse(c, readBody()));
-                    else c.statements.AddRange(Statementizer.parse(c, readBody(false, ";")));
+                    if (t.check(CF_BODY_OPEN)) c.statements.AddRange(Segmentizer.parse(c, readBody()));
+                    else c.statements.AddRange(Segmentizer.parse(c, readBody(false, ";")));
                 }
             } while (!endOfStack());
             return c;
@@ -62,13 +62,13 @@ namespace Qrakhen.Sqript
             do {
                 Token t = peek();
                 Keyword k = Keywords.get(t.str());
-                if (k != null && k.name == Keyword.CONDITION_LOOP && expr == null) {
+                if (k != null && k.name == Keyword.CONDITION_LOOP.name && expr == null) {
                     digest();
                     expr = new Expressionizer(readBody());
                     c.setPremise(expr);
                 } else {
-                    if (t.check(CF_BODY_OPEN)) c.statements.AddRange(Statementizer.parse(c, readBody()));
-                    else c.statements.AddRange(Statementizer.parse(c, readBody(false, ";")));
+                    if (t.check(CF_BODY_OPEN)) c.statements.AddRange(Segmentizer.parse(c, readBody()));
+                    else c.statements.AddRange(Segmentizer.parse(c, readBody(false, ";")));
                 }
             } while (!endOfStack());
             return c;

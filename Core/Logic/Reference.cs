@@ -55,4 +55,19 @@
             this.forcedType = forcedType;
         }
     }
+
+    internal class FloatingReference : Reference
+    {
+        public string name { get; private set; }
+        public Context owner { get; private set; }
+
+        public FloatingReference(string name, Context owner) : base(NULL) {
+            this.name = name;
+            this.owner = owner;
+        }
+
+        public void bind() {
+            if (value.type != ValueType.NULL) owner.set(name, new Reference(value));
+        }
+    }
 }
