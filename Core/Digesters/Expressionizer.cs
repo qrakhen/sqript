@@ -41,8 +41,7 @@ namespace Qrakhen.Sqript
                     if (expr.right == null) expr.op = digest().getValue<Operator>();
                     else throw new Exception("unexpected operator after left and right token have been read: " + expr.left.ToString() + " " + expr.right.ToString(), t);
                 } else {
-                    int read;
-                    v = Vactory.readNextValue(context, remaining(), out read);
+                    v = readNextValue(context);
                     if (v == null) throw new Exception("expected any value while parsing expression, got '" + v + "' instead.");
                 }
 

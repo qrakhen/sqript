@@ -24,14 +24,14 @@ namespace Qrakhen.Sqript
                 if (t.check(ValueType.KEYWORD)) {
                     Keyword keyword = digest().getValue<Keyword>();
                     switch (keyword.name) {
-                        case Keyword.REFERENCE: declaring = true; break;
-                        case Keyword.FUNQTION: declaring = true; break;
-                        case Keyword.QLASS: declaring = true; break;
-                        case Keyword.CONDITION_IF: condition = Conditionizer.parse(keyword, context, remaining()); break;
-                        case Keyword.CONDITION_LOOP: condition = Conditionizer.parse(keyword, context, remaining()); break;
-                        case Keyword.RETURN: returning = true; break;
-                        case Keyword.CURRENT_CONTEXT: target = rrr(context, -1); break;
-                        case Keyword.PARENT_CONTEXT: target = rrr(context, -1); break;
+                        case "REFERENCE": declaring = true; break;
+                        case "FUNQTION": declaring = true; break;
+                        case "QLASS": declaring = true; break;
+                        case "CONDITION_IF": condition = Conditionizer.parse(keyword, context, remaining()); break;
+                        case "CONDITION_LOOP": condition = Conditionizer.parse(keyword, context, remaining()); break;
+                        case "RETURN": returning = true; break;
+                        case "CURRENT_CONTEXT": target = rrr(context, -1); break;
+                        case "PARENT_CONTEXT": target = rrr(context, -1); break;
                         default: throw new Exception("unexpected or not yet supported keyword '" + keyword.name + "'", peek());
                     }
                     if (declaring) target = new Reference();
@@ -63,7 +63,7 @@ namespace Qrakhen.Sqript
                     } else if (target == null) throw new Exception("assign? assign to WHAT? there's no target reference. ._.");
 
                     Operator op = digest().getValue<Operator>();
-                    Value value = Vactory.readNextValue(context, remaining());
+                    Value value = readNextValue(context);
                     if (value == null) throw new ParseException("could not read value to be " + (returning ? "returned" : "assigned to '" + identifier + ".") + ": unreadable or no value", t);
 
                     op.execute(target, value);

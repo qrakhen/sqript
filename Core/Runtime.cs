@@ -61,11 +61,11 @@ namespace Qrakhen.Sqript
         }
 
         public static void error(object message, ConsoleColor color = ConsoleColor.Red) {
-            if (((int)loggingLevel >= (int) Level.CRITICAL)) writeOut("ERR " + message, color);
+            if (((int)loggingLevel >= (int) Level.CRITICAL)) writeOut("ERROR " + message, color);
         }
 
         public static void warn(object message, ConsoleColor color = ConsoleColor.Yellow) {
-            if (((int)loggingLevel >= (int)Level.WARNINGS)) writeOut("WRN " + message, color);
+            if (((int)loggingLevel >= (int)Level.WARNINGS)) writeOut("ALERT " + message, color);
         }
 
         public static void info(object message, ConsoleColor color = ConsoleColor.White) {
@@ -353,6 +353,13 @@ namespace Qrakhen.Sqript
             } else if (content.EndsWith("!!")) {
                 content = content.Substring(0, content.Length - 2);
                 __DEV_DEBUG = true;
+            } else if (content.EndsWith("??")) {
+                content = content.Substring(0, content.Length - 2);
+                var nizer = new Tokenizer(content);
+                var stack = nizer.parse();
+                var stuff = new Statementizer(stack).parse(GlobalContext.getInstance(), true);
+                stuff[0].execute(GlobalContext.getInstance());
+                return;
             }
 
             if (__DEV_DEBUG) {

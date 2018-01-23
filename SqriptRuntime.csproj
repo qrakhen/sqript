@@ -32,6 +32,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Core\Logic\Segment.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="fqtest.sq" />
   </ItemGroup>
 
