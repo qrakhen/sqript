@@ -49,8 +49,8 @@ namespace Qrakhen.Sqript
             string r = "(";
             if (parameters != null) {
                 foreach (string parameter in parameters)
-                    r += parameter + ", ";
-                if (r.Length > 1) r = r.Substring(0, r.Length - 2);
+                    r += parameter + " ";
+                //if (r.Length > 1) r = r.Substring(0, r.Length - 2);
             }
             if (statements != null) {
                 r = r + "{\n";

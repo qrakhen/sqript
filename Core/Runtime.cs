@@ -385,7 +385,7 @@ namespace Qrakhen.Sqript
         }
 
         static void cli() {
-            Log.setLoggingLevel(Log.Level.VERBOSE);
+            Log.setLoggingLevel(Log.Level.DEBUG);
             Log.write("\n" + SQRIPT.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
             Log.debug("  available cli commands:");
             Log.debug("   - #help");
