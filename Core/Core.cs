@@ -23,6 +23,10 @@ namespace Qrakhen.Sqript
         internal static void defineOperators() {
 
             Operators.define(Operator.ASSIGN_VALUE, delegate (Value a, Value b) {
+                if (a == null && b != null) {
+                    // return statement
+                    return b;
+                }
                 if (!(a is Reference)) throw new OperationException("can not assign value to a non-reference.");
                 Log.spam("assigning value '" + b + "' to reference '" + a + "'.");
                 (a as Reference).assign(b);
@@ -30,6 +34,11 @@ namespace Qrakhen.Sqript
             });
 
             Operators.define(Operator.ASSIGN_REFERENCE, delegate (Value a, Value b) {
+                if (a == null && b != null) {
+                    // return statement
+                    if (b is Reference) return b;
+                    else return new Reference(b);
+                }
                 if (!(a is Reference)) throw new OperationException("can not assign value to a non-reference.");
                 Log.spam("referencing the value of '" + b + "' to reference '" + a + "'.");
                 if (b is Reference) (a as Reference).assign(b);

@@ -36,19 +36,20 @@ namespace Qrakhen.Sqript
          **/
         public Value execute(Context context) {
             Log.spam("segment.execute()");
-            head = null;
+            reset();
+            head = new Node();
             Node end = build(context);
             Value r = Value.NULL;
-            if (end.empty() && head != null && !head.empty()) {
+            if (end.empty() && !head.empty()) {
                 r = head.execute();
             } else {
                 r = end.execute();
-                if (head != null && !head.empty()) {
+                if (!head.empty()) {
                     head.right = r;
                     head.execute();
                 }
             }
-            if (head.left is FloatingReference) (head.left as FloatingReference).bind();
+            if (head != null) if (head.left is FloatingReference) (head.left as FloatingReference).bind();
             return r;
         }
 
@@ -64,7 +65,7 @@ namespace Qrakhen.Sqript
                         digest();
                         t = peek();
                         if (t.check(ValueType.IDENTIFIER)) {
-                            head = new Node(new FloatingReference(digest().str(), context), null, null);
+                            head.left = new FloatingReference(digest().str(), context);
                         } else throw new ParseException("expected identifier after new reference keyword, got '" + t + "' instead", t);
                     } else if (t.check(Keyword.CURRENT_CONTEXT) || t.check(Keyword.PARENT_CONTEXT)) {
                         if (head == null) {
@@ -101,6 +102,15 @@ namespace Qrakhen.Sqript
                 }
             } while (!endOfStack());
             return node;
+        }
+
+        public override string ToString() {
+            string r = "";
+            foreach (Token t in stack) {
+                r += " " + t.str();
+            }
+            if (r.Length > 0) r = r.Substring(1) + ";";
+            return r;
         }
 
         protected class Node
