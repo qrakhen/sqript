@@ -106,7 +106,7 @@ namespace Qrakhen.Sqript
                     Log.spam("hey, it's a funqtion call!");
                     if (r.getValueType() == ValueType.FUNQTION) {
                         Value[] p = Funqtionizer.parseParameters(context, readBody(true));
-                        result = (r.getReference() as Funqtion).execute(p);
+                        result = (r.getTrueValue() as Funqtion).execute(p);
                     } else throw new ParseException("can not call " + peek(-1) + ": not a funqtion.");
                 } else {
                     result = r;

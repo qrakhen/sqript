@@ -15,11 +15,12 @@
         }
 
         public virtual Value getReference() {
-            return value;
+            //return value; temporary bypass to see if this method actually serves any purpose at all
+            return getTrueValue();
         }
 
-        public virtual Value getFinalReference() {
-            return (value is Reference ? (value as Reference).getFinalReference() : value);
+        public virtual Value getTrueValue() {
+            return (value is Reference ? (value as Reference).getTrueValue() : value);
         }
 
         public virtual void setReference(Value value) {
@@ -31,11 +32,11 @@
         }
 
         public new virtual object getValue() {
-            return value?.getValue();
+            return getTrueValue()?.getValue();
         }
 
         public ValueType getValueType() {
-            return value.type;
+            return getTrueValue().type;
         }
 
         public override string ToString() {
