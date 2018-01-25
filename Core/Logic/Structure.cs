@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Qrakhen.Sqript
+﻿namespace Qrakhen.Sqript
 {
     internal class Struqture
     {

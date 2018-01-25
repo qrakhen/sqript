@@ -3,16 +3,16 @@
 
 Sqript is an interpreting programming language written in C#.
 
-It comes with it's very own syntax, data types, workflow and behaviours.
+It comes with its very own syntax, data types, workflow and behaviours.
 Can be built for - and also runs on - all platforms, including your microwave.
 
 ## Philosophy
 
 With Sqript, I wanted to create something that is new and different,
-but still logical and not too alien.
+but still logical, consistent and not too alien.
 My very first idea was mostly concerned about the looks - hence why we have ` *~ a <~ 5 `.
 More and more ideas came together, and as stuff started to work, 
-I created a concept that now is called ` Sqript `. 
+I created a concept that I now call ` Sqript `. 
 Sqript fixes logical issues that other languages (in my opinion) suffer from,
 and takes the best parts of what I personally like the most, sticking them together - 
 whilst trying to make the result as consistent as possible.
@@ -37,44 +37,37 @@ but as I am constantly working on it, even these things will fade.
 
 ### Example Code
 ```javascript
-// reference declaration & assignment
-reference name;
-name = 'Foo';
-name = name + 'Bar';
+ # reference declaration & assignment
+ <<	*~ name <~ 'foo';
+ >> foo
+ << name <~ name + 'bar';
+ >> foobar
+ 
+ # funqtion declaration
+ << *~ pow <~ ~(value {
+        <~ value * value;
+    });
+ << pow(5);
+ >> 25
 
-// several (configurable) keyword alternatives:
-ref a = 7;
-*~ b = a + 5; // yes, *~ is a valid 'ref' alternative
+ # assign by reference
+ << *~ a <~ 5;
+ >> 5
+ << *~ b <& a;
+ << a <~ 10;
+ << b;
+ >> 10
+ 
+ # typeless per default, but can be strictly typed
+ *<string>~ str = "I'm a string!";
+ *<number>~ num = 12.74;
+ str = num * 2; # throws Sqript.OperationException
 
-// actual forced references, even to primitive types:
-ref a = 5;
-ref b <& a; // <& means force reference assignment, no matter what the type is
-a = 10;		// b is now also 10
-b = 7;		// a is now also 7
-a <& 2;		// new integer assigned by reference, so
-b = 5;		// and a stays 2.
-
-// typeless per default, but can be strictly typed
-ref<STRING> str = "I'm a string!";
-ref<NUMBER> num = 12.74;
-str = num * 2; // throws Sqript.OperationException
-
-// typeless function
-function concat(str1 str2 {
-	<~ str1 + str2; // <~ is a return keyword
-});
-concat(str, num); // would return "I'm a string!12.72";
-
-// fixed type function
-function concat(<string>str1 <string>str2 {
-	<~ str1 + str2;
-});
-concat(str, num); // throws Sqript.FunctionParameterViolation
-
-// classes
-// not yet implemented
-
-// to be continued, lots more to be written
+ # fixed-type function declaration
+ funqtion<string> concat(<string>str1 <string>str2 {
+     <~ str1 + str2;
+ });
+concat(str, num); # throws Sqript.FunctionParameterViolation
 ```
 
 ### Primitive Types
@@ -112,7 +105,7 @@ Integer indexed lists that store references to any value type.
 Items can be accessed using the ` : ` delimiter.
 ```javascript
 [(<any>, ...)];
-ref array = [3, 'str', { a = 'b' }];
+*~ array <~ [3, 'str', { a <~ 'b' }];
 array:0		// -> 3
 array:2:a	// -> 'b'
 ```
@@ -120,12 +113,12 @@ array:2:a	// -> 'b'
 ### Context Types
 Context types store properties indexed by keys that can be accessed via the ` : ` delimiter:
 ```javascript
-ref ctx = {};
-ctx:a = 'apple';
-ctx:b = 5 + 3;
+ref ctx <~ {};
+ctx:a <~ 'apple';
+ctx:b <~ 5 + 3;
 {
-	a = 'apple',
-	b = 8
+	a <~ 'apple',
+	b <~ 8
 }
 ```
 Every context can always look up recursively to its parents for identifiers.
@@ -135,12 +128,12 @@ Yes, I called objects obqects.
 But no worries, you'll never have to actually type that.
 String indexed collection that stored references to any value type
 ```javascript
-ref obqect = { a = 5, b = 'c' };
+ref obqect <~ { a <~ 5, b <~ 'c' };
 
-*~ obj = {};
-obj:name = 'Elephant';
-obj:child = {};
-obj:child:name = 'Noodles';
+*~ obj <~ {};
+obj:name <~ 'Elephant';
+obj:child <~ {};
+obj:child:name <~ 'Noodles';
 ```
 
 #### Qlasses
@@ -209,7 +202,7 @@ reference | ref | declare | *~
 dereference | del | destroy | ~:
 
 // dynamic declaration
-*~ name = 'Max';
+*~ name <~ 'Max';
 // Max
 
 *~ name = 123;
@@ -226,12 +219,12 @@ ref<int> number = 10;
 ```
 
 ### Operators
-#### Assign (by Value or Reference)
+#### Assign (by Value ' <~ ' or Reference ' <& ')
 ```javascript
-name = 'Der' + 'ser'; // assigns value of right hand operation result
+name <~ 'Der' + 'ser'; // assigns value of right hand operation result
 *~ nameReference <& name; // assigns the actual variable by reference, so
 
-name = 'Foo'; // would result in
+name <& 'Foo'; // would result in
 (nameReference == 'Foo');
 ```
 

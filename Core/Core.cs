@@ -1,9 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Qrakhen.Sqript
 {
+    public enum Access
+    {
+        PRIVATE = 0x1,
+        PROTECTED = 0x2,
+        INTERNAL = 0x4,
+        PUBLIC = 0x8
+    }
+
     public static class Core
     {
         internal static void defineKeywords() {

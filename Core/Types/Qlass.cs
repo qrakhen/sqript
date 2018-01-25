@@ -40,12 +40,4 @@ namespace Qrakhen.Sqript
             }
         }
     }
-
-    internal enum Access
-    {
-        PRIVATE = 0x1,
-        PROTECTED = 0x2,
-        INTERNAL = 0x4,
-        PUBLIC = 0x8
-    }
 }

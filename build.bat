@@ -1,1 +1,2 @@
-dotnet publish Sqript.sln -c Release -r win7-x64
+dotnet publish Sqript.sln
+ -c Release -r win7-x64

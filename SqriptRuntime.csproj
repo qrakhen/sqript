@@ -23,6 +23,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputPath>bin\build\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,16 +33,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Core\Digesters\Expressionizer.cs" />
     <Compile Remove="Core\Digesters\Segment.cs" />
+    <Compile Remove="Core\Logic\Expression.cs" />
     <Compile Remove="Core\Logic\Statement.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Core\Types\Qontext.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="fqtest.sq" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace Qrakhen.Sqript
+﻿namespace Qrakhen.Sqript
 {
     internal class Obqectizer : Interpretoken
     {

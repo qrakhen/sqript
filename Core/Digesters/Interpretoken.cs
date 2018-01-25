@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
 
 namespace Qrakhen.Sqript
 {
@@ -130,8 +127,6 @@ namespace Qrakhen.Sqript
                     result = o;
                 } else if (t.check(Struqture.Collection[OPEN])) {
                     // Array a = readBody(true);
-                } else if (t.check("(")) {
-                    Expression e = Expressionizer.parse(context, readBody());
                 }
             } else if (t.check(ValueType.PRIMITIVE)) {
                 result = digest().makeValue();
