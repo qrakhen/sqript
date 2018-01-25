@@ -34,11 +34,12 @@ namespace Qrakhen.Sqript
                     xfq.set(this.parameters[i], new Reference(parameters[i]));
                 }
             }
-            foreach (Segment statement in segments) {
-                Value r = statement.execute(xfq);
-                if (r == null) continue;
-                Log.spam("reached return statement, returning " + r.str());
-                return r;
+            foreach (Segment s in segments) {
+                Value r = s.execute(xfq);
+                if (s.returning && r != null) {
+                    Log.spam("reached return statement, returning " + r.str());
+                    return r;
+                }
             }
             return null;
         }

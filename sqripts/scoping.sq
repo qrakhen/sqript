@@ -1,6 +1,8 @@
-﻿*~ obj <~ {};
-obj:sub <~ {};
-obj:sub:a <~ 500;
+﻿*~ obj <~ {
+	sub <~ {
+		a <~ 500
+	}
+};
 
 fq f~({
 	<~ obj:sub:a;
@@ -8,13 +10,13 @@ fq f~({
 
 f();
 
-obj:sub:f = f;
+obj:sub:f <~ f;
 
 obj:sub:f();
 
-*~ a = 700;
+*~ a <~ 700;
 
-fq ff({
-	ref a = 300;
-	<~ this:a + parent:a;
+fq ff~({
+	ref a <~ 300;
+	<~ .~:a + ^~:a;
 });

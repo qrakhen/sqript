@@ -114,7 +114,7 @@ namespace Qrakhen.Sqript
             } else if (t.check(ValueType.STRUCTURE)) {
                 Log.spam("detected possible structure");
                 if (t.check(Struqture.Funqtion[OPEN])) {
-                    Log.spam("it's a funqtion");
+                    Log.spam("...it's a funqtion");
                     Funqtion f = Funqtionizer.parse(context, readBody(true));
                     if (peek().check(Struqture.Call[OPEN])) {
                         Value[] p = Funqtionizer.parseParameters(context, readBody(true));

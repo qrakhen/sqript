@@ -4,6 +4,7 @@ namespace Qrakhen.Sqript
 {
     internal class Segment : Interpretoken
     {
+        public bool returning { get; protected set; }
         protected Node head;
 
         public SegmentType type { get; protected set; }
@@ -35,6 +36,7 @@ namespace Qrakhen.Sqript
         public virtual Value execute(Qontext context) {
             Log.spam("segment.execute()");
             reset();
+            returning = false;
             head = new Node();
             Node end = build(context);
             Value r = Value.NULL;
@@ -76,6 +78,7 @@ namespace Qrakhen.Sqript
                 } else if (t.check(ValueType.OPERATOR)) {
                     Operator op = digest().getValue<Operator>();
                     if (op.symbol == Operator.ASSIGN_VALUE || op.symbol == Operator.ASSIGN_REFERENCE) {
+                        if (step == 0) returning = true;
                         if (head.empty() && step == 1) {
                             head.left = node.left;
                         }
@@ -146,6 +149,11 @@ namespace Qrakhen.Sqript
                 } else {
                     return Value.NULL;
                 }
+            }
+
+            public bool isReturner() {
+                return (left == null && right != null && 
+                    (op.symbol == Operator.ASSIGN_VALUE || op.symbol == Operator.ASSIGN_REFERENCE));
             }
 
             public bool ready() {
