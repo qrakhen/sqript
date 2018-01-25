@@ -32,10 +32,10 @@ namespace Qrakhen.Sqript
         }
 
         private IfCondition parseIf(Context context) {
-            Expressionizer expr;
-            if (peek().check(CF_EXPR_OPEN)) expr = new Expressionizer(readBody());
-            else expr = null;
-            IfCondition c = new IfCondition(context, expr);
+            Segment premise;
+            if (peek().check(CF_EXPR_OPEN)) premise = Segmentizer.parse(context, readBody())[0];
+            else premise = null;
+            IfCondition c = new IfCondition(context, premise);
             do {
                 Token t = peek();
                 Keyword k = Keywords.get(t.str());
@@ -46,29 +46,29 @@ namespace Qrakhen.Sqript
                     else digest();
                     c.setElse(parse(k, context, remaining()));
                 } else {
-                    if (t.check(CF_BODY_OPEN)) c.statements.AddRange(Segmentizer.parse(c, readBody()));
-                    else c.statements.AddRange(Segmentizer.parse(c, readBody(false, ";")));
+                    if (t.check(CF_BODY_OPEN)) c.segments.AddRange(Segmentizer.parse(c, readBody()));
+                    else c.segments.AddRange(Segmentizer.parse(c, readBody(false, ";")));
                 }
             } while (!endOfStack());
             return c;
         }
 
         private LoopCondition parseLoop(Context context) {
-            Expressionizer expr;
-            if (peek().check(CF_EXPR_OPEN)) expr = new Expressionizer(readBody());
-            else expr = null;
-            var loopType = (expr == null ? LoopCondition.LoopType.FooterCondition : LoopCondition.LoopType.HeaderCondition);
-            LoopCondition c = new LoopCondition(context, loopType, expr);
+            Segment premise;
+            if (peek().check(CF_EXPR_OPEN)) premise = Segmentizer.parse(context, readBody())[0];
+            else premise = null;
+            var loopType = (premise == null ? LoopCondition.LoopType.FooterCondition : LoopCondition.LoopType.HeaderCondition);
+            LoopCondition c = new LoopCondition(context, loopType, premise);
             do {
                 Token t = peek();
                 Keyword k = Keywords.get(t.str());
-                if (k != null && k.name == Keyword.CONDITION_LOOP.name && expr == null) {
+                if (k != null && k.name == Keyword.CONDITION_LOOP.name && premise == null) {
                     digest();
-                    expr = new Expressionizer(readBody());
-                    c.setPremise(expr);
+                    premise = Segmentizer.parse(context, readBody())[0];
+                    c.setPremise(premise);
                 } else {
-                    if (t.check(CF_BODY_OPEN)) c.statements.AddRange(Segmentizer.parse(c, readBody()));
-                    else c.statements.AddRange(Segmentizer.parse(c, readBody(false, ";")));
+                    if (t.check(CF_BODY_OPEN)) c.segments.AddRange(Segmentizer.parse(c, readBody()));
+                    else c.segments.AddRange(Segmentizer.parse(c, readBody(false, ";")));
                 }
             } while (!endOfStack());
             return c;

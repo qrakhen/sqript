@@ -8,7 +8,7 @@ namespace Qrakhen.Sqript
     {
         public Segmentizer(Token[] stack) : base(stack) { }
 
-        public static Segment[] parse(Funqtion context, Token[] stack) {
+        public static Segment[] parse(Context context, Token[] stack) {
             return new Segmentizer(stack).parse(context);
         }
 
@@ -17,7 +17,7 @@ namespace Qrakhen.Sqript
          * 
          * */
 
-        public Segment[] parse(Funqtion context) {
+        public Segment[] parse(Context context) {
             Log.spam("Statementizer.execute()");
             if (stack.Length == 0) return new Segment[0];
             List<Token> buffer = new List<Token>();
@@ -25,16 +25,42 @@ namespace Qrakhen.Sqript
             int level = 0;
             do {
                 Token t = digest();
-
-                Log.spam(t.ToString());
-                if (t.check(";") && level == 0) {
-                    segments.Add(new Segment(buffer.ToArray()));
-                    buffer.Clear();
+                if (t.check(ValueType.KEYWORD) && t.getValue<Keyword>().isType(Keyword.KeywordType.DECLARATION)) {
+                    if (buffer.Count > 0) throw new ParseException("unexpected declaration keyword '" + t.str() + "' while parsing segment.", t);
+                    Keyword k = t.getValue<Keyword>();
+                    if (k.name == Keyword.FUNQTION.name) {
+                        t = peek();
+                        if (!t.check(ValueType.IDENTIFIER)) throw new ParseException("expected identifier for declaration of '" + k.name + "', got '" + t.str() + "' instead.", t);
+                        string name = digest().str();
+                        Funqtion fq = Funqtionizer.parse(context, readBody(true));
+                        context.set(name, new Reference(fq));
+                    } else if (k.isType(Keyword.KeywordType.CONDITION)) {
+                        Segment premise = parse(context, readBody())[0];
+                        Value result = premise.execute(context);
+                        if (result.type == ValueType.BOOLEAN) {
+                            if (result.getValue<bool>() == true) {
+                                segments.AddRange(parse(context, readBody()));
+                            } else {
+                                readBody(); //ignore
+                                if (peek().check(Keyword.CONDITION_ELSE.name)) {
+                                    digest();
+                                }
+                            }
+                        } else {
+                            throw new OperationException("condition premise has to return a boolean type value, got '" + result.type + "' instead.");
+                        }
+                    }
+                    if (peek().check(";")) digest();
                 } else {
-                    if (t.check(Context.CHAR_OPEN)) level++;
-                    else if (t.check(Context.CHAR_CLOSE)) level--;
-                    buffer.Add(t);
-                    if (endOfStack()) segments.Add(new Segment(buffer.ToArray()));
+                    if (t.check(";") && level == 0) {
+                        segments.Add(new Segment(buffer.ToArray()));
+                        buffer.Clear();
+                    } else {
+                        if (t.check(Context.CHAR_OPEN)) level++;
+                        else if (t.check(Context.CHAR_CLOSE)) level--;
+                        buffer.Add(t);
+                        if (endOfStack()) segments.Add(new Segment(buffer.ToArray()));
+                    }
                 }
             } while (!endOfStack());
             return segments.ToArray();

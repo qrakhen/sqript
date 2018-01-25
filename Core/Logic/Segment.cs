@@ -54,6 +54,7 @@ namespace Qrakhen.Sqript
         }
 
         protected virtual Node build(Context context, Node node = null) {
+            int step = 0;
             do {
                 if (node == null) node = new Node();
                 Log.spam("now building node: " + node);
@@ -76,6 +77,11 @@ namespace Qrakhen.Sqript
                     } else throw new Exception("check me");
                 } else if (t.check(ValueType.OPERATOR)) {
                     Operator op = digest().getValue<Operator>();
+                    if (op.symbol == Operator.ASSIGN_VALUE || op.symbol == Operator.ASSIGN_REFERENCE) {
+                        if (head.empty() && step == 1) {
+                            head.left = node.left;
+                        }
+                    }
                     if (node.ready()) {
                         // explanation: move right node side to the new node and make that the right side of the current node
                         // let's call it node stack rotation or something, sounds pretty cool
@@ -100,6 +106,7 @@ namespace Qrakhen.Sqript
                     Value v = readNextValue(context);
                     node.put(v);
                 }
+                step++;
             } while (!endOfStack());
             return node;
         }

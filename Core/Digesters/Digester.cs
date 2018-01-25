@@ -43,5 +43,22 @@ namespace Qrakhen.Sqript
             if (!endOfStack()) return stack[position++];
             else return peek();
         }
+
+        public class Sweeper
+        {
+            public Digester<T> source { get; private set; }
+
+            public Sweeper(Digester<T> source) {
+                this.source = source;
+            }
+
+            public T peek() {
+                return source.peek();
+            }
+
+            public T digest() {
+                return source.digest();
+            }
+        }
     }
 }

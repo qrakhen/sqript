@@ -6,16 +6,16 @@ namespace Qrakhen.Sqript
 {
     internal class Funqtion : Context
     {
-        public List<Segment> statements { get; protected set; }
+        public List<Segment> segments { get; protected set; }
         public List<string> parameters { get; protected set; }
 
         public Funqtion(
                 Context parent, 
                 Dictionary<string, Reference> references, 
-                List<Segment> statements,
+                List<Segment> segments,
                 List<string> parameters = null,
                 ValueType type = ValueType.FUNQTION) : base(parent, type, references) {
-            this.statements = statements;
+            this.segments = segments;
             this.parameters = parameters == null ? new List<string>() : parameters;
         }
 
@@ -36,7 +36,7 @@ namespace Qrakhen.Sqript
                     xfq.set(this.parameters[i], new Reference(parameters[i]));
                 }
             }
-            foreach (Segment statement in statements) {
+            foreach (Segment statement in segments) {
                 Value r = statement.execute(xfq);
                 if (r == null) continue;
                 Log.spam("reached return statement, returning " + r.str());
@@ -52,9 +52,9 @@ namespace Qrakhen.Sqript
                     r += parameter + " ";
                 //if (r.Length > 1) r = r.Substring(0, r.Length - 2);
             }
-            if (statements != null) {
+            if (segments != null) {
                 r = r + "{\n";
-                foreach (Segment statement in statements) {
+                foreach (Segment statement in segments) {
                     r += "    " + statement.ToString() + "\n";
                 }
                 r += "}";

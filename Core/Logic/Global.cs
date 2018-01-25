@@ -119,11 +119,11 @@ namespace Qrakhen.Sqript
                 foreach (Segment statement in queued) {
                     Value r = statement.execute(this);
                     if (r != null) Log.debug(r.ToString(), ConsoleColor.Green);
-                    statements.Add(statement);
+                    segments.Add(statement);
                 }
                 clearQueue();
             }
-            Log.spam("main context total executed statement amount: " + statements.Count);
+            Log.spam("main context total executed statement amount: " + segments.Count);
         }
 
         public override string ToString() {
