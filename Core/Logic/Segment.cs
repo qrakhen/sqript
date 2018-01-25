@@ -75,6 +75,7 @@ namespace Qrakhen.Sqript
                             node.put(rrr(context));
                         }
                     } else if (t.check(Keyword.RETURN)) {
+                        digest();
                         returning = true;
                     } else throw new Exception("check me");
                 } else if (t.check(ValueType.OPERATOR)) {
