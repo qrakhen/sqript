@@ -229,22 +229,4 @@ namespace Qrakhen.Sqript
             return null;
         }
     }
-
-    internal class _Statement : Segment
-    {
-        public _Statement(Token[] stack) : base(stack) {
-
-        }
-    }
-
-    internal class _Expression : Segment
-    {
-        protected Segment left, right;
-        protected Operator op;
-
-        public _Expression(Token[] stack) : base(stack) {
-
-        }
-    }
-
 }

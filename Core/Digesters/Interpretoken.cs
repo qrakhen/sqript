@@ -127,6 +127,9 @@ namespace Qrakhen.Sqript
                     result = o;
                 } else if (t.check(Struqture.Collection[OPEN])) {
                     // Array a = readBody(true);
+                } else if (t.check(Struqture.Call[OPEN])) {
+                    Segment s = Segmentizer.parseOne(context, readBody());
+                    result = s.execute(context);
                 }
             } else if (t.check(ValueType.PRIMITIVE)) {
                 result = digest().makeValue();
