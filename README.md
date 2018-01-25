@@ -1,10 +1,19 @@
-﻿# sqript
+﻿# Sqript
+```
+      _______/ ^ \___.___,
+     (__.   ._ .     |
+     .__)(_][  | [_) | _.
+      \    |     |     /
+```
 ### ~ another (dynamic|static) type-(less|full) adventure into obscurity
 
 Sqript is an interpreting programming language written in C#.
+It is being developed and maintained by David Neumaier aka 'Qrakhen' (qrakhen@gmail.com, http://qrakhen.net)
 
 It comes with its very own syntax, data types, workflow and behaviours.
 Can be built for - and also runs on - all platforms, including your microwave.
+
+https://github.com/qrakhen/sqript
 
 ## Philosophy
 
