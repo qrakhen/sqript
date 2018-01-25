@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    internal abstract class Context : Collection<string, Reference> {
+    internal class Context : Collection<string, Reference> {
         public const string
             CHAR_OPEN = "{",
             CHAR_CLOSE = "}";
@@ -34,6 +34,10 @@ namespace Qrakhen.Sqript
         public Context parent { get; protected set; }
 
         public Context(Context parent, ValueType type, Dictionary<string, Reference> value) : base(type, value) {
+            this.parent = parent;
+        }
+
+        public Context(Context parent) : base(ValueType.CONTEXT, new Dictionary<string, Reference>()) {
             this.parent = parent;
         }
 

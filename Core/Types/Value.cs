@@ -99,6 +99,27 @@ namespace Qrakhen.Sqript
         }
     }
 
+    public class Readonly : Value
+    {
+        public new object value {
+            get { return base.value; }
+            set { }
+        }
+
+        public new ValueType type {
+            get { return base.type; }
+            set { }
+        }
+
+        public Readonly(ValueType type, object value) : base(value, type) {
+
+        }
+
+        public static Readonly fromValue(Value value) {
+            return new Readonly(value.type, value.value);
+        }
+    }
+
     public class Value<T> : Value
     {
         public new T value {

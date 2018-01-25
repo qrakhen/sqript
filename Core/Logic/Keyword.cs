@@ -16,24 +16,23 @@ namespace Qrakhen.Sqript
         }
 
         public readonly static Kwrd
-            REFERENCE =         new Kwrd(0x000001, "REFERENCE"),
-            DESTROY =           new Kwrd(0x000002, "DESTROY"),
-            NEW =               new Kwrd(0x000004, "NEW"),
-            RETURN =            new Kwrd(0x000008, "RETURN"),
-            QLASS =             new Kwrd(0x000010, "QLASS"),
-            FUNQTION =          new Kwrd(0x000020, "FUNQTION"),
-            NAMESPACE =         new Kwrd(0x000040, "NAMESPACE"),
-            CONDITION_IF =      new Kwrd(0x000100, "CONDITION_IF"),
-            CONDITION_ELSE =    new Kwrd(0x000200, "CONDITION_ELSE"),
-            CONDITION_LOOP =    new Kwrd(0x000400, "CONDITION_LOOP"),
-            PUBLIC =            new Kwrd(0x001000, "PUBLIC"),
-            PROTECTED =         new Kwrd(0x002000, "PROTECTED"),
-            PRIVATE =           new Kwrd(0x003000, "PRIVATE"),
-            CURRENT_CONTEXT =   new Kwrd(0x010000, "CURRENT_CONTEXT"),
-            PARENT_CONTEXT =    new Kwrd(0x020000, "PARENT_CONTEXT");
+            REFERENCE = new Kwrd(0x000001, "REFERENCE"),
+            DESTROY = new Kwrd(0x000002, "DESTROY"),
+            NEW = new Kwrd(0x000004, "NEW"),
+            RETURN = new Kwrd(0x000008, "RETURN"),
+            QLASS = new Kwrd(0x000010, "QLASS"),
+            FUNQTION = new Kwrd(0x000020, "FUNQTION"),
+            NAMESPACE = new Kwrd(0x000040, "NAMESPACE"),
+            CONDITION_IF = new Kwrd(0x000100, "CONDITION_IF"),
+            CONDITION_ELSE = new Kwrd(0x000200, "CONDITION_ELSE"),
+            CONDITION_LOOP = new Kwrd(0x000400, "CONDITION_LOOP"),
+            PUBLIC = new Kwrd(0x001000, "PUBLIC"),
+            PROTECTED = new Kwrd(0x002000, "PROTECTED"),
+            PRIVATE = new Kwrd(0x003000, "PRIVATE"),
+            CURRENT_CONTEXT = new Kwrd(0x010000, "CURRENT_CONTEXT"),
+            PARENT_CONTEXT = new Kwrd(0x020000, "PARENT_CONTEXT");
 
-        public enum KeywordType
-        {
+        public enum KeywordType {
             FUNCTIONAL = 0x000F,
             DECLARATION = 0x0070,
             CONDITION = 0x0700,
@@ -58,6 +57,39 @@ namespace Qrakhen.Sqript
 
         public bool isType(KeywordType type) {
             return ((id & (int)type) > 0);
+        }
+
+        public override bool Equals(object obj) {
+            if (obj is Keyword) {
+                return (id == (obj as Keyword).id);
+            } else if (obj is Kwrd) {
+                Kwrd k = (Kwrd)obj;
+                return (id == k.id);
+            } else return base.Equals(obj);
+        }
+
+        public static bool operator ==(Keyword a, Keyword b) {
+            bool? r = (a?.Equals(b));
+            if (r.HasValue) return r.Value;
+            else return false;
+        }
+
+        public static bool operator ==(Keyword a, Kwrd b) {
+            bool? r = (a?.Equals(b));
+            if (r.HasValue) return r.Value;
+            else return false;
+        }
+
+        public static bool operator !=(Keyword a, Keyword b) {
+            bool? r = !(a?.Equals(b));
+            if (r.HasValue) return r.Value;
+            else return false;
+        }
+
+        public static bool operator !=(Keyword a, Kwrd b) {
+            bool? r = !(a?.Equals(b));
+            if (r.HasValue) return r.Value;
+            else return false;
         }
     } 
 

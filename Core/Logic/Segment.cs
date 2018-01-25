@@ -34,7 +34,7 @@ namespace Qrakhen.Sqript
          *          }
          *     }
          **/
-        public Value execute(Context context) {
+        public virtual Value execute(Context context) {
             Log.spam("segment.execute()");
             reset();
             head = new Node();
@@ -179,10 +179,56 @@ namespace Qrakhen.Sqript
         }
     }
 
-    internal class TypeDefinition : Segment
+    internal class LoopSegment : Segment
     {
-        public TypeDefinition(Token[] stack) : base(stack) {
+        public const int HEAD = 0x1, FOOT = 0x2;
 
+        public Segment[] body { get; protected set; }
+        public int loopType { get; protected set; }
+
+        public LoopSegment(Segment[] body, int loopType, Token[] stack) : base(stack) {
+            this.body = body;
+            this.loopType = loopType;
+        }
+
+        public override Value execute(Context context) {
+            Value p = new Value(true, ValueType.BOOLEAN);
+            do {
+                if (loopType == HEAD) p = base.execute(context);
+                if (!p.isType(ValueType.BOOLEAN)) throw new ConditionException("expression for loop condition has to return a value of type BOOL, got " + p.type.ToString() + " instead.");
+                if (p.getValue<bool>()) {
+                    Funqtion fq = new Funqtion(context, new List<Segment>(body));
+                    fq.execute();
+                } else break;
+                if (loopType == FOOT) p = base.execute(context);
+            } while (true);
+            return null;
+        }
+    }
+
+    internal class IfElseSegment : Segment
+    {
+        public Segment[] body { get; protected set; }
+        public Segment next { get; protected set; }
+
+        public IfElseSegment(Segment[] body, Token[] stack) : base(stack) {
+            this.body = body;
+        }
+
+        public void append(IfElseSegment next) {
+            this.next = next;
+        }
+
+        public override Value execute(Context context) {
+            Value r = stack.Length == 0 ? Value.TRUE : base.execute(context);
+            if (!r.isType(ValueType.BOOLEAN)) throw new ConditionException("expression for loop condition has to return a value of type BOOLEAN, got " + r.type.ToString() + " instead.");
+            else if (r.getValue<bool>()) {
+                Funqtion xfq = new Funqtion(context, new List<Segment>(body));
+                xfq.execute();
+            } else if (next != null) {
+                next.execute(context);
+            }
+            return null;
         }
     }
 

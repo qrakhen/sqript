@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    internal abstract class Condition : Funqtion
+    /*internal abstract class Condition : Funqtion
     {
         protected Segment premise;
 
@@ -44,7 +44,7 @@ namespace Qrakhen.Sqript
         }
     }
 
-    internal class LoopCondition : Condition
+    internal class LoopCondition : Funqtion
     {
         public enum LoopType
         {
@@ -55,7 +55,7 @@ namespace Qrakhen.Sqript
 
         public LoopType loopType { get; protected set; }
 
-        public LoopCondition(Context parent, LoopType loopType, Segment premise = null) : base(parent, premise) {
+        public LoopCondition(Context parent, LoopType loopType, Segment premise) : base(parent, premise) {
             this.loopType = loopType;
         }
 
@@ -70,5 +70,5 @@ namespace Qrakhen.Sqript
             } while (true);
             return null;
         }
-    }
+    }*/
 }

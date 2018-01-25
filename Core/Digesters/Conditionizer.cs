@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    internal class Conditionizer : Interpretoken
+    /*internal class Conditionizer : Interpretoken
     {
         public const string
             CF_EXPR_OPEN = "(",
@@ -77,5 +77,5 @@ namespace Qrakhen.Sqript
         public static Condition parse(Keyword keyword, Context context, Token[] stack) {
             return new Conditionizer(stack).parse(keyword, context);
         }
-    }
+    }*/
 }

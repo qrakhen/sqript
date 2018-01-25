@@ -18,6 +18,10 @@
             return value;
         }
 
+        public virtual Value getFinalReference() {
+            return (value is Reference ? (value as Reference).getFinalReference() : value);
+        }
+
         public virtual void setReference(Value value) {
             setValue(value, type);
         }

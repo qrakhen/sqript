@@ -33,7 +33,7 @@ namespace Qrakhen.Sqript
         }
 
         public static Value getRealValue(Value v) {
-            if (v is Reference) return (v as Reference).getReference();
+            if (v is Reference) return (v as Reference).getFinalReference();
             else return v;
         }
 
