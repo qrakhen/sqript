@@ -41,21 +41,21 @@ but as I am constantly working on it, even these things will fade.
  * operator overloads, custom operator declaration and definition
  * custom 'native' types, extendable native types
 
-# OUTDATED
-## Please be patient while I am working on an actual documentation for this.
+## Partially outdated
+### Please be patient while I am working on an actual documentation for this.
 
 ### Example Code
 ```javascript
  # reference declaration & assignment
- <<	*~ name <~ 'foo';
+ << *~ name <~ 'foo';
  >> foo
  << name <~ name + 'bar';
  >> foobar
  
  # funqtion declaration
  << *~ pow <~ ~(value {
-        <~ value * value;
-    });
+ <<     <~ value * value;
+ << });
  << pow(5);
  >> 25
 
@@ -175,7 +175,7 @@ fq multiply(a b {
 }, a b c {
 	<~ a * b * c;
 });
-
+```
 Yes, that's right: funqtion overloads work exactly like this and are all declared in one body.
 Of course overloaded funqtions don't make much sense without types, so here's a (pretty pointless) typed version:
 ```javascript
