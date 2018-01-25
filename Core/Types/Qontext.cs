@@ -4,12 +4,9 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    internal class Context : Collection<string, Reference> {
-        public const string
-            CHAR_OPEN = "{",
-            CHAR_CLOSE = "}";
-
-        static Context() {
+    internal abstract class Qontext : Collection<string, Reference>
+    {
+        static Qontext() {
             /*nativeCalls.Add(
                 "toString", 
                 new Func<Value[], Context, Value>(delegate (Value[] parameters, Context caller) {
@@ -31,13 +28,13 @@ namespace Qrakhen.Sqript
             );*/
         }
 
-        public Context parent { get; protected set; }
+        public Qontext parent { get; protected set; }
 
-        public Context(Context parent, ValueType type, Dictionary<string, Reference> value) : base(type, value) {
+        public Qontext(Qontext parent, ValueType type, Dictionary<string, Reference> value) : base(type, value) {
             this.parent = parent;
         }
 
-        public Context(Context parent) : base(ValueType.CONTEXT, new Dictionary<string, Reference>()) {
+        public Qontext(Qontext parent) : base(ValueType.CONTEXT, new Dictionary<string, Reference>()) {
             this.parent = parent;
         }
 
@@ -66,15 +63,15 @@ namespace Qrakhen.Sqript
         public Reference lookupOrThrow(string name, bool recursive = true) {
             if (value.ContainsKey(name)) return value[name];
             else if (recursive && parent != null) return parent.lookup(name, true);
-            else throw new ContextException("could not lookup identifier '" + name + "' in current context");
+            else throw new QontextException("could not lookup identifier '" + name + "' in current context");
         }
 
         public Reference get(string[] keys) {
-            Context c = this;
+            Qontext c = this;
             for (int i = 0; i < keys.Length - 1; i++) {
                 if (c.value.ContainsKey(keys[i])) {
-                    if (c.value[keys[i]].getValue() is Context) {
-                        c = c.value[keys[i]].getValue<Context>();
+                    if (c.value[keys[i]].getValue() is Qontext) {
+                        c = c.value[keys[i]].getValue<Qontext>();
                     }
                 } else return null;
             }
@@ -126,13 +123,13 @@ namespace Qrakhen.Sqript
                         else return null;
                     }
                 } else if (v.isType(ValueType.CONTEXT)) {
-                    Context ctx = (Context)v;
+                    Qontext ctx = (Qontext)v;
                     string asd = ctx.str();
-                    r = (v as Context).get(key);
+                    r = (v as Qontext).get(key);
                     if (r == null) {
                         if (autoCreate) {
                             r = new Reference();
-                            (v as Context).set(key, r);
+                            (v as Qontext).set(key, r);
                         } else if (safe) throw new Exception("tried to access undefined context member '" + keys[i - 1] + ":" + keys[i] + "'");
                         else return null;
                     }
@@ -144,7 +141,7 @@ namespace Qrakhen.Sqript
         public override string ToString() {
             string r = "{\n";
             foreach (var reference in value) {
-                if (reference.Value.getReference() == (Context) this) continue;
+                if (reference.Value.getReference() == (Qontext) this) continue;
                 string[] lines = reference.Value.getReference().ToString().Split('\n');
                 r += "    " + reference.Key + ": " + lines[0] + "\n";
                 for (int i = 1; i < lines.Length; i++) r += "    " + lines[i] + "\n";
@@ -153,8 +150,8 @@ namespace Qrakhen.Sqript
         }
     }
 
-    public class ContextException : Exception
+    public class QontextException : Exception
     {
-        public ContextException(string message) : base(message) { }
+        public QontextException(string message) : base(message) { }
     }
 }

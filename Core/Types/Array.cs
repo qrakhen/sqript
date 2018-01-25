@@ -52,12 +52,12 @@ namespace Qrakhen.Sqript
                         } else if (safe) throw new Exception("tried to access undefined array index '" + keys[i - 1] + ":" + keys[i] + "'");
                         else return null;
                     }
-                } else if (v is Context) {
-                    r = (v as Context).get(key);
+                } else if (v is Qontext) {
+                    r = (v as Qontext).get(key);
                     if (r == null) {
                         if (autoCreate) {
                             r = new Reference();
-                            (v as Context).set(key, r);
+                            (v as Qontext).set(key, r);
                         } else if (safe) throw new Exception("tried to access undefined context member '" + keys[i - 1] + ":" + keys[i] + "'");
                         else return null;
                     }

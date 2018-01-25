@@ -4,26 +4,26 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    internal class Funqtion : Context
+    internal class Funqtion : Qontext
     {
         public List<Segment> segments { get; protected set; }
         public List<string> parameters { get; protected set; }
 
         public Funqtion(
-                Context parent, 
+                Qontext parent, 
                 Dictionary<string, Reference> references, 
                 List<Segment> segments,
                 List<string> parameters = null,
                 ValueType type = ValueType.FUNQTION) : base(parent, type, references) {
             this.segments = segments;
-            this.parameters = parameters == null ? new List<string>() : parameters;
+            this.parameters = parameters ?? new List<string>();
         }
 
-        public Funqtion(Context parent, ValueType type) : this(parent, null, null, null, type) { }
+        public Funqtion(Qontext parent, ValueType type) : this(parent, null, null, null, type) { }
 
-        public Funqtion(Context parent) : this(parent, new Dictionary<string, Reference>(), new List<Segment>()) {}
+        public Funqtion(Qontext parent) : this(parent, new Dictionary<string, Reference>(), new List<Segment>()) {}
 
-        public Funqtion(Context parent, List<Segment> statements) : this(parent, new Dictionary<string, Reference>(), statements) { }
+        public Funqtion(Qontext parent, List<Segment> statements) : this(parent, new Dictionary<string, Reference>(), statements) { }
 
         public virtual Value execute(Value[] parameters = null) {
             // we need to store all references in a temporary xfq (execution funqtion) so that the original funqtion is not mutated
@@ -67,7 +67,7 @@ namespace Qrakhen.Sqript
     {
         public string call { get; protected set; }
 
-        public NativeCall(Context parent, string call) : base(parent, ValueType.NATIVE_CALL) {
+        public NativeCall(Qontext parent, string call) : base(parent, ValueType.NATIVE_CALL) {
             this.call = call;
         }
 

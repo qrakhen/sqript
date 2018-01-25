@@ -8,11 +8,11 @@ namespace Qrakhen.Sqript
     {
         public Obqectizer(Token[] stack) : base(stack) { }
 
-        public static Obqect parse(Context context, Token[] stack) {
+        public static Obqect parse(Qontext context, Token[] stack) {
             return new Obqectizer(stack).parse(context);
         }
 
-        public Obqect parse(Context context) {
+        public Obqect parse(Qontext context) {
             Log.spam("Obqectizer.parse()");
             Obqect o = new Obqect(context);
             if (stack.Length == 0) return o;

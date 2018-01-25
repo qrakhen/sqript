@@ -63,9 +63,9 @@
     internal class FloatingReference : Reference
     {
         public string name { get; private set; }
-        public Context owner { get; private set; }
+        public Qontext owner { get; private set; }
 
-        public FloatingReference(string name, Context owner) : base(NULL) {
+        public FloatingReference(string name, Qontext owner) : base(NULL) {
             this.name = name;
             this.owner = owner;
         }

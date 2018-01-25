@@ -64,7 +64,7 @@ namespace Qrakhen.Sqript
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public Reference rrr(Context context, int adjust = 0, int __l = 0) {
+        public Reference rrr(Qontext context, int adjust = 0, int __l = 0) {
             if (adjust != 0) shift(adjust);
             Log.spam("rrr inbound,\n __level: " + __l);
             Reference r = null;
@@ -82,9 +82,9 @@ namespace Qrakhen.Sqript
 
             t = peek();
             if (t.check(Struqture.MEMBER)) {
-                if (r?.getReference() is Context) {
+                if (r?.getReference() is Qontext) {
                     digest(); // <~ into the void!
-                    return rrr((Context)r.getReference(), 0, ++__l);
+                    return rrr((Qontext)r.getReference(), 0, ++__l);
                 } else throw new ParseException("tried to access member of a value that is not a context and thus memberless.", t);
             } else {
                 if (r == null && identifier != null) {
@@ -95,7 +95,7 @@ namespace Qrakhen.Sqript
             }
         }
 
-        public Value readNextValue(Context context, ValueType expected = ValueType.ANY_VALUE) {
+        public Value readNextValue(Qontext context, ValueType expected = ValueType.ANY_VALUE) {
             Log.spam("Interpretoken.readNextValue()");
             Token t = peek();
             Value result = null;
@@ -125,10 +125,10 @@ namespace Qrakhen.Sqript
                     } else {
                         result = f;
                     }
-                } else if (t.check(Obqect.CHAR_OPEN)) {
+                } else if (t.check(Struqture.Context[OPEN])) {
                     Obqect o = Obqectizer.parse(context, readBody(true));
                     result = o;
-                } else if (t.check(Array.CHAR_OPEN)) {
+                } else if (t.check(Struqture.Collection[OPEN])) {
                     // Array a = readBody(true);
                 } else if (t.check("(")) {
                     Expression e = Expressionizer.parse(context, readBody());

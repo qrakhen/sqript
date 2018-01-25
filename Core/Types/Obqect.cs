@@ -4,13 +4,13 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    internal class Obqect : Context
+    internal class Obqect : Qontext
     {
-        public Obqect(Context parent, Dictionary<string, Reference> value) : base(parent, ValueType.OBQECT, value) {
+        public Obqect(Qontext parent, Dictionary<string, Reference> value) : base(parent, ValueType.OBQECT, value) {
             assignNativeCalls();
         }
 
-        public Obqect(Context parent) : this(parent, new Dictionary<string, Reference>()) {}
+        public Obqect(Qontext parent) : this(parent, new Dictionary<string, Reference>()) {}
 
         protected override void assignNativeCalls() {
 

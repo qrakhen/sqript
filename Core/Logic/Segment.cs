@@ -34,7 +34,7 @@ namespace Qrakhen.Sqript
          *          }
          *     }
          **/
-        public virtual Value execute(Context context) {
+        public virtual Value execute(Qontext context) {
             Log.spam("segment.execute()");
             reset();
             head = new Node();
@@ -53,7 +53,7 @@ namespace Qrakhen.Sqript
             return r;
         }
 
-        protected virtual Node build(Context context, Node node = null) {
+        protected virtual Node build(Qontext context, Node node = null) {
             int step = 0;
             do {
                 if (node == null) node = new Node();
@@ -191,7 +191,7 @@ namespace Qrakhen.Sqript
             this.loopType = loopType;
         }
 
-        public override Value execute(Context context) {
+        public override Value execute(Qontext context) {
             Value p = new Value(true, ValueType.BOOLEAN);
             do {
                 if (loopType == HEAD) p = base.execute(context);
@@ -219,7 +219,7 @@ namespace Qrakhen.Sqript
             this.next = next;
         }
 
-        public override Value execute(Context context) {
+        public override Value execute(Qontext context) {
             Value r = stack.Length == 0 ? Value.TRUE : base.execute(context);
             if (!r.isType(ValueType.BOOLEAN)) throw new ConditionException("expression for loop condition has to return a value of type BOOLEAN, got " + r.type.ToString() + " instead.");
             else if (r.getValue<bool>()) {

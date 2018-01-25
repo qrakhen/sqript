@@ -2,7 +2,7 @@
 
 namespace Qrakhen.Sqript
 {
-    internal class Qlass : Context
+    internal class Qlass : Qontext
     {
         public Dictionary<string, Property> properties;
 
@@ -11,13 +11,13 @@ namespace Qrakhen.Sqript
         /// </summary>
         /// <param name="context"></param>
         public Qlass(
-                Context parent, 
+                Qontext parent, 
                 Dictionary<string, Property> instanceProperties = null, 
                 Dictionary<string, Reference> staticReferences = null) : base(parent, ValueType.QLASS, staticReferences) {
-            properties = (instanceProperties == null ? new Dictionary<string, Property>() : instanceProperties);
+            properties = (instanceProperties ?? new Dictionary<string, Property>());
         }
 
-        public Obqect instantiate() {
+        public Instance instantiate() {
             return null;
         }
 

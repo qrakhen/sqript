@@ -8,19 +8,19 @@ namespace Qrakhen.Sqript
     {
         public Segmentizer(Token[] stack) : base(stack) { }
 
-        public static Segment[] parse(Context context, Token[] stack) {
+        public static Segment[] parse(Qontext context, Token[] stack) {
             return new Segmentizer(stack).parse(context);
         }
 
-        public static Segment parseOne(Context context, Token[] stack) {
+        public static Segment parseOne(Qontext context, Token[] stack) {
             return new Segmentizer(stack).parseOne(context);
         }
 
-        public Segment parseOne(Context context) {
+        public Segment parseOne(Qontext context) {
             return parse(context, true)[0];
         }
 
-        public Segment[] parse(Context context, bool first = false) {
+        public Segment[] parse(Qontext context, bool first = false) {
             Log.spam("Statementizer.execute()");
             if (stack.Length == 0) return new Segment[0];
             List<Token> buffer = new List<Token>();
@@ -47,8 +47,8 @@ namespace Qrakhen.Sqript
                         else segments.Add(new Segment(buffer.ToArray()));
                         buffer.Clear();
                     } else {
-                        if (t.check(Context.CHAR_OPEN)) level++;
-                        else if (t.check(Context.CHAR_CLOSE)) level--;
+                        if (t.check(Struqture.Context[OPEN])) level++;
+                        else if (t.check(Struqture.Context[CLOSE])) level--;
                         buffer.Add(t);
                         if (endOfStack()) segments.Add(new Segment(buffer.ToArray()));
                     }
@@ -57,7 +57,7 @@ namespace Qrakhen.Sqript
             return segments.ToArray();
         }
 
-        protected Segment parseCondition(Context context, Keyword keyword) {
+        protected Segment parseCondition(Qontext context, Keyword keyword) {
             if (keyword == Keyword.CONDITION_IF) {
                 Token[] premise = readBody();
                 Segment[] body = parse(context, readBody());

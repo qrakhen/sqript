@@ -78,7 +78,7 @@ namespace Qrakhen.Sqript
         {
             public Call call { get; private set; }
 
-            public Funqtion(Context parent, Call call) : base(parent) {
+            public Funqtion(Qontext parent, Call call) : base(parent) {
                 this.call = call;
             }
 

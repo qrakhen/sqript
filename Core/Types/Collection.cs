@@ -32,7 +32,7 @@ namespace Qrakhen.Sqript
 
         public virtual T getOrThrow(K key) {
             if (value.ContainsKey(key)) return value[key];
-            else throw new ContextException("unkown identifier or index '" + key + "' in given context or array");
+            else throw new QontextException("unkown identifier or index '" + key + "' in given context or array");
         }
 
         /*public virtual Value get(object[] keys) {

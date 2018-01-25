@@ -8,11 +8,11 @@ namespace Qrakhen.Sqript
     {
         public Funqtionizer(Token[] stack) : base(stack) { }
 
-        public static Funqtion parse(Context context, Token[] stack) {
+        public static Funqtion parse(Qontext context, Token[] stack) {
             return new Funqtionizer(stack).parse(context);
         }
 
-        public Funqtion parse(Context context) {
+        public Funqtion parse(Qontext context) {
             Token t = digest();
             if (t.check(Struqture.Funqtion[OPEN])) {
                 Funqtion fq = new Funqtion(context);
@@ -37,7 +37,7 @@ namespace Qrakhen.Sqript
             } else throw new ParseException("unexpected funqtion parameter opening, expected '('", t);
         }
 
-        public Value[] parseParameters(Context context) {
+        public Value[] parseParameters(Qontext context) {
             List<Value> parameters = new List<Value>();
             Token t = digest();
             if (t.check(Struqture.Call[OPEN])) {
@@ -57,7 +57,7 @@ namespace Qrakhen.Sqript
             } else throw new ParseException("unexpected funqtion call parameter opening, expected '('", t);
         }
 
-        public static Value[] parseParameters(Context context, Token[] stack) {
+        public static Value[] parseParameters(Qontext context, Token[] stack) {
             return new Funqtionizer(stack).parseParameters(context);
         }
     }

@@ -25,11 +25,11 @@ namespace Qrakhen.Sqript
             }
         }
 
-        public static Expression parse(Context context, Token[] stack) {
+        public static Expression parse(Qontext context, Token[] stack) {
             return new Expressionizer(stack).parse(context);
         }
 
-        public Expression parse(Context context) {
+        public Expression parse(Qontext context) {
             Expression head = null;
             Expr expr = new Expr();
             do {

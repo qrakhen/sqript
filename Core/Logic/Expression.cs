@@ -6,13 +6,13 @@ namespace Qrakhen.Sqript
 {
     internal class Expression
     {
-        private Context context;
+        private Qontext context;
 
         public object left { get; protected set; }
         public object right { get; protected set; }
         public Operator op { get; protected set; }
 
-        public Expression(Operator op, object left, object right, Context context) {
+        public Expression(Operator op, object left, object right, Qontext context) {
             this.op = op;
             this.left = left;
             this.right = right;
