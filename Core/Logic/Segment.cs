@@ -74,18 +74,18 @@ namespace Qrakhen.Sqript
                         } else {
                             node.put(rrr(context));
                         }
+                    } else if (t.check(Keyword.RETURN)) {
+                        returning = true;
                     } else throw new Exception("check me");
                 } else if (t.check(ValueType.OPERATOR)) {
                     Operator op = digest().getValue<Operator>();
                     if (op.symbol == Operator.ASSIGN_VALUE || op.symbol == Operator.ASSIGN_REFERENCE) {
                         if (step == 0) returning = true;
-                        if (head.empty() && step == 1) {
+                        else if (head.empty() && step == 1) {
                             head.left = node.left;
                         }
                     }
                     if (node.ready()) {
-                        // explanation: move right node side to the new node and make that the right side of the current node
-                        // let's call it node stack rotation or something, sounds pretty cool
                         Node next = new Node(node, null, op);
                         node = build(context, next);
                     } else if (node.left != null) {
