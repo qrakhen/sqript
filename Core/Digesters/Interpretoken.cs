@@ -71,7 +71,7 @@ namespace Qrakhen.Sqript
             if (
                    (Keywords.isAlias(t.str(), Keyword.CURRENT_CONTEXT) && __l == 0) ||
                     Keywords.isAlias(t.str(), Keyword.PARENT_CONTEXT) ||
-                    t.check(ValueType.Identifier)) { 
+                    t.check(ValueType.Identifier) || t.check(ValueType.Integer)) { 
                 key = (t.getValue() is Keyword ? digest().getValue<Keyword>().getKey<T>() : digest().getValue<T>());
                 r = context.get(key);
                 __buffer.Add(r);
@@ -147,10 +147,11 @@ namespace Qrakhen.Sqript
                         result = f;
                     }
                 } else if (t.check(Struqture.Context[OPEN])) {
-                    Obqect o = Obqectizer.parse(context, readBody(true));
+                    Obqect o = Colleqtionizer.readObqect(context, readBody(true));
                     result = o;
                 } else if (t.check(Struqture.Collection[OPEN])) {
-                    //Array a = readBody(true);
+                    Array a = Colleqtionizer.readArray(context, readBody(true));
+                    result = a;
                 } else if (t.check(Struqture.Call[OPEN])) {
                     Segment s = Segmentizer.parseOne(context, readBody());
                     result = s.execute(context);

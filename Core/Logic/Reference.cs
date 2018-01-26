@@ -17,8 +17,6 @@
         }
 
         public virtual Value getReference() {
-            //#if (value is Collection<string>) return (Qontext)value;
-            //#else if (value is Collection<int>) return (Array)value;
             return value;
         }
 

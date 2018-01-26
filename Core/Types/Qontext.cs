@@ -59,67 +59,6 @@ namespace Qrakhen.Sqript
             else if (value.ContainsKey(key)) return value[key];
             else return null;
         }
-
-        public Reference query(string query, bool safe = true, bool autoCreate = true) {
-            Log.error("I SHOULD STOP USING CONTEXT QUERY, IS THERE REALLY ANY SPOT WHERE I'D REALLY NEED THIS? USE RESREFREC");
-            Log.spam("called context::query with parameters: '" + query + "', '" + safe + "', '" + autoCreate + "'.");
-            string[] keys = query.Split(MEMBER_DELIMITER.ToCharArray());
-
-            int index = 0;
-            Reference r = get(keys[index++]);
-
-            /*r = get(keys[index]);
-            if (r == null) {
-                if (index > 0) {
-                    if (safe) throw new Exception("tried to access undefined member '" + keys[index] + "'");
-                    else return null;
-                } else {
-                    r = lookup(keys[index]);
-                    if (r == null)
-                        if (safe) throw new Exception("tried to access undefined or inaccessible identifier '" + keys[index] + "'");
-                        else if (!safe) return null;
-                }
-            }*/
-
-            for (int i = index; i < keys.Length; i++) {
-                string key = keys[i];
-                Value v = r.getTrueValue();
-                if (v == null) throw new Exception("tried to access member of empty reference '" + keys[i - 1] + ":" + keys[i] + "'");
-                if (v.isType(ValueType.Array)) {
-                    r = (v as Array).get(Int32.Parse(key));
-                    if (r == null) {
-                        if (autoCreate) {
-                            r = new Reference();
-                            (v as Array).set(Int32.Parse(key), r);
-                        } else if (safe) throw new Exception("tried to access undefined array index '" + keys[i - 1] + ":" + keys[i] + "'");
-                        else return null;
-                    }
-                } else if (v.isType(ValueType.Qontext)) {
-                    Qontext ctx = (Qontext)v;
-                    string asd = ctx.str();
-                    r = (v as Qontext).get(key);
-                    if (r == null) {
-                        if (autoCreate) {
-                            r = new Reference();
-                            (v as Qontext).set(key, r);
-                        } else if (safe) throw new Exception("tried to access undefined context member '" + keys[i - 1] + ":" + keys[i] + "'");
-                        else return null;
-                    }
-                } else throw new Exception("trying to access member of memberless value type " + v.type.ToString());
-            }
-            return r;  
-        }
-
-        public override string ToString() {
-            string r = "{\n";
-            foreach (var reference in value) {
-                if (reference.Value.getTrueValue() == (Qontext) this) continue;
-                string[] lines = reference.Value.getTrueValue().ToString().Split('\n');
-                r += "    " + reference.Key + ": " + lines[0] + "\n";
-                for (int i = 1; i < lines.Length; i++) r += "    " + lines[i] + "\n";
-            }
-            return r + "}";
-        }
     }
 
     internal class StatiqQontext : Qontext
