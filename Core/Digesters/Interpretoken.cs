@@ -62,46 +62,53 @@ namespace Qrakhen.Sqript
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public Reference[] rrra(Qontext context, int __l = 0, List<Reference> __buffer = null) {
+        public Reference[] rrra<T>(Collection<T> context, int __l = 0, List<Reference> __buffer = null) {
             if (__buffer == null) __buffer = new List<Reference>();
             Log.spam("rrr inbound,\n __level: " + __l);
             Reference r = null;
             Token t = peek();
-            string identifier;
+            T key;
             if (
                    (Keywords.isAlias(t.str(), Keyword.CURRENT_CONTEXT) && __l == 0) ||
                     Keywords.isAlias(t.str(), Keyword.PARENT_CONTEXT) ||
                     t.check(ValueType.Identifier)) { 
-                identifier = digest().str();
-                r = context.get(identifier);
+                key = (t.getValue() is Keyword ? digest().getValue<Keyword>().getKey<T>() : digest().getValue<T>());
+                r = context.get(key);
                 __buffer.Add(r);
                 Log.spam("found " + (r == null ? " nothing, lol." : r.getTrueValue()?.str()));
             } else throw new ParseException("tried to resolve reference with unexpected token '" + t + "'", t);
-            if (r == null && __l == 0) r = context.lookupOrThrow(identifier);
+            if (r == null && __l == 0 && context is Qontext) r = (context as Qontext).lookupOrThrow(key.ToString());
 
             t = peek();
             if (t.check(Struqture.MEMBER)) {
                 Reference nc = Native.get(r.getTrueValue().type, peek(1).str());
-                if (nc == null && r?.getTrueValue() is Qontext) {
-                    digest(); // <~ into the void!
-                    return rrra((Qontext)r.getTrueValue(), ++__l, __buffer);
+                if (nc == null) {
+                    if (r?.getTrueValue() is Qontext) {
+                        digest(); // <~ into the void!
+                        return rrra((Qontext)r.getTrueValue(), ++__l, __buffer);
+                    } else if (r?.getTrueValue() is Array) {
+                        digest();
+                        return rrra((Array)r.getTrueValue(), ++__l, __buffer);
+                    }
                 } else {
                     if (nc != null) {
                         digest();
                         digest();
                         __buffer.Add(nc);
                         return __buffer.ToArray();
-                    } else throw new ParseException("tried to access member of a value that is not a context and thus memberless.", t);
+                    }
                 }
+                throw new ParseException("tried to access member of a value that is not a context and thus memberless,\nor tried to call unknown native funqtion.", t);
             } else {
-                if (r == null && identifier != null) {
+                if (r == null && key != null) {
                     Log.spam("rrr detected undeclared identifier at the end of the member chain,\nreturning floating reference for possible binding...");
-                    r = new FloatingReference(identifier, context);
+                    r = new FloatingReference<T>(key, context);
+                    __buffer.Add(r);
                 }
                 return __buffer.ToArray();
             }
         }
-
+        
         public Reference rrr(Qontext context, int item = 0) {
             Reference[] r = rrra(context);
             if (r.Length > item) return r[r.Length - (item + 1)];
@@ -143,7 +150,7 @@ namespace Qrakhen.Sqript
                     Obqect o = Obqectizer.parse(context, readBody(true));
                     result = o;
                 } else if (t.check(Struqture.Collection[OPEN])) {
-                    // Array a = readBody(true);
+                    //Array a = readBody(true);
                 } else if (t.check(Struqture.Call[OPEN])) {
                     Segment s = Segmentizer.parseOne(context, readBody());
                     result = s.execute(context);

@@ -49,7 +49,8 @@ namespace Qrakhen.Sqript
                     head.execute();
                 }
             }
-            if (!head.empty() && head.left is FloatingReference) (head.left as FloatingReference).bind();
+            if (!head.empty() && head.left is FloatingReference<string>) (head.left as FloatingReference<string>).bind();
+            else if (!head.empty() && head.left is FloatingReference<int>) (head.left as FloatingReference<int>).bind();
             return r;
         }
 
@@ -66,7 +67,7 @@ namespace Qrakhen.Sqript
                         digest();
                         t = peek();
                         if (t.check(ValueType.Identifier)) {
-                            head.left = new FloatingReference(digest().str(), context);
+                            head.left = new FloatingReference<string>(digest().str(), context);
                         } else throw new ParseException("expected identifier after new reference keyword, got '" + t + "' instead", t);
                     } else if (t.check(Keyword.CURRENT_CONTEXT) || t.check(Keyword.PARENT_CONTEXT)) {
                         if (head.empty()) {

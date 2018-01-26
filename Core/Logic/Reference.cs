@@ -17,11 +17,13 @@
         }
 
         public virtual Value getReference() {
+            //#if (value is Collection<string>) return (Qontext)value;
+            //#else if (value is Collection<int>) return (Array)value;
             return value;
         }
 
         public virtual Value getTrueValue() {
-            return (value is Reference ? (value as Reference).getTrueValue() : value);
+            return (getReference() is Reference ? (value as Reference).getTrueValue() : getReference());
         }
 
         public virtual void setReference(Value value) {
@@ -51,18 +53,18 @@
         }
     }
 
-    internal class FloatingReference : Reference
+    internal class FloatingReference<T> : Reference
     {
-        public string name { get; private set; }
-        public Qontext owner { get; private set; }
+        public T key { get; private set; }
+        public Collection<T> owner { get; private set; }
 
-        public FloatingReference(string name, Qontext owner) : base(Null) {
-            this.name = name;
+        public FloatingReference(T key, Collection<T> owner) : base(Null) {
+            this.key = key;
             this.owner = owner;
         }
 
         public void bind() {
-            if (value.type != ValueType.Null) owner.set(name, new Reference(value));
+            if (value.type != ValueType.Null) owner.set(key, new Reference(value));
         }
     }
 }

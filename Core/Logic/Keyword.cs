@@ -57,6 +57,10 @@ namespace Qrakhen.Sqript
             return ((id & (int)type) > 0);
         }
 
+        public T getKey<T>() {
+            return (T)(object)name;
+        }
+
         public override bool Equals(object obj) {
             if (obj is Keyword) {
                 return (id == (obj as Keyword).id);

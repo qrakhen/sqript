@@ -11,11 +11,11 @@ namespace Qrakhen.Sqript
      *<t1>~ t <~ [ val(t1), ... ];    
          
      ***/
-    internal class Array : Collection<int, Reference>
+    internal class Array : Collection<int>
     {
         public const string
             CHAR_OPEN = "[",
-            CHAR_CLOSE = "]"; 
+            CHAR_CLOSE = "]";
 
         public Array(Dictionary<int, Reference> value) : base(ValueType.Array, value) { }
         public Array() : base(ValueType.Array, new Dictionary<int, Reference>()) { }

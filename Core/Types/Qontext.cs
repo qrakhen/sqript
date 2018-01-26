@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    internal abstract class Qontext : Collection<string, Reference>
+    internal abstract class Qontext : Collection<string>
     {
         public Qontext parent { get; protected set; }
 
