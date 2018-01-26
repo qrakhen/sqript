@@ -1,0 +1,17 @@
+﻿*~ complex <~ {
+	name <~ 'complex obqect', #comments inside obqects? no problem!
+	with <~ [
+		'its very own',
+		'sub-array',
+		'which has dynamically indexed values and',
+		100 <~ 'directly set indexes',
+		'it also has another type inside it:',
+		{ 
+			yes <~ 'another obqect!',
+			__this <~ [ 'is', { intense <~ '100%' }]
+		}
+	],
+	awesome <~ [{ sqript <~ { levels <~ { awesome <~ 1000, useless <~ 0 }}}, ':)']
+};
+
+complex;

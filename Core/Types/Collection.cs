@@ -41,7 +41,7 @@ namespace Qrakhen.Sqript
                 if (reference.Value.getTrueValue() == this) continue;
                 string[] lines = reference.Value.getTrueValue().ToString().Split('\n');
                 r += "    " + reference.Key + ": " + lines[0] + "\n";
-                for (int i = 1; i < lines.Length; i++) r += "        " + lines[i] + "\n";
+                for (int i = 1; i < lines.Length; i++) r += "    " + lines[i] + "\n";
             }
             return r + "}";
         }
