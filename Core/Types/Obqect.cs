@@ -4,7 +4,7 @@ namespace Qrakhen.Sqript
 {
     internal class Obqect : Qontext
     {
-        public Obqect(Qontext parent, Dictionary<string, Reference> value) : base(parent, ValueType.OBQECT, value) {
+        public Obqect(Qontext parent, Dictionary<string, Reference> value) : base(parent, ValueType.Obqect, value) {
             assignNativeCalls();
         }
 

@@ -1,13 +1,15 @@
 ﻿namespace Qrakhen.Sqript
 {
     internal class Reference : Value<Value>
-    {        
-        public Reference(Value value) : base(ValueType.REFERENCE, value) {
+    {
+        public readonly ValueType acceptedType;
 
+        public Reference(Value value, ValueType acceptedType = ValueType.Null) : base(ValueType.Reference, value) {
+            this.acceptedType = acceptedType;
         }
 
-        public Reference() : base(ValueType.REFERENCE, new Value(null, ValueType.NULL)) {
-
+        public Reference(ValueType acceptedType = ValueType.Null) : base(ValueType.Reference, new Value(null, ValueType.Null)) {
+            this.acceptedType = acceptedType;
         }
 
         public virtual void assign(Value value) { 
@@ -15,8 +17,7 @@
         }
 
         public virtual Value getReference() {
-            //return value; temporary bypass to see if this method actually serves any purpose at all
-            return getTrueValue();
+            return value;
         }
 
         public virtual Value getTrueValue() {
@@ -24,6 +25,7 @@
         }
 
         public virtual void setReference(Value value) {
+            if (acceptedType != ValueType.Null && !value.isType(acceptedType)) throw new ReferenceException("can not assign value '" + value.str() + "': expected a value of type '" + acceptedType + "', got '" + value.ToString(true) + "' instead", this);
             setValue(value, type);
         }
 
@@ -40,24 +42,10 @@
         }
 
         public override string ToString() {
-            return (getReference() == null ? NULL.ToString() : getReference().ToString());
-        }
-    }
-
-    internal class TypeReference : Reference
-    {
-        public ValueType forcedType {
-            get {
-                return forcedType;
-            }
-            private set {
-                if (forcedType == ValueType.NULL) forcedType = value;
-                else throw new Exception("can not redefine static reference type");
-            }
-        }
-
-        public TypeReference(Value value, ValueType forcedType) : base(value) {
-            this.forcedType = forcedType;
+            return 
+                (acceptedType != ValueType.Null ? "<" + acceptedType + ":" : "") + 
+                (getTrueValue() == null ? NULL.ToString() : getTrueValue().ToString(false)) +
+                (acceptedType != ValueType.Null ? ">" : "");
         }
     }
 
@@ -72,7 +60,7 @@
         }
 
         public void bind() {
-            if (value.type != ValueType.NULL) owner.set(name, new Reference(value));
+            if (value.type != ValueType.Null) owner.set(name, new Reference(value));
         }
     }
 }

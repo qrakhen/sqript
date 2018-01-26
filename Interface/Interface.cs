@@ -55,7 +55,7 @@ namespace Qrakhen.Sqript
             /// the actual function, provide any method that accepts a Dictionary as parameter and returns a Sqript.Value
             /// all provided parameters will be accessible using the dictionary (i.e. string key = parameters["key"];)
             /// </param>
-            public Call(string name, string[] parameters, Func<Dictionary<string, Value>, Value> callback, ValueType returnType = ValueType.ANY_VALUE) {
+            public Call(string name, string[] parameters, Func<Dictionary<string, Value>, Value> callback, ValueType returnType = ValueType.Any) {
                 this.name = name;
                 this.parameters = parameters;
                 this.callback = callback;
@@ -80,7 +80,7 @@ namespace Qrakhen.Sqript
                 this.call = call;
             }
 
-            public override Value execute(Value[] parameters) {
+            public override Value execute(Value[] parameters, Value caller = null) {
                 return call.execute(parameters);
             }
 

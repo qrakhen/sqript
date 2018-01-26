@@ -16,7 +16,7 @@ namespace Qrakhen.Sqript
 
     internal class QonfigFunqtion : GlobalFunqtion
     {
-        public override Value execute(Value[] parameters = null) {
+        public override Value execute(Value[] parameters = null, Value caller = null) {
             if (parameters.Length == 1) {
                 Qonfig.resetValue(parameters[0].getValue().ToString());
             } else {
@@ -128,8 +128,8 @@ namespace Qrakhen.Sqript
         public override string ToString() {
             string r = "{\n";
             foreach (var reference in value) {
-                if (reference.Value.getReference() == this) continue;
-                string[] lines = reference.Value.getReference().ToString().Split('\n');
+                if (reference.Value.getTrueValue() == this) continue;
+                string[] lines = reference.Value.getTrueValue().ToString().Split('\n');
                 r += "    " + reference.Key + ": " + lines[0] + "\n";
                 for (int i = 1; i < lines.Length; i++) r += "    " + lines[i] + ",\n";
             }

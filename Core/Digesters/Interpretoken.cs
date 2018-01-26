@@ -44,7 +44,7 @@ namespace Qrakhen.Sqript
                 case "<": descend = ">"; break;
                 default: throw new ParseException("could not find closing element for opened '" + ascend + "'", peek());
             } do {
-                string cur = (peek().type == ValueType.STRUCTURE ? peek().getValue<string>() : "");
+                string cur = (peek().type == ValueType.Struqture ? peek().getValue<string>() : "");
                 if (cur == descend) depth--;
                 else if (cur == ascend) depth++;
                 if (depth > 0) buffer.Add(digest());
@@ -61,8 +61,8 @@ namespace Qrakhen.Sqript
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public Reference rrr(Qontext context, int adjust = 0, int __l = 0) {
-            if (adjust != 0) shift(adjust);
+        public Reference[] rrra(Qontext context, int __l = 0, List<Reference> __buffer = null) {
+            if (__buffer == null) __buffer = new List<Reference>();
             Log.spam("rrr inbound,\n __level: " + __l);
             Reference r = null;
             Token t = peek();
@@ -70,48 +70,64 @@ namespace Qrakhen.Sqript
             if (
                    (Keywords.isAlias(t.str(), Keyword.CURRENT_CONTEXT) && __l == 0) ||
                     Keywords.isAlias(t.str(), Keyword.PARENT_CONTEXT) ||
-                    t.check(ValueType.IDENTIFIER)) { 
+                    t.check(ValueType.Identifier)) { 
                 identifier = digest().str();
                 r = context.get(identifier);
-                Log.spam("found " + (r == null ? " nothing, lol." : r.getReference()?.str()));
+                __buffer.Add(r);
+                Log.spam("found " + (r == null ? " nothing, lol." : r.getTrueValue()?.str()));
             } else throw new ParseException("tried to resolve reference with unexpected token '" + t + "'", t);
             if (r == null && __l == 0) r = context.lookupOrThrow(identifier);
 
             t = peek();
             if (t.check(Struqture.MEMBER)) {
-                if (r?.getReference() is Qontext) {
+                Reference nc = Native.get(r.getTrueValue().type, peek(1).str());
+                if (nc == null && r?.getTrueValue() is Qontext) {
                     digest(); // <~ into the void!
-                    return rrr((Qontext)r.getReference(), 0, ++__l);
-                } else throw new ParseException("tried to access member of a value that is not a context and thus memberless.", t);
+                    return rrra((Qontext)r.getTrueValue(), ++__l, __buffer);
+                } else {
+                    if (nc != null) {
+                        digest();
+                        digest();
+                        __buffer.Add(nc);
+                        return __buffer.ToArray();
+                    } else throw new ParseException("tried to access member of a value that is not a context and thus memberless.", t);
+                }
             } else {
                 if (r == null && identifier != null) {
                     Log.spam("rrr detected undeclared identifier at the end of the member chain,\nreturning floating reference for possible binding...");
                     r = new FloatingReference(identifier, context);
                 }
-                return r;
+                return __buffer.ToArray();
             }
         }
 
-        public Value readNextValue(Qontext context, ValueType expected = ValueType.ANY_VALUE) {
+        public Reference rrr(Qontext context, int item = 0) {
+            Reference[] r = rrra(context);
+            if (r.Length > item) return r[r.Length - (item + 1)];
+            else return null;
+        }
+
+        public Value readNextValue(Qontext context, ValueType expected = ValueType.Any) {
             Log.spam("Interpretoken.readNextValue()");
             Token t = peek();
             Value result = null;
-            if ((t.check(ValueType.IDENTIFIER)) ||
-                    (t.check(ValueType.KEYWORD) &&
+            if ((t.check(ValueType.Identifier)) ||
+                    (t.check(ValueType.Keyword) &&
                     (t.check(Keyword.CURRENT_CONTEXT.name) ||
                     t.check(Keyword.PARENT_CONTEXT.name)))) {
                 Log.spam("detected possible reference / identifier");
-                Reference r = rrr(context);
+                Reference[] _r = rrra(context);
+                Reference r = _r[_r.Length - 1];
                 if (peek().check(Struqture.Call[OPEN])) {
                     Log.spam("hey, it's a funqtion call!");
-                    if (r.getValueType() == ValueType.FUNQTION) {
+                    if (r.getValueType() == ValueType.Funqtion || r.getValueType() == ValueType.NativeCall) {
                         Value[] p = Funqtionizer.parseParameters(context, readBody(true));
-                        result = (r.getTrueValue() as Funqtion).execute(p);
+                        result = (r.getTrueValue() as Funqtion).execute(p, _r[_r.Length - 2]);
                     } else throw new ParseException("can not call " + peek(-1) + ": not a funqtion.");
                 } else {
                     result = r;
                 }
-            } else if (t.check(ValueType.STRUCTURE)) {
+            } else if (t.check(ValueType.Struqture)) {
                 Log.spam("detected possible structure");
                 if (t.check(Struqture.Funqtion[OPEN])) {
                     Log.spam("...it's a funqtion");
@@ -131,9 +147,9 @@ namespace Qrakhen.Sqript
                     Segment s = Segmentizer.parseOne(context, readBody());
                     result = s.execute(context);
                 }
-            } else if (t.check(ValueType.PRIMITIVE)) {
+            } else if (t.check(ValueType.Primitive)) {
                 result = digest().makeValue();
-            } else if (t.check(ValueType.OPERATOR)) {
+            } else if (t.check(ValueType.Operator)) {
                 throw new ParseException("next token was unreadable as value: " + t, t);
             }
 

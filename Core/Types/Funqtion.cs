@@ -1,29 +1,52 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Qrakhen.Sqript
 {
+    /***
+     
+     *~ f <~ ~(a b c {
+        *~ d <~ a * b;
+        <~ c - d;
+     });
+
+     *~ of <~ ~(a {
+        <~ a;
+     }, a b {
+        <~ a + b;
+     }, ...);
+     
+     *<t1>~ tf <~ ~(<t2:a> <t3:b> {
+        <~ ...
+     });
+         
+     ***/
     internal class Funqtion : Qontext
     {
         public List<Segment> segments { get; protected set; }
         public List<string> parameters { get; protected set; }
+        protected Func<Value, Value[], Value> nativeCallback;
 
         public Funqtion(
                 Qontext parent, 
                 Dictionary<string, Reference> references, 
                 List<Segment> segments,
                 List<string> parameters = null,
-                ValueType type = ValueType.FUNQTION) : base(parent, type, references) {
+                ValueType type = ValueType.Funqtion) : base(parent, type, references) {
             this.segments = segments;
             this.parameters = parameters ?? new List<string>();
         }
 
-        public Funqtion(Qontext parent, ValueType type) : this(parent, null, null, null, type) { }
-
         public Funqtion(Qontext parent) : this(parent, new Dictionary<string, Reference>(), new List<Segment>()) {}
-
+        public Funqtion(Qontext parent, ValueType type) : this(parent, null, null, null, type) { }
         public Funqtion(Qontext parent, List<Segment> statements) : this(parent, new Dictionary<string, Reference>(), statements) { }
 
-        public virtual Value execute(Value[] parameters = null) {
+        public Funqtion(Qontext parent, Func<Value, Value[], Value> nativeCallback) : this(parent, null, null, null, ValueType.NativeCall) {
+            this.nativeCallback = nativeCallback;
+        }
+
+        public virtual Value execute(Value[] parameters = null, Value caller = null) {
+            if (nativeCallback != null) return nativeCallback(caller, parameters);
             // we need to store all references in a temporary xfq (execution funqtion) so that the original funqtion is not mutated
             Log.spam("executing function:\n" + this.ToString());
             Funqtion xfq = new Funqtion(parent);
@@ -59,23 +82,6 @@ namespace Qrakhen.Sqript
                 r += "}";
             }
             return r + ")";
-        }
-    }
-
-    internal class NativeCall : Funqtion
-    {
-        public string call { get; protected set; }
-
-        public NativeCall(Qontext parent, string call) : base(parent, ValueType.NATIVE_CALL) {
-            this.call = call;
-        }
-
-        public override Value execute(Value[] parameters = null) {
-            return nativeCalls[call](parameters, parent);
-        }
-
-        public override string ToString() {
-            return "[NATIVE] " + base.ToString();
         }
     }
 }

@@ -6,42 +6,14 @@ namespace Qrakhen.Sqript
 {
     internal abstract class Qontext : Collection<string, Reference>
     {
-        static Qontext() {
-            /*nativeCalls.Add(
-                "toString", 
-                new Func<Value[], Context, Value>(delegate (Value[] parameters, Context caller) {
-                    return new Value(caller.ToString(), ValueType.STRING);
-                })
-            );
-            nativeCalls.Add(
-                "getType",
-                new Func<Value[], Context, Value>(delegate (Value[] parameters, Context caller) {
-                    return new Value(caller.type.ToString(), ValueType.STRING);
-                })
-            );
-            nativeCalls.Add(
-                "equals",
-                new Func<Value[], Context, Value>(delegate (Value[] parameters, Context caller) {
-                    if (parameters.Length < 1) return FALSE;
-                    return new Value(caller.getValue().Equals(parameters[0].getValue()), ValueType.BOOLEAN);
-                })
-            );*/
-        }
-
         public Qontext parent { get; protected set; }
 
         public Qontext(Qontext parent, ValueType type, Dictionary<string, Reference> value) : base(type, value) {
             this.parent = parent;
         }
 
-        public Qontext(Qontext parent) : base(ValueType.CONTEXT, new Dictionary<string, Reference>()) {
+        public Qontext(Qontext parent) : base(ValueType.Qontext, new Dictionary<string, Reference>()) {
             this.parent = parent;
-        }
-
-        protected override void assignNativeCalls() {
-            foreach (var call in nativeCalls) {
-                set(call.Key, new Reference(new NativeCall(this, call.Key)));
-            }
         }
 
         public override void set(string key, Reference reference) {
@@ -111,9 +83,9 @@ namespace Qrakhen.Sqript
 
             for (int i = index; i < keys.Length; i++) {
                 string key = keys[i];
-                Value v = r.getReference();
+                Value v = r.getTrueValue();
                 if (v == null) throw new Exception("tried to access member of empty reference '" + keys[i - 1] + ":" + keys[i] + "'");
-                if (v.isType(ValueType.ARRAY)) {
+                if (v.isType(ValueType.Array)) {
                     r = (v as Array).get(Int32.Parse(key));
                     if (r == null) {
                         if (autoCreate) {
@@ -122,7 +94,7 @@ namespace Qrakhen.Sqript
                         } else if (safe) throw new Exception("tried to access undefined array index '" + keys[i - 1] + ":" + keys[i] + "'");
                         else return null;
                     }
-                } else if (v.isType(ValueType.CONTEXT)) {
+                } else if (v.isType(ValueType.Qontext)) {
                     Qontext ctx = (Qontext)v;
                     string asd = ctx.str();
                     r = (v as Qontext).get(key);
@@ -141,13 +113,18 @@ namespace Qrakhen.Sqript
         public override string ToString() {
             string r = "{\n";
             foreach (var reference in value) {
-                if (reference.Value.getReference() == (Qontext) this) continue;
-                string[] lines = reference.Value.getReference().ToString().Split('\n');
+                if (reference.Value.getTrueValue() == (Qontext) this) continue;
+                string[] lines = reference.Value.getTrueValue().ToString().Split('\n');
                 r += "    " + reference.Key + ": " + lines[0] + "\n";
                 for (int i = 1; i < lines.Length; i++) r += "    " + lines[i] + "\n";
             }
             return r + "}";
         }
+    }
+
+    internal class StatiqQontext : Qontext
+    {
+        public StatiqQontext(Qontext parent) : base(parent) { } 
     }
 
     public class QontextException : Exception

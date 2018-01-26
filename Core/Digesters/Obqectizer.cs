@@ -16,7 +16,7 @@
             if (t.check(Struqture.Context[OPEN])) {
                 do {
                     t = peek();
-                    if (t.check(ValueType.IDENTIFIER)) {
+                    if (t.check(ValueType.Identifier)) {
                         string key = digest().str();
                         t = peek();
                         if (t.check(Operator.ASSIGN_REFERENCE) || t.check(Operator.ASSIGN_VALUE)) {

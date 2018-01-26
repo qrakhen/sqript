@@ -26,18 +26,18 @@ namespace Qrakhen.Sqript
             int level = 0;
             do {
                 Token t = digest();
-                if (t.check(ValueType.KEYWORD) && t.getValue<Keyword>().isType(Keyword.KeywordType.DECLARATION)) {
+                if (t.check(ValueType.Keyword) && t.getValue<Keyword>().isType(Keyword.KeywordType.DECLARATION)) {
                     if (buffer.Count > 0) throw new ParseException("unexpected declaration keyword '" + t.str() + "' while parsing segment.", t);
                     Keyword keyword = t.getValue<Keyword>();
                     if (keyword == Keyword.FUNQTION) {
                         t = peek();
-                        if (!t.check(ValueType.IDENTIFIER)) throw new ParseException("expected identifier for declaration of '" + keyword.name + "', got '" + t.str() + "' instead.", t);
+                        if (!t.check(ValueType.Identifier)) throw new ParseException("expected identifier for declaration of '" + keyword.name + "', got '" + t.str() + "' instead.", t);
                         string name = digest().str();
                         Funqtion fq = Funqtionizer.parse(context, readBody(true));
                         context.set(name, new Reference(fq));
                     }
                     if (peek().check(";")) digest();
-                } else if (t.check(ValueType.KEYWORD) && t.getValue<Keyword>().isType(Keyword.KeywordType.CONDITION)) {
+                } else if (t.check(ValueType.Keyword) && t.getValue<Keyword>().isType(Keyword.KeywordType.CONDITION)) {
                     segments.Add(parseCondition(context, t.getValue<Keyword>()));
                 } else {
                     if (t.check(";") && level == 0) {
@@ -61,9 +61,9 @@ namespace Qrakhen.Sqript
                 Segment[] body = parse(context, readBody());
                 Log.spam("creating new ifElseSegment");
                 IfElseSegment ifElse = new IfElseSegment(body, premise);
-                if (peek().check(ValueType.KEYWORD) && peek().getValue<Keyword>() == Keyword.CONDITION_ELSE) {
+                if (peek().check(ValueType.Keyword) && peek().getValue<Keyword>() == Keyword.CONDITION_ELSE) {
                     digest();
-                    if (peek().check(ValueType.KEYWORD) && peek().check(Keyword.CONDITION_IF)) {
+                    if (peek().check(ValueType.Keyword) && peek().check(Keyword.CONDITION_IF)) {
                         digest();
                         Log.spam("appending else if (...) continuation...");
                         ifElse.append((IfElseSegment) parseCondition(context, keyword));
@@ -74,12 +74,12 @@ namespace Qrakhen.Sqript
                 }
                 return ifElse;
             } else if (keyword == Keyword.CONDITION_LOOP) {
-                if (peek().check(ValueType.STRUCTURE) && peek().check(Struqture.Call[OPEN])) {
+                if (peek().check(ValueType.Struqture) && peek().check(Struqture.Call[OPEN])) {
                     Token[] premise = readBody();
                     Segment[] body = parse(context, readBody());
                     LoopSegment loop = new LoopSegment(body, LoopSegment.HEAD, premise);
                     return loop;
-                } else if (peek().check(ValueType.STRUCTURE) && peek().check(Struqture.Context[OPEN])) {
+                } else if (peek().check(ValueType.Struqture) && peek().check(Struqture.Context[OPEN])) {
                     Segment[] body = parse(context, readBody());
                     Token[] premise = readBody();
                     LoopSegment loop = new LoopSegment(body, LoopSegment.FOOT, premise);

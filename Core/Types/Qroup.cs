@@ -13,7 +13,7 @@ namespace Qrakhen.Sqript
         public Qroup(
                 Qontext parent,
                 Dictionary<string, Qlass> qlasses = null,
-                Dictionary<string, Reference> subQroups = null) : base(parent, ValueType.QLASS, subQroups) {
+                Dictionary<string, Reference> subQroups = null) : base(parent, ValueType.Qlass, subQroups) {
             qlasses = (qlasses ?? new Dictionary<string, Qlass>());
         }
 

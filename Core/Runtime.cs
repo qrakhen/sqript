@@ -429,8 +429,7 @@ namespace Qrakhen.Sqript
         }
 
         static void Main(string[] args) {
-            Core.defineKeywords();
-            Core.defineOperators();
+            Core.init();
             KeyState.run();
             if (args.Length == 0) cli();
             else execute(File.ReadAllText(args[0]));           

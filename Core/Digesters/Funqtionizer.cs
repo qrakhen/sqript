@@ -17,7 +17,7 @@ namespace Qrakhen.Sqript
                 do {
                     t = peek();
                     if (t.check(Struqture.Context[OPEN])) break;
-                    else if (t.check(ValueType.IDENTIFIER)) {
+                    else if (t.check(ValueType.Identifier)) {
                         fq.parameters.Add(t.str());
                         digest();
                     } else throw new ParseException("unexpected token found when trying to parse funqtion parameter declaration", t);
@@ -43,8 +43,8 @@ namespace Qrakhen.Sqript
                 if (t.check(Struqture.Funqtion[CLOSE])) return new Value[0];
                 else do {
                         t = digest();
-                        if (t.isType(ValueType.ANY_VALUE)) parameters.Add(t.makeValue());
-                        else if (t.isType(ValueType.IDENTIFIER)) parameters.Add(context.getOrThrow(t.str()).getReference());
+                        if (t.isType(ValueType.Any)) parameters.Add(t.makeValue());
+                        else if (t.isType(ValueType.Identifier)) parameters.Add(context.getOrThrow(t.str()).getTrueValue());
                         else throw new ParseException("unexpected token found when trying to parse funqtion call", t);
                         t = digest();
                         if (t.check(Struqture.Call[DEL])) continue;

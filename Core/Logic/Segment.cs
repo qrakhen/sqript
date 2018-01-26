@@ -59,13 +59,13 @@ namespace Qrakhen.Sqript
                 if (node == null) node = new Node();
                 Log.spam("now building node: " + node);
                 Token t = peek();
-                if (t.check(ValueType.KEYWORD)) {
+                if (t.check(ValueType.Keyword)) {
                     if (t.check(Keyword.REFERENCE)) {
                         if (node.left != null) throw new ParseException("can not declare a new reference here ._.", t);
                         type = SegmentType.REFERENCE;
                         digest();
                         t = peek();
-                        if (t.check(ValueType.IDENTIFIER)) {
+                        if (t.check(ValueType.Identifier)) {
                             head.left = new FloatingReference(digest().str(), context);
                         } else throw new ParseException("expected identifier after new reference keyword, got '" + t + "' instead", t);
                     } else if (t.check(Keyword.CURRENT_CONTEXT) || t.check(Keyword.PARENT_CONTEXT)) {
@@ -78,7 +78,7 @@ namespace Qrakhen.Sqript
                         digest();
                         returning = true;
                     } else throw new Exception("check me");
-                } else if (t.check(ValueType.OPERATOR)) {
+                } else if (t.check(ValueType.Operator)) {
                     Operator op = digest().getValue<Operator>();
                     if (op.symbol == Operator.ASSIGN_VALUE || op.symbol == Operator.ASSIGN_REFERENCE) {
                         if (step == 0) returning = true;
@@ -94,7 +94,7 @@ namespace Qrakhen.Sqript
                     } else if (head.op == null) {
                         head.op = op;
                     } else throw new ParseException("sorry, manipulation operators (operators without left-hand value) are not yet implemented. :/", t);
-                } else if (t.check(ValueType.STRUCTURE, "(")) {
+                } else if (t.check(ValueType.Struqture, "(")) {
                     if (node.ready()) throw new ParseException("can not open new segment without prior operator.", t);
                     Segment sub = new Segment(readBody());
                     node.put(sub.execute(context));
@@ -199,10 +199,10 @@ namespace Qrakhen.Sqript
         }
 
         public override Value execute(Qontext context) {
-            Value p = new Value(true, ValueType.BOOLEAN);
+            Value p = new Value(true, ValueType.Boolean);
             do {
                 if (loopType == HEAD) p = base.execute(context);
-                if (!p.isType(ValueType.BOOLEAN)) throw new ConditionException("expression for loop condition has to return a value of type BOOL, got " + p.type.ToString() + " instead.");
+                if (!p.isType(ValueType.Boolean)) throw new ConditionException("expression for loop condition has to return a value of type BOOL, got " + p.type.ToString() + " instead.");
                 if (p.getValue<bool>()) {
                     Funqtion fq = new Funqtion(context, new List<Segment>(body));
                     fq.execute();
@@ -228,7 +228,7 @@ namespace Qrakhen.Sqript
 
         public override Value execute(Qontext context) {
             Value r = stack.Length == 0 ? Value.TRUE : base.execute(context);
-            if (!r.isType(ValueType.BOOLEAN)) throw new ConditionException("expression for loop condition has to return a value of type BOOLEAN, got " + r.type.ToString() + " instead.");
+            if (!r.isType(ValueType.Boolean)) throw new ConditionException("expression for loop condition has to return a value of type BOOLEAN, got " + r.type.ToString() + " instead.");
             else if (r.getValue<bool>()) {
                 Funqtion xfq = new Funqtion(context, new List<Segment>(body));
                 xfq.execute();

@@ -4,14 +4,21 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
+    /***
+     
+     *~ a <~ [ 3, '5', { n <~ 't'}]; 
+     
+     *<t1>~ t <~ [ val(t1), ... ];    
+         
+     ***/
     internal class Array : Collection<int, Reference>
     {
         public const string
             CHAR_OPEN = "[",
             CHAR_CLOSE = "]"; 
 
-        public Array(Dictionary<int, Reference> value) : base(ValueType.ARRAY, value) { }
-        public Array() : base(ValueType.ARRAY, new Dictionary<int, Reference>()) { }
+        public Array(Dictionary<int, Reference> value) : base(ValueType.Array, value) { }
+        public Array() : base(ValueType.Array, new Dictionary<int, Reference>()) { }
 
         public virtual void add(Value item) {
             int free = 0;
@@ -41,7 +48,7 @@ namespace Qrakhen.Sqript
             }
             for (int i = 1; i < keys.Length; i++) {
                 string key = keys[i];
-                Value v = r.getReference();
+                Value v = r.getTrueValue();
                 if (v == null) throw new Exception("tried to access member of empty reference '" + keys[i - 1] + ":" + keys[i] + "'");
                 if (v is Array) {
                     r = (v as Array).get(Int32.Parse(key));

@@ -6,10 +6,10 @@ namespace Qrakhen.Sqript
 {
     public class Value
     {
-        public static readonly Value TRUE = new Value(true, ValueType.BOOLEAN);
-        public static readonly Value FALSE = new Value(false, ValueType.BOOLEAN); 
-        public static readonly Value NULL = new Value(null, ValueType.NULL);
-        public static readonly Value UNDEFINED = new Value(null, ValueType.UNDEFINED);
+        public static readonly Value TRUE = new Value(true, ValueType.Boolean);
+        public static readonly Value FALSE = new Value(false, ValueType.Boolean); 
+        public static readonly Value NULL = new Value(null, ValueType.Null);
+        public static readonly Value UNDEFINED = new Value(null, ValueType.Undefined);
 
         public static Dictionary<string, Func<Value[], Value, Value>> nativeCalls = new Dictionary<string, Func<Value[], Value, Value>>();
 
@@ -31,7 +31,7 @@ namespace Qrakhen.Sqript
         public Value(object value, ValueType type) {
             this.type = type;
             this.value = value;
-            if (type != ValueType.NATIVE_CALL) assignNativeCalls();
+            if (type != ValueType.NativeCall) assignNativeCalls();
         }
 
         protected virtual void assignNativeCalls() {
@@ -76,26 +76,36 @@ namespace Qrakhen.Sqript
         }
 
         public override string ToString() {
-            return (value != null ? value.ToString() : (type == ValueType.NULL ? "<NULL>" : "undefined"));
+            return ToString(false);
         } 
+
+        public string ToString(bool includeType) {
+            string r = (value != null ? value.ToString() : (type == ValueType.Null ? "<null>" : "undefined"));
+            if (includeType) r = "<" + type + ":" + r + ">";
+            return r;
+        }
 
         public static Type getSystemType(ValueType type) {
             switch (type) {
-                case ValueType.KEYWORD: return typeof(Keyword);
-                case ValueType.OPERATOR: return typeof(Operator);
-                case ValueType.STRUCTURE: return typeof(string);
-                case ValueType.INTEGER: return typeof(int);
-                case ValueType.DECIMAL: return typeof(double);
-                case ValueType.NUMBER: return typeof(decimal);
-                case ValueType.STRING: return typeof(string);
-                case ValueType.BOOLEAN: return typeof(bool);
-                case ValueType.ARRAY: return typeof(Array);
-                case ValueType.REFERENCE: return typeof(Reference);
-                case ValueType.OBQECT: return typeof(Obqect);
-                case ValueType.QLASS: return typeof(Qlass);
-                case ValueType.FUNQTION: return typeof(Funqtion);
+                case ValueType.Keyword: return typeof(Keyword);
+                case ValueType.Operator: return typeof(Operator);
+                case ValueType.Struqture: return typeof(string);
+                case ValueType.Integer: return typeof(int);
+                case ValueType.Decimal: return typeof(double);
+                case ValueType.Number: return typeof(decimal);
+                case ValueType.String: return typeof(string);
+                case ValueType.Boolean: return typeof(bool);
+                case ValueType.Array: return typeof(Array);
+                case ValueType.Reference: return typeof(Reference);
+                case ValueType.Obqect: return typeof(Obqect);
+                case ValueType.Qlass: return typeof(Qlass);
+                case ValueType.Funqtion: return typeof(Funqtion);
                 default: return null;
             }
+        }
+
+        public static ValueType getType(string type) {
+            return (ValueType) Enum.Parse(typeof(ValueType), type);
         }
     }
 
@@ -141,25 +151,25 @@ namespace Qrakhen.Sqript
 
     public enum ValueType
     {
-        NULL = 0,
-        KEYWORD = 1,
-        OPERATOR = 2,
-        STRUCTURE = 4,
-        IDENTIFIER = 8,
-        INTEGER = 16,
-        DECIMAL = 32,
-        BOOLEAN = 64,
-        STRING = 128,
-        ARRAY = 256,
-        OBQECT = 512,
-        FUNQTION = 1024,
-        NATIVE_CALL = 1337,
-        QLASS = 2048,
-        REFERENCE = 4096,
-        UNDEFINED = 16384,
-        NUMBER = INTEGER + DECIMAL,
-        PRIMITIVE = NUMBER + BOOLEAN + STRING,
-        CONTEXT = QLASS + FUNQTION + OBQECT,
-        ANY_VALUE = PRIMITIVE + ARRAY + CONTEXT   
+        Null = 0x0000,
+        Keyword = 0x0001,
+        Operator = 0x0002,
+        Struqture = 0x0004,
+        Identifier = 0x0008,
+        Integer = 0x0010,
+        Decimal = 0x0020,
+        Boolean = 0x0040,
+        String = 0x0080,
+        Array = 0x0100,
+        Obqect = 0x0200,
+        Funqtion = 0x0400,
+        NativeCall = 1337,
+        Qlass = 0x0800,
+        Reference = 0x1000,
+        Undefined = 0xFFFF,
+        Number = Integer + Decimal,
+        Primitive = Number + Boolean + String,
+        Qontext = Qlass + Funqtion + Obqect,
+        Any = Primitive + Array + Qontext   
     }
 }

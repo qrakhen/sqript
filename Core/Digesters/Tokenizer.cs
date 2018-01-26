@@ -43,11 +43,11 @@ namespace Qrakhen.Sqript
             NumberFormatInfo format = new NumberFormatInfo();
             format.NumberDecimalSeparator = ".";
             switch (type) {
-                case ValueType.KEYWORD: parsed = Keywords.get(value); break;
-                case ValueType.OPERATOR: parsed = Operators.get(value); break;
-                case ValueType.INTEGER: parsed = Int32.Parse(value); break;
-                case ValueType.DECIMAL: parsed = Decimal.Parse(value, format); break;
-                case ValueType.BOOLEAN: parsed = Boolean.Parse(value); break;
+                case ValueType.Keyword: parsed = Keywords.get(value); break;
+                case ValueType.Operator: parsed = Operators.get(value); break;
+                case ValueType.Integer: parsed = Int32.Parse(value); break;
+                case ValueType.Decimal: parsed = Decimal.Parse(value, format); break;
+                case ValueType.Boolean: parsed = Boolean.Parse(value); break;
                 default: parsed = value; break;
             }
             return new Token(type, parsed, line, col);
@@ -104,20 +104,20 @@ namespace Qrakhen.Sqript
                             break;
                         } else if (s == close) break;
                     } while (!endOfStack());
-                } else if (Is.Structure(cur)) addToken(readStructure(), ValueType.STRUCTURE, __line, __col);
-                else if (Is.Operator(cur)) addToken(readOperator(), ValueType.OPERATOR, __line, __col);
-                else if (Is.String(cur)) addToken(readString(), ValueType.STRING, __line, __col);
-                else if (Is.Number(cur)) addToken(readNumber(), ValueType.NUMBER, __line, __col);
-                else if (Is.Identifier(cur)) addToken(readIdentifier(), ValueType.IDENTIFIER, __line, __col);
+                } else if (Is.Structure(cur)) addToken(readStructure(), ValueType.Struqture, __line, __col);
+                else if (Is.Operator(cur)) addToken(readOperator(), ValueType.Operator, __line, __col);
+                else if (Is.String(cur)) addToken(readString(), ValueType.String, __line, __col);
+                else if (Is.Number(cur)) addToken(readNumber(), ValueType.Number, __line, __col);
+                else if (Is.Identifier(cur)) addToken(readIdentifier(), ValueType.Identifier, __line, __col);
                 else throw new Exception("unreadable symbol " + cur);
             } while (!endOfStack());
             return result.ToArray();
         }
 
         private void addToken(string value, ValueType type, int line = 0, int col = 0) {
-            if (type != ValueType.STRING && Keywords.get(value) != null) type = ValueType.KEYWORD;
-            else if (type != ValueType.STRING && Operators.get(value) != null) type = ValueType.OPERATOR;
-            else if (type == ValueType.NUMBER) type = (value.IndexOf(".") < 0 ? ValueType.INTEGER : ValueType.DECIMAL);
+            if (type != ValueType.String && Keywords.get(value) != null) type = ValueType.Keyword;
+            else if (type != ValueType.String && Operators.get(value) != null) type = ValueType.Operator;
+            else if (type == ValueType.Number) type = (value.IndexOf(".") < 0 ? ValueType.Integer : ValueType.Decimal);
             result.Add(Token.create(type, value, line, col));
             Log.spam("[" + type.ToString() + "] > '" + value + "'");
         }
