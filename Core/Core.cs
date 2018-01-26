@@ -38,8 +38,8 @@ namespace Qrakhen.Sqript
                 "equals",
                 new Func<Value, Value[], Value>(delegate (Value target, Value[] parameters) {
                     Value compare = parameters.Length > 0 ? parameters[0] : null;
-                    if (compare == null) return Value.FALSE;
-                    return target.Equals(compare) ? Value.TRUE : Value.FALSE;
+                    if (compare == null) return Value.False;
+                    return target.Equals(compare) ? Value.True : Value.False;
                 }
             ));
         }
@@ -55,7 +55,7 @@ namespace Qrakhen.Sqript
             Keywords.define(Keyword.PARENT_CONTEXT, "parent", "^~");
             Keywords.define(Keyword.CONDITION_IF, "if", "when", "~?");
             Keywords.define(Keyword.CONDITION_ELSE, "else", "otherwise", "?~");
-            Keywords.define(Keyword.CONDITION_LOOP, "do", "while", "for", "loop", "repeat");
+            Keywords.define(Keyword.CONDITION_LOOP, "do", "while", "for", "loop", "repeat", "until");
         }
 
         internal static void defineOperators() {

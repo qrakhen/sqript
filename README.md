@@ -41,10 +41,51 @@ but as I am constantly working on it, even these things will fade.
  * operator overloads, custom operator declaration and definition
  * custom 'native' types, extendable native types
 
-## Partially outdated
-### Please be patient while I am working on an actual documentation for this.
+#### Example Code
+This is just here to see how Sqript's syntax _can_ work.
+Yes, it is intended to look mind-numbingly retarded :)
+```javascript
+*<int>:~ STOMACH_SIZE = 12;
 
-### Example Code
+qlass <Being:>Person 
+{
+	public <str:>name;
+	private <[]:>stack;
+
+	public Person({
+		.~:stack <~ STOMACH_SIZE:[];
+	}, name {
+		^:();
+		.~:name <~ name;
+	});
+
+	private fq digest ~({
+		sqr:delay(({
+			.~:stack:0 ->;
+			<~ (.~:stack:length = 0);
+		}), 512);
+	});
+}
+
+*~ john <~ spawn Person('John'); 
+
+john:eat <~ ~(item {
+	when .~:stack:length < STOMACH_SIZE {
+		.~:stack <+ item;
+		<~ true;
+	} otherwise <~.~:digest(&.~);
+});
+
+john:eat([ 'noodle', 'soup' ]);
+
+*~ lisa <~ *:Person('Lisa');
+
+:~ john, lisa;
+
+<~ 0;
+```
+
+#### Quick Briefing
 ```javascript
  # reference declaration & assignment
  << *~ name <~ 'foo';

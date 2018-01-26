@@ -39,7 +39,6 @@ namespace Qrakhen.Sqript
             REFERENCIAL = 0x030000
         }
 
-
         public int id { get; private set; }
         public string name { get; private set; }
         public string[] aliases { get; private set; }

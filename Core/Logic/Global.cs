@@ -115,10 +115,10 @@ namespace Qrakhen.Sqript
         public void execute() {
             if (queued.Count > 0) {
             Log.spam("main context processing " + queued.Count + " queued statements...");
-                foreach (Segment statement in queued) {
-                    Value r = statement.execute(this);
+                foreach (Segment s in queued) {
+                    Value r = s.execute(this);
                     if (r != null) Log.debug(r.ToString(), ConsoleColor.Green);
-                    segments.Add(statement);
+                    segments.Add(s);
                 }
                 clearQueue();
             }

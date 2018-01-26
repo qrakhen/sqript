@@ -46,7 +46,7 @@ namespace Qrakhen.Sqript
                 case ValueType.Keyword: parsed = Keywords.get(value); break;
                 case ValueType.Operator: parsed = Operators.get(value); break;
                 case ValueType.Integer: parsed = Int32.Parse(value); break;
-                case ValueType.Decimal: parsed = Decimal.Parse(value, format); break;
+                case ValueType.Decimal: parsed = System.Decimal.Parse(value, format); break;
                 case ValueType.Boolean: parsed = Boolean.Parse(value); break;
                 default: parsed = value; break;
             }

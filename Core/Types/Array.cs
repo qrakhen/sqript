@@ -36,7 +36,11 @@ namespace Qrakhen.Sqript
             set(free, item);
         }
 
-        public Reference query(string query, bool safe = true, bool autoCreate = true) {
+        public void add(Value item) {
+            add(new Reference(item));
+        }
+
+        /*public Reference query(string query, bool safe = true, bool autoCreate = true) {
             string[] keys = query.Split(MEMBER_DELIMITER.ToCharArray());
             Reference r = get(Int32.Parse(keys[0]));
             if (r == null) {
@@ -71,7 +75,7 @@ namespace Qrakhen.Sqript
                 } else throw new Exception("trying to access member of memberless value");
             }
             return r;
-        }
+        }*/
 
         public override string ToString() {
             string r = " [ ";

@@ -6,10 +6,14 @@ namespace Qrakhen.Sqript
 {
     public class Value
     {
-        public static readonly Value TRUE = new Value(true, ValueType.Boolean);
-        public static readonly Value FALSE = new Value(false, ValueType.Boolean); 
-        public static readonly Value NULL = new Value(null, ValueType.Null);
-        public static readonly Value UNDEFINED = new Value(null, ValueType.Undefined);
+        public static readonly Value True = new Value(true, ValueType.Boolean);
+        public static readonly Value False = new Value(false, ValueType.Boolean); 
+        public static readonly Value Null = new Value(null, ValueType.Null);
+        public static readonly Value Undefined = new Value(null, ValueType.Undefined);
+        public static Value Int(int v) { return new Value(v, ValueType.Integer); }
+        public static Value Decimal(decimal v) { return new Value(v, ValueType.Decimal); }
+        public static Value Decimal(float v) { return new Value(Convert.ToDecimal(v), ValueType.Decimal); }
+        public static Value Decimal(double v) { return new Value(Convert.ToDecimal(v), ValueType.Decimal); }
 
         public static Dictionary<string, Func<Value[], Value, Value>> nativeCalls = new Dictionary<string, Func<Value[], Value, Value>>();
 
@@ -31,11 +35,6 @@ namespace Qrakhen.Sqript
         public Value(object value, ValueType type) {
             this.type = type;
             this.value = value;
-            if (type != ValueType.NativeCall) assignNativeCalls();
-        }
-
-        protected virtual void assignNativeCalls() {
-
         }
 
         public virtual Value clone() {
@@ -101,6 +100,15 @@ namespace Qrakhen.Sqript
                 case ValueType.Qlass: return typeof(Qlass);
                 case ValueType.Funqtion: return typeof(Funqtion);
                 default: return null;
+            }
+        }
+
+        public static ValueType getValueType(Type type) {
+            switch (type.Name) {
+                case "String": return ValueType.String;
+                case "Int32": return ValueType.Integer;
+                case "Double": return ValueType.Decimal;
+                default: return ValueType.Any;
             }
         }
 

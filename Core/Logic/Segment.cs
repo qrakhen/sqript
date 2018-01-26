@@ -39,7 +39,7 @@ namespace Qrakhen.Sqript
             returning = false;
             head = new Node();
             Node end = build(context);
-            Value r = Value.NULL;
+            Value r = Value.Null;
             if (end.empty() && !head.empty()) {
                 r = head.execute();
             } else {
@@ -148,7 +148,7 @@ namespace Qrakhen.Sqript
                         return (Value)left;
                     }
                 } else {
-                    return Value.NULL;
+                    return Value.Null;
                 }
             }
 
@@ -227,7 +227,7 @@ namespace Qrakhen.Sqript
         }
 
         public override Value execute(Qontext context) {
-            Value r = stack.Length == 0 ? Value.TRUE : base.execute(context);
+            Value r = stack.Length == 0 ? Value.True : base.execute(context);
             if (!r.isType(ValueType.Boolean)) throw new ConditionException("expression for loop condition has to return a value of type BOOLEAN, got " + r.type.ToString() + " instead.");
             else if (r.getValue<bool>()) {
                 Funqtion xfq = new Funqtion(context, new List<Segment>(body));

@@ -410,8 +410,10 @@ namespace Qrakhen.Sqript
                         Log.write("    ", ConsoleColor.White, "");
                     }
                 } while (c.Key != ConsoleKey.Escape);
-                if (content.StartsWith("#run")) content = File.ReadAllText(content.Substring(5) + (content.EndsWith(".sq") ? "" : ".sq"));
-                else if (content == "#clr") {
+                if (content.StartsWith("#run")) {
+                    content = File.ReadAllText(content.Substring(5) + (content.EndsWith(".sq") ? "" : ".sq"));
+                    Log.info("executing:\n" + content);
+                } else if (content == "#clr") {
                     GlobalContext.resetInstance();
                     continue;
                 } else if (content == "#help") {
