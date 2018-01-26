@@ -20,14 +20,6 @@ namespace Qrakhen.Sqript
         public Array(Dictionary<int, Reference> value) : base(ValueType.Array, value) { }
         public Array() : base(ValueType.Array, new Dictionary<int, Reference>()) { }
 
-        public virtual void add(Value item) {
-            int free = 0;
-            do {
-
-            } while (get(free++) != null);
-            set(free, new Reference(item));
-        }
-
         public virtual void add(Reference item) {
             int free = 0;
             do {

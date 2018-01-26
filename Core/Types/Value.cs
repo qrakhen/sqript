@@ -75,12 +75,13 @@ namespace Qrakhen.Sqript
         }
 
         public override string ToString() {
-            return ToString(false);
-        } 
-
-        public string ToString(bool includeType) {
             string r = (value != null ? value.ToString() : (type == ValueType.Null ? "<null>" : "undefined"));
-            if (includeType) r = "<" + type + ":" + r + ">";
+            return r;
+        }
+
+        public virtual string toFullString() {
+            string r = ToString();
+            r = "<" + type + ":" + r + ">";
             return r;
         }
 

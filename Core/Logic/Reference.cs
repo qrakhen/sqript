@@ -25,7 +25,9 @@
         }
 
         public virtual void setReference(Value value) {
-            if (acceptedType != ValueType.Null && !value.isType(acceptedType)) throw new ReferenceException("can not assign value '" + value.str() + "': expected a value of type '" + acceptedType + "', got '" + value.ToString(true) + "' instead", this);
+            if (acceptedType != ValueType.Null && !value.isType(acceptedType))
+                throw new ReferenceException(
+                    "can not assign value '" + value.str() + "': expected a value of type '" + acceptedType + "', got '" + value.toFullString() + "' instead", this);
             setValue(value, type);
         }
 
@@ -44,7 +46,7 @@
         public override string ToString() {
             return 
                 (acceptedType != ValueType.Null ? "<" + acceptedType + ":" : "") + 
-                (getTrueValue() == null ? NULL.ToString() : getTrueValue().ToString(false)) +
+                (getTrueValue() == null ? Null.ToString() : getTrueValue().ToString()) +
                 (acceptedType != ValueType.Null ? ">" : "");
         }
     }
@@ -54,7 +56,7 @@
         public string name { get; private set; }
         public Qontext owner { get; private set; }
 
-        public FloatingReference(string name, Qontext owner) : base(NULL) {
+        public FloatingReference(string name, Qontext owner) : base(Null) {
             this.name = name;
             this.owner = owner;
         }
