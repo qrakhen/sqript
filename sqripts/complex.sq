@@ -13,5 +13,3 @@
 	],
 	awesome <~ [{ sqript <~ { levels <~ { awesome <~ 1000, useless <~ 0 }}}, ':)']
 };
-
-complex;

@@ -39,6 +39,7 @@ namespace Qrakhen.Sqript
             returning = false;
             head = new Node();
             Node end = build(context);
+            Log.spam("executing node:\n" + end);
             Value r = Value.Null;
             if (end.empty() && !head.empty()) {
                 r = head.execute();
@@ -49,6 +50,7 @@ namespace Qrakhen.Sqript
                     head.execute();
                 }
             }
+            Log.spam("head after execution:\n" + head);
             if (!head.empty() && head.left is FloatingReference<string>) (head.left as FloatingReference<string>).bind();
             else if (!head.empty() && head.left is FloatingReference<int>) (head.left as FloatingReference<int>).bind();
             return r;
@@ -58,7 +60,6 @@ namespace Qrakhen.Sqript
             int step = 0;
             do {
                 if (node == null) node = new Node();
-                Log.spam("now building node: " + node);
                 Token t = peek();
                 if (t.check(ValueType.Keyword)) {
                     if (t.check(Keyword.REFERENCE)) {

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -328,6 +330,56 @@ namespace Qrakhen.Sqript
         }
     }
 
+    public static class Watcher
+    {
+        private static List<Diag> log = new List<Diag>();
+
+        public struct Diag
+        {
+            public long mem;
+            public double cpu;
+            public int thr;
+
+            public override string ToString() {
+                string r = "";
+                r += "Mem: " + mem + " M\n";
+                r += "Pct: " + cpu + " ms\n";
+                r += "Thr: " + thr + " x";
+                return r;
+            }
+
+            public string ToString(Diag compare) {
+                string r = "";
+                var _mem = mem - compare.mem;
+                var _cpu = cpu - compare.cpu;
+                var _thr = thr - compare.thr;
+                r += "Mem: " + mem + " M (" + (_mem < 0 ? "-" : "+") + _mem +")\n";
+                r += "Pct: " + cpu + " ms (" + (_cpu < 0 ? "-" : "+") + _cpu + ")\n";
+                r += "Thr: " + thr + " x (" + (_thr < 0 ? "-" : "+") + _thr + ")\n";
+                return r;
+            }
+        }
+
+        public static string getDiagString() {
+            if (log.Count == 1) {
+                return log[0].ToString();
+            } else if (log.Count > 1) {
+                return log[0].ToString(log[1]);
+            } else return "";
+        }
+
+        public static Diag diagnose() {
+            var proc = Process.GetCurrentProcess();
+            Diag now = new Diag {
+                mem = proc.WorkingSet64 / 1024 / 1024,
+                cpu = proc.TotalProcessorTime.TotalMilliseconds,
+                thr = proc.Threads.Count
+            };
+            log.Insert(0, now);
+            return now;
+        }
+    }
+
     public class Runtime
     {
         public struct Reader
@@ -384,12 +436,13 @@ namespace Qrakhen.Sqript
         }
 
         static void cli() {
-            Log.setLoggingLevel(Log.Level.DEBUG);
+            Log.setLoggingLevel(Log.Level.VERBOSE);
             Log.write("\n" + SQRIPT.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
-            Log.debug("  available cli commands:");
-            Log.debug("   - #help");
-            Log.debug("   - #run <filename>");
-            Log.debug("   - #clr (clears global context)");
+            Log.info("  available cli commands:");
+            Log.info("   - #help");
+            Log.info("   - #run <filename>");
+            Log.info("   - #clr (clears global context)");
+            Log.info("   - #diag (process diagnose)");
             Log.debug("\n  use qonfig:('log', '5'); for verbose output\n");
 
             string content = "";
@@ -416,7 +469,10 @@ namespace Qrakhen.Sqript
                 } else if (content == "#clr") {
                     GlobalContext.resetInstance();
                     continue;
-                } else if (content == "#help") {
+                } else if (content == "#diag") {
+                    Watcher.diagnose();
+                    Log.info(Watcher.getDiagString(), ConsoleColor.Cyan);
+                } else if (content == "#help") { 
                     Log.debug("~ HELP ~\n");
                     Log.debug("~ Keywords:");
                     foreach (var keyword in Keywords.get()) {

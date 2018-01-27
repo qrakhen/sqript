@@ -130,7 +130,7 @@ namespace Qrakhen.Sqript
                     Log.spam("hey, it's a funqtion call!");
                     if (r.getValueType() == ValueType.Funqtion || r.getValueType() == ValueType.NativeCall) {
                         Value[] p = Funqtionizer.parseParameters(context, readBody(true));
-                        result = (r.getTrueValue() as Funqtion).execute(p, _r[_r.Length - 2]);
+                        result = (r.getTrueValue() as Funqtion).execute(p, (_r.Length > 1 ? _r[_r.Length - 2] : null));
                     } else throw new ParseException("can not call " + peek(-1) + ": not a funqtion.");
                 } else {
                     result = r;
