@@ -8,11 +8,21 @@
         public readonly bool isReadonly;
         public readonly string name;
 
-        public Reference(Value value, ValueType acceptedType = ValueType.Null) : base(ValueType.Reference, value) {
+        public Reference(
+                Value value, 
+                Qontext owner = null,
+                string name = null,
+                Access access = Access.PUBLIC,
+                bool isReadonly = false,
+                ValueType acceptedType = ValueType.Null) : base(ValueType.Reference, value) {
+            this.owner = owner;
+            this.name = name;
+            this.access = access;
+            this.isReadonly = isReadonly;
             this.acceptedType = acceptedType;
         }
 
-        public Reference(ValueType acceptedType = ValueType.Null) : base(ValueType.Reference, new Value(null, ValueType.Null)) {
+        public Reference(ValueType acceptedType = ValueType.Null) : base(ValueType.Reference, Null) {
             this.acceptedType = acceptedType;
         }
 
@@ -29,10 +39,13 @@
         }
 
         public virtual void setReference(Value value) {
-            if (acceptedType != ValueType.Null && !value.isType(acceptedType))
-                throw new ReferenceException(
-                    "can not assign value '" + value.str() + "': expected a value of type '" + acceptedType + "', got '" + value.toFullString() + "' instead", this);
-            setValue(value, type);
+            if (isReadonly) throw new ReferenceException("can not set the value of read-only reference '" + name?.ToString() + "'", this);
+            else if (acceptedType != ValueType.Null && !value.isType(acceptedType)) throw new ReferenceException("can not assign value '" + value.str() + "': expected a value of type '" + acceptedType + "', got '" + value.toFullString() + "' instead", this);
+            else if (owner != null) {
+
+            } else {
+                setValue(value, type);
+            }
         }
 
         public new virtual T getValue<T>() {
@@ -49,6 +62,7 @@
 
         public override string ToString() {
             return 
+                name != null ? name : "" + " " +
                 (acceptedType != ValueType.Null ? "<" + acceptedType + ":" : "") + 
                 (getTrueValue() == null ? Null.ToString() : getTrueValue().ToString()) +
                 (acceptedType != ValueType.Null ? ">" : "");
@@ -58,15 +72,16 @@
     internal class FloatingReference<T> : Reference
     {
         public T key { get; private set; }
-        public Collection<T> owner { get; private set; }
+        public Collection<T> target { get; private set; }
 
-        public FloatingReference(T key, Collection<T> owner) : base(Null) {
+        public FloatingReference(T key, Collection<T> target) : base(Null) {
             this.key = key;
-            this.owner = owner;
+            this.target = target;
         }
 
         public void bind() {
-            if (value.type != ValueType.Null) owner.set(key, new Reference(value));
+            if (target is Qontext && !(target as Qontext).extendable) throw new QontextException("can not assign new reference to context: context not extendable or read-only");
+            if (value.type != ValueType.Null) target.set(key, new Reference(value));
         }
     }
 }

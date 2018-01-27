@@ -93,9 +93,9 @@ namespace Qrakhen.Sqript
         }
 
         internal Obqect createInterfaceContext() {
-            Obqect context = new Obqect(null);
+            Obqect context = new Obqect(null, false);
             foreach (var call in calls) {
-                context.set(call.Key, new Reference(new Funqtion(context, call.Value)));
+                context.set(call.Key, new Reference(new Funqtion(context, call.Value), context, call.Key, Access.PUBLIC, true));
             }
             return context;
         }

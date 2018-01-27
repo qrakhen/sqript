@@ -6,14 +6,17 @@ namespace Qrakhen.Sqript
 {
     internal abstract class Qontext : Collection<string>
     {
+        public readonly bool extendable;
         public Qontext parent { get; protected set; }
 
-        public Qontext(Qontext parent, ValueType type, Dictionary<string, Reference> value) : base(type, value) {
+        public Qontext(Qontext parent, ValueType type, Dictionary<string, Reference> value, bool extendable = true) : base(type, value) {
             this.parent = parent;
+            this.extendable = extendable;
         }
 
-        public Qontext(Qontext parent) : base(ValueType.Qontext, new Dictionary<string, Reference>()) {
+        public Qontext(Qontext parent, bool extendable = true) : base(ValueType.Qontext, new Dictionary<string, Reference>()) {
             this.parent = parent;
+            this.extendable = extendable;
         }
 
         public override void set(string key, Reference reference) {
