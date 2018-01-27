@@ -124,17 +124,5 @@ namespace Qrakhen.Sqript
             }
             Log.spam("main context total executed statement amount: " + segments.Count);
         }
-
-        public override string ToString() {
-            string r = "{\n";
-            foreach (var reference in value) {
-                if (reference.Value.getTrueValue() == this) continue;
-                string[] lines = reference.Value.getTrueValue().ToString().Split('\n');
-                r += "    " + reference.Key + ": " + lines[0] + "\n";
-                for (int i = 1; i < lines.Length; i++) r += "    " + lines[i] + ",\n";
-            }
-            if (r.EndsWith(",\n")) r = r.Substring(0, r.Length - 2) + "\n";
-            return r + "}";
-        }
     }
 }

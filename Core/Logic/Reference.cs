@@ -3,6 +3,10 @@
     internal class Reference : Value<Value>
     {
         public readonly ValueType acceptedType;
+        public readonly Qontext owner;
+        public readonly Access access;
+        public readonly bool isReadonly;
+        public readonly string name;
 
         public Reference(Value value, ValueType acceptedType = ValueType.Null) : base(ValueType.Reference, value) {
             this.acceptedType = acceptedType;
