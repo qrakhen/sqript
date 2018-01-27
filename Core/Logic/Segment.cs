@@ -85,6 +85,7 @@ namespace Qrakhen.Sqript
                         if (step == 0) returning = true;
                         else if (head.empty() && step == 1) {
                             head.left = node.left;
+                            node.left = null;
                         }
                     }
                     if (node.ready()) {
