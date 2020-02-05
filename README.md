@@ -272,10 +272,11 @@ reference | ref | declare | *~
 dereference | del | destroy | ~:
 
 // dynamic declaration
+// the star stands for "new" and the tilde means flow. obviously.
 *~ name <~ 'Max';
 // Max
 
-*~ name = 123;
+*~ name <~ 123;
 // Exception thrown at stdin 0:4, cannot redeclare reference 'name'
 
 ~: name;
@@ -291,11 +292,15 @@ ref<int> number = 10;
 ### Operators
 #### Assign (by Value ' <~ ' or Reference ' <& ')
 ```javascript
-name <~ 'Der' + 'ser'; // assigns value of right hand operation result
-*~ nameReference <& name; // assigns the actual variable by reference, so
-
-name <& 'Foo'; // would result in
-(nameReference == 'Foo');
+name <~ 'Der' + 'ser';		// assigns value of right hand operation result
+*~ nameReference <& name;	// assigns the actual variable by reference, so
+name <& 'Foo';				// would result in
+(nameReference == 'Foo');   // pretty transparent, hm? the arrow here is depicting
+							// you putting something INTO a name/variable.
+							// because that's what you do.
+							// you can also add or remove stuff from collections with:
+myList <+ anItem;			// read "< into + add" 
+someArray:627 ->			// read "> from - remove"
 ```
 
 
@@ -332,6 +337,7 @@ runtimeCore		| sqript.core	| [any string] (see runtime cores)
 useProcessOut	| true			| false, true (use stdOut internally)
 encoding		| UTF-8			| [any string] (encoding type)
 suppressErrors  | false			| false, true (does not throw exceptions)
+[...]			| [...]			| [...]
 ```
 
 ##### logLevel

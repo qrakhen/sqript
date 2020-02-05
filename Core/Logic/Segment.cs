@@ -50,7 +50,6 @@ namespace Qrakhen.Sqript
                     head.execute();
                 }
             }
-            Log.spam("head after execution:\n" + head);
             if (!head.empty() && head.left is FloatingReference<string>) (head.left as FloatingReference<string>).bind();
             else if (!head.empty() && head.left is FloatingReference<int>) (head.left as FloatingReference<int>).bind();
             return r;

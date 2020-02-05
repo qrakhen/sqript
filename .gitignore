@@ -1,4 +1,5 @@
 bin/
 obj/
 log/
+lib/
 .vs/
