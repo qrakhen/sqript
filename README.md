@@ -39,7 +39,7 @@ Jokes aside - Sqript was never intended to be used as an actual tool in real pro
 but I was shocked to realize that it definitely has the power to do so.
 To this day, I have some smaller tasks automated using Sqript - mostly for fun - but it still works.
 At the end of the day, this is just another one of my many children I have created to embrace my love of logic & code.
-Code can be art, and sqript isn't, I don't know what is.
+Code can be art, and if sqript isn't, I don't know what is.
 
 Please keep in mind that if you actually want to use Sqript that it is still very young and will suffer from partial child diseases - 
 but as I am ~constantly~ sometimes working on it, so these things will fade.
