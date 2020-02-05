@@ -5,7 +5,7 @@
      .__)(_][  | [_) | _.
       \    |     |     /
 ```
-### ~ another (dynamic|static) type-(less|full) adventure into obscurity
+### ~ another type(safe|less) adventure into obscurity!
 
 Sqript is an interpreting programming language written in C#.
 It is being developed and maintained by David Neumaier aka 'Qrakhen' (qrakhen@gmail.com, http://qrakhen.net)
@@ -18,34 +18,51 @@ https://github.com/qrakhen/sqript
 ## Philosophy
 
 With Sqript, I wanted to create something that is new and different,
-but still logical, consistent and not too alien.
-My very first idea was mostly concerned about the looks - hence why we have ` *~ a <~ 5 `.
-More and more ideas came together, and as stuff started to work, 
-I created a concept that I now call ` Sqript `. 
-Sqript fixes logical issues that other languages (in my opinion) suffer from,
-and takes the best parts of what I personally like the most, sticking them together - 
-whilst trying to make the result as consistent as possible.
-It was never intended to be used as an actual thing used in real productive scenarios,
-but it definitely has the power to do so.
+but still logical, consistent and not too alien. 
+Some might have the braveness to say that I failed; 
+but I feel forced to contradict such treacherous contraband.
 
-Please keep in mind that Sqript is still very young and will suffer from child disease - 
-but as I am constantly working on it, even these things will fade.
+My very first idea was mostly focused on the looks of a special syntax.
+Something really out of this world, yet still easy to type and feel.
+This is the reason why we now have ` *~ a <~ 5 `. 
+Don't try to tell me you don't instantly understand what that piece of code does.
+
+More and more ideas came together, whilst I was still mostly trying to tell myself to better *not* start this project.
+One saturday night, 4:00AM, the first line of code that was trapped inside my head for months was finally written down.
+And as stuff slowly began to work, I created the concept which I now call ` Sqript `. 
+
+Sqript fixes logical issues that other languages (in my humble opinion) suffer from,
+and takes the best parts of what I personally like the most; Sticking them together - 
+whilst also trying to make the result as consistent and readable as possible.
+I have given up on the readable part, but, man, is it consistent. Consistently unreadable.
+Jokes aside - Sqript was never intended to be used as an actual tool in real productive scenarios,
+but I was shocked to realize that it definitely has the power to do so.
+To this day, I have some smaller tasks automated using Sqript - mostly for fun - but it still works.
+At the end of the day, this is just another one of my many children I have created to embrace my love of logic & code.
+Code can be art, and sqript isn't, I don't know what is.
+
+Please keep in mind that if you actually want to use Sqript that it is still very young and will suffer from partial child diseases - 
+but as I am ~constantly~ sometimes working on it, so these things will fade.
 
 ### Some Features:
  * type-less, comparable to JavaScript, but CAN be typed if wanted.
  * easily extendendable - missing a feature? implement it!
- * pointers. just in easy-to-understand and hard-to-fuck-up.
- * encapsulation (private, protected, public)
- * namespaces, classes, inheritation
- * configurable keyword alternatives
- * operator overloads, custom operator declaration and definition
- * custom 'native' types, extendable native types
+ * easy library wrapper to link almost any library directly into sqript
+ * encapsulation (private, protected, public, custom scopes, etc.)
+ * feels like an OOP, serving namespaces, classes, interfaces, inheritation 
+ * configurable keyword alternatives (let's call ` return ` just ` RÜCKSENDUNG ` instead because y not!)
+ * operator overloads, custom operator declaration and definition (tell sqript what a '+' _really_ does!)
+ * custom 'native' types, extendable native types - okay, native might be a stretch. but they are types.
+ * pointers & references. yes, don't worry, you may deactivate them globally.
 
 #### Example Code
 This is just here to see how Sqript's syntax _can_ work.
-Yes, it is intended to look mind-numbingly retarded :)
+I intentionally explain not a single line of code here.
+But this actually compiles to a working program.
+I will explain to you _why_ it makes sense and _why_ everyone who says otherwise is *wrong*.
+
 ```javascript
-*<int>:~ STOMACH_SIZE = 12;
+$<int>:~ STOMACH_SIZE = 12;
 
 qlass <Being:>Person 
 {
@@ -53,11 +70,11 @@ qlass <Being:>Person
 	private <[]:>stack;
 
 	public Person({
-		.~:stack <~ STOMACH_SIZE:[];
+		.~:stack <~ STOMACH_SIZE:[];	
 	}, name {
-		^:();
-		.~:name <~ name;
-	});
+		^:();							
+		.~:name <~ name;				
+	});									
 
 	private fq digest ~({
 		sqr:delay(({
@@ -86,6 +103,9 @@ john:eat([ 'noodle', 'soup' ]);
 ```
 
 #### Quick Briefing
+
+SOME OF WHAT FOLLOWS HERE IS OUTDATED AT THE MOMENT. UPDATES FOLLOWING SOON.
+
 ```javascript
  # reference declaration & assignment
  << *~ name <~ 'foo';
@@ -144,7 +164,7 @@ Dynamic number type, can represent an integer or a decimal number.
 <dec> [0.0]
 ```
 
-#### BOOLEAN
+#### BOOLEAN (NON_FALSY!)
 ```javascript
 <bool> [true|false]
 ```
@@ -298,7 +318,7 @@ When no qonfig file is provided, default values will be used.
 ```javascript
 key				| default		| values
 ----------------|---------------|---------------------------------------
-logLevel		| DEVELOPMENT	| set logging level
+logLevel		| DEBUG			| set logging level
 forceTypes		| false			| forces type usage
 forceNamespace	| false			| forces namespace usage
 allowRedeclare  | false			| allows reference redeclaration
@@ -321,5 +341,6 @@ Can be set to one of these values:
     1 = CRITICAL	//critical errors, such as program termination
     2 = WARNINGS	//warnings such as redeclaration of references
     3 = INFO		//default logs
-    4 = VERBOSE		//verbose mode, spits out everything ever
+	4 = DEBUG		//recommended
+    5 = VERBOSE		//don't use this if you want to see any usable information
 ```
