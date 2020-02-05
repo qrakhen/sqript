@@ -46,7 +46,7 @@ namespace Qrakhen.Sqript
                 default: throw new ParseException("could not find closing element for opened '" + ascend + "'", peek());
             } do {
                 string cur = (peek().type == ValueType.Struqture ? peek().getValue<string>() : "");
-                if (cur == descend) depth--;
+                if (!string.IsNullOrEmpty(cur) && descend.IndexOf(cur) > -1) depth--;
                 else if (cur == ascend) depth++;
                 if (depth > 0) buffer.Add(digest());
                 else if (depth == 0)

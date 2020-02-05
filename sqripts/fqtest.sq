@@ -1,9 +1,9 @@
-﻿ref a = 5;
-funqtion f (x y {
-	ref z = y + 2;
-	funqtion innerfq ({
+﻿ref a <~ 5;
+funqtion f ~(x y {
+	ref z <~ y + 2;
+	funqtion innerfq ~({
 		return z;
 	});
 	return x + y;
 });
-ref b = f(a, 5);
+ref b <~ f(a, 5);

@@ -56,6 +56,8 @@ namespace Qrakhen.Sqript
             Keywords.define(Keyword.CONDITION_IF, "if", "when", "~?");
             Keywords.define(Keyword.CONDITION_ELSE, "else", "otherwise", "?~");
             Keywords.define(Keyword.CONDITION_LOOP, "do", "while", "for", "loop", "repeat", "until");
+            Keywords.define(Keyword.BOOL_TRUE, "true");
+            Keywords.define(Keyword.BOOL_FALSE, "false");
         }
 
         internal static void defineOperators() {

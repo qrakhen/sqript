@@ -23,6 +23,8 @@ namespace Qrakhen.Sqript
             FUNQTION = new Kwrd(0x000020, "FUNQTION"),
             NAMESPACE = new Kwrd(0x000040, "NAMESPACE"),
             CONDITION_IF = new Kwrd(0x000100, "CONDITION_IF"),
+            BOOL_TRUE = new Kwrd(0x000101, "BOOL_TRUE"),
+            BOOL_FALSE = new Kwrd(0x000102, "BOOL_FALSE"),
             CONDITION_ELSE = new Kwrd(0x000200, "CONDITION_ELSE"),
             CONDITION_LOOP = new Kwrd(0x000400, "CONDITION_LOOP"),
             PUBLIC = new Kwrd(0x001000, "PUBLIC"),

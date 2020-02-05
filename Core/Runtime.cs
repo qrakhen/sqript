@@ -19,7 +19,7 @@ namespace Qrakhen.Sqript
 
     internal static class Log
     {
-        private static Level loggingLevel = Level.INFO;
+        public static Level loggingLevel { get; private set; } = Level.DEBUG;
 
         public enum Level
         {
@@ -435,15 +435,18 @@ namespace Qrakhen.Sqript
             }
         }
 
-        static void cli() {
+        static void cli(string startCommand = "", bool hideHeader = false) {
             Log.setLoggingLevel(Log.Level.VERBOSE);
-            Log.write("\n" + SQRIPT.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
-            Log.info("  available cli commands:");
-            Log.info("   - #help");
-            Log.info("   - #run <filename>");
-            Log.info("   - #clr (clears global context)");
-            Log.info("   - #diag (process diagnose)");
-            Log.debug("\n  use qonfig:('log', '5'); for verbose output\n");
+            if (!hideHeader) {
+                Log.write("\n" + SQRIPT.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
+                Log.info("  available cli commands:");
+                Log.info("   - #help");
+                Log.info("   - #run <filename>");
+                Log.info("   - #clr (clears global context)");
+                Log.info("   - #diag (process diagnose)");
+                Log.info("   - #dbg (toggle debug mode)");
+                Log.debug("\n  use qonfig:('log', '5'); for verbose output\n");
+            }
 
             string content = "";
             GlobalContext.resetInstance();
@@ -453,7 +456,13 @@ namespace Qrakhen.Sqript
                 Log.write(" <~ ", ConsoleColor.White, "");
                 ConsoleKeyInfo c;
                 do {
-                    string line = Console.ReadLine();
+                    string line;
+                    if (startCommand != "") {
+                        line = startCommand;
+                        startCommand = "";
+                    } else {
+                        line = Console.ReadLine();
+                    }
                     if (line == "" && content == "") {
                         Console.SetCursorPosition(4, Console.CursorTop - 1);
                     } else {
@@ -468,6 +477,9 @@ namespace Qrakhen.Sqript
                     Log.info("executing:\n" + content);
                 } else if (content == "#clr") {
                     GlobalContext.resetInstance();
+                    continue;
+                } else if (content == "#dbg") {
+                    Log.setLoggingLevel((int)Log.loggingLevel > 4 ? Log.Level.INFO : Log.Level.VERBOSE);
                     continue;
                 } else if (content == "#diag") {
                     Watcher.diagnose();
@@ -489,8 +501,7 @@ namespace Qrakhen.Sqript
         static void Main(string[] args) {
             Core.init();
             KeyState.run();
-            if (args.Length == 0) cli();
-            else execute(File.ReadAllText(args[0]));           
+            cli((args.Length > 0 ? "#run " + args[0] : ""), args.Length > 0);
         }
     }
 

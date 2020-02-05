@@ -32,25 +32,21 @@ namespace Qrakhen.Sqript
                         throw new FunqtionizerException("funqtions overloads not yet implemented", peek());
                     } else throw new ParseException("unexpected token found when trying to parse funqtion body definition", peek());
                 }
-            } else throw new ParseException("unexpected funqtion parameter opening, expected '('", t);
+            } else throw new ParseException("unexpected funqtion parameter opening, expected '~('", t);
         }
 
         public Value[] parseParameters(Qontext context) {
             List<Value> parameters = new List<Value>();
-            Token t = digest();
+            Token t = peek();
             if (t.check(Struqture.Call[OPEN])) {
-                t = peek();
-                if (t.check(Struqture.Funqtion[CLOSE])) return new Value[0];
-                else do {
-                        t = digest();
-                        if (t.isType(ValueType.Any)) parameters.Add(t.makeValue());
-                        else if (t.isType(ValueType.Identifier)) parameters.Add(context.getOrThrow(t.str()).getTrueValue());
-                        else throw new ParseException("unexpected token found when trying to parse funqtion call", t);
-                        t = digest();
-                        if (t.check(Struqture.Call[DEL])) continue;
-                        else if (t.check(Struqture.Call[CLOSE])) break;
-                        else throw new ParseException("unexpected token found when trying to parse funqtion call", t);
-                    } while (!endOfStack());
+                do {
+                    var seg = Segmentizer.parseOne(context, readBody(false, ",)"));
+                    parameters.Add(seg.execute(context));
+                    shift(-1);
+                    if (peek().check(Struqture.Call[CLOSE])) break;
+                    if (peek().check(Struqture.Call[DEL])) continue;
+                    else throw new ParseException("unexpected token found when trying to parse funqtion call", t);
+                } while (!endOfStack());
                 return parameters.ToArray();
             } else throw new ParseException("unexpected funqtion call parameter opening, expected '('", t);
         }
