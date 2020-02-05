@@ -38,13 +38,13 @@ namespace Qrakhen.Sqript
             reset();
             returning = false;
             head = new Node();
-            Node end = build(context);
-            Log.spam("executing node:\n" + end);
+            Node tail = build(context, new Node());
+            Log.spam("executing node:\n" + tail);
             Value r = Value.Null;
-            if (end.empty() && !head.empty()) {
+            if (tail.empty() && !head.empty()) {
                 r = head.execute();
             } else {
-                r = end.execute();
+                r = tail.execute();
                 if (!head.empty()) {
                     head.right = r;
                     head.execute();
@@ -90,12 +90,28 @@ namespace Qrakhen.Sqript
                         }
                     }
                     if (node.ready()) {
-                        Node next = new Node(node, null, op);
-                        node = build(context, next);
+                        Log.spam("comparing operators to chain nodes");
+                        if (op.compare(node.op) > 0)
+                            node.right = build(context, new Node(node.right, null, op));
+                        else
+                            node = build(context, new Node(node, null, op));
+                    } else if (head.op == null && (
+                        op.symbol == Operator.ASSIGN_VALUE ||
+                        op.symbol == Operator.ASSIGN_REFERENCE)) {
+                        head.op = op;
+                    } else if (node.left == null || (node.op != null && node.right == null)) {
+                        if (op.symbol == Operator.CALCULATE_ADD) continue;
+                        else if (op.symbol == Operator.CALCULATE_SUBTRACT) {
+                            var neg = new Segment(new Token[] {
+                                Token.create(ValueType.Number, "-1"),
+                                Token.create(ValueType.Operator, Operator.CALCULATE_MULTIPLY),
+                                digest() });
+                            Log.spam("created negating segment: " + neg.ToString());
+                            if (node.left == null) node.left = neg.execute(context);
+                            else node.right = neg.execute(context);
+                        } else throw new ParseException("unexpected operator " + op.symbol + " at start of expression", t);
                     } else if (node.left != null) {
                         node.op = op;
-                    } else if (head.op == null) {
-                        head.op = op;
                     } else throw new ParseException("sorry, manipulation operators (operators without left-hand value) are not yet implemented. :/", t);
                 } else if (t.check(ValueType.Struqture, "(")) {
                     if (node.ready()) throw new ParseException("can not open new segment without prior operator.", t);
@@ -176,15 +192,8 @@ namespace Qrakhen.Sqript
             }
 
             public override string ToString() {
-                if (empty()) return "{ }";
-                string r = "{\n";
-                r += "   " + (right is Node ? left?.ToString() : right?.ToString()) + " " + op?.symbol;
-                if (ready()) {
-                    string[] s = (right is Node ? right?.ToString() : left?.ToString()).Split(new char[] { '\n' });
-                    r += " " + s[0] + " ";
-                    for (int i = 1; i < s.Length; i++) r += "\n    " + s[i];
-                }
-                return r += "\n}";
+                if (empty()) return "{ void }";
+                return "{ " + (left ?? "null") + " " + (op == null ? "NaO" : op.symbol) + " " + (right ?? "null") + " }";
             }
         }
     }

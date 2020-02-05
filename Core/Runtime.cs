@@ -462,7 +462,7 @@ namespace Qrakhen.Sqript
                         content += "\n";
                         Log.write("    ", ConsoleColor.White, "");
                     }
-                } while (c.Key != ConsoleKey.Escape);
+                } while (true);  //c.Key != ConsoleKey.Escape);
                 if (content.StartsWith("#run")) {
                     content = File.ReadAllText(content.Substring(5) + (content.EndsWith(".sq") ? "" : ".sq"));
                     Log.info("executing:\n" + content);

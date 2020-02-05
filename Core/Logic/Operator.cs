@@ -31,6 +31,13 @@ namespace Qrakhen.Sqript
             this.execute = calculate;
         }
 
+        public int compare(Operator op)
+        {
+            return importance - op.importance;
+        }
+
+        public int importance => (symbol == CALCULATE_ADD || symbol == CALCULATE_SUBTRACT ? 1 : (symbol == CALCULATE_MULTIPLY || symbol == CALCULATE_DIVIDE ? 2 : 0));
+
         public static Value getRealValue(Value v) {
             if (v is Reference) return (v as Reference).getTrueValue();
             else return v;
