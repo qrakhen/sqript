@@ -1,8 +1,7 @@
 {
   "profiles": {
     "SqriptRuntime": {
-      "commandName": "Project",
-      "commandLineArgs": "C:\\Users\\Qrakhen\\projects\\sqript\\sqripts\\fqtest.sq"
+      "commandName": "Project"
     }
   }
 }

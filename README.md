@@ -42,7 +42,7 @@ At the end of the day, this is just another one of my many children I have creat
 Code can be art, and if sqript isn't, I don't know what is.
 
 Please keep in mind that if you actually want to use Sqript that it is still very young and will suffer from partial child diseases - 
-but as I am ~constantly~ sometimes working on it, so these things will fade.
+but as I am ~constantly~ sometimes working on it, even these things will fade.
 
 ### Some Features:
  * type-less, comparable to JavaScript, but CAN be typed if wanted.

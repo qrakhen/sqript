@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>Qrakhen.Sqript</AssemblyName>
     <RootNamespace>Qrakhen.Sqript</RootNamespace>
-    <Version>0.2.0</Version>
+    <Version>0.4.1</Version>
     <Authors>Qrakhen</Authors>
     <Product>Sqript</Product>
     <PackageId>Sqript.Runtime</PackageId>
@@ -16,14 +16,20 @@
     <PackageIconUrl />
     <RepositoryType>Qrakhen</RepositoryType>
     <PackageTags>Qrakhen</PackageTags>
-    <PackageReleaseNotes>QrakhenQrakhenQrakhenQrakhenQrakhen</PackageReleaseNotes>
+    <PackageReleaseNotes>QrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhenQrakhen</PackageReleaseNotes>
     <NeutralLanguage>en-CC</NeutralLanguage>
-    <ApplicationIcon>sqript.ico</ApplicationIcon>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <Win32Resource />
+    <StartupObject />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <OutputPath>bin\build\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
 
   <ItemGroup>
