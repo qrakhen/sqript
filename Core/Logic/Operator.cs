@@ -19,9 +19,17 @@ namespace Qrakhen.Sqript
             CONDITION_SMALLER_EQUAL = "<=",
             CONDITION_BIGGER = ">",
             CONDITION_BIGGER_EQUAL = ">=",
-            COLLECTION_ADD = "<+",
-            COLLECTION_REMOVE = "->",
+            COLLECTION_ADD_LEFT = "<+",
+            COLLECTION_ADD_RIGHT = "+>",
+            COLLECTION_REMOVE_LEFT = "->",
+            COLLECTION_REMOVE_RIGHT = "<-",
             NO_OPERATION = "";
+
+        // list -> item
+        // inventory -> shovel
+        // inventory 10:-> shovel
+        // inventory <+ diamond
+        // chrisInv 100:-> diamond +> daveInv &
 
         public string symbol { get; protected set; }
         public Func<Value, Value, Value> execute { get; protected set; }

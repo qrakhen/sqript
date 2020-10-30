@@ -188,8 +188,10 @@ namespace Qrakhen.Sqript
                 } else throw new OperationException("can not compare types for " + a.type.ToString() + " BIGGER_EQUAL " + b.type.ToString());
             });
 
-            Operators.define(Operator.COLLECTION_ADD);
-            Operators.define(Operator.COLLECTION_REMOVE);
+            Operators.define(Operator.COLLECTION_ADD_LEFT);
+            Operators.define(Operator.COLLECTION_ADD_RIGHT);
+            Operators.define(Operator.COLLECTION_REMOVE_LEFT);
+            Operators.define(Operator.COLLECTION_REMOVE_RIGHT);
         }
     }
 }
