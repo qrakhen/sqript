@@ -104,15 +104,6 @@ namespace Qrakhen.Sqript
             }
         }
 
-        public static ValueType getValueType(Type type) {
-            switch (type.Name) {
-                case "String": return ValueType.String;
-                case "Int32": return ValueType.Integer;
-                case "Double": return ValueType.Decimal;
-                default: return ValueType.Any;
-            }
-        }
-
         public static ValueType getType(string type) {
             return (ValueType) Enum.Parse(typeof(ValueType), type);
         }
