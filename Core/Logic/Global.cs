@@ -80,9 +80,13 @@ namespace Qrakhen.Sqript
             Interface[] libs = Loader.loadDirectory(AppContext.BaseDirectory + "\\lib\\");
             if (libs.Length > 0) {
                 foreach (var lib in libs) {
-                    lib.load();
-                    set(lib.name, new Reference(lib.createInterfaceContext()));
-                    Log.spam("loaded external library component '" + lib.name + "' into global context");
+                    try {
+                        //lib.load();
+                        set(lib.name, new Reference(lib.createInterfaceContext()));
+                        Log.spam("loaded external library component '" + lib.name + "' into global context");
+                    } catch(Exception e) {
+                        Log.error("failed to load library '" + lib.name + "': " + e.Message); 
+                    }
                 }
                 Log.debug("successfully loaded " + libs.Length + " external libraries.");
             }
