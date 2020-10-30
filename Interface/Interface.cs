@@ -41,7 +41,9 @@ namespace Qrakhen.Sqript
 
         public sealed class Call
         {
-            public Func<Dictionary<string, Value>, Value> callback { get; private set; }
+            public delegate Value CallMethod(Dictionary<string, Value> parameters);
+
+            public CallMethod call { get; private set; }
             public string name { get; private set; }
             public string[] parameters { get; private set; }
             public ValueType returnType { get; private set; }
@@ -51,24 +53,26 @@ namespace Qrakhen.Sqript
             /// </summary>
             /// <param name="name">function name, as used in code</param>
             /// <param name="parameters">parameter names to later be able to identify them inside the callback</param>
-            /// <param name="callback">
+            /// <param name="call">any function that implements the CallbackMethod delegate (Value(Dictionary<string, Value>))
             /// the actual function, provide any method that accepts a Dictionary as parameter and returns a Sqript.Value
             /// all provided parameters will be accessible using the dictionary (i.e. string key = parameters["key"];)
             /// </param>
-            public Call(string name, string[] parameters, Func<Dictionary<string, Value>, Value> callback, ValueType returnType = ValueType.Any) {
-                this.name = name;
+            public Call(string[] parameters, CallMethod call, ValueType returnType = ValueType.Any, string name = null)
+            {
                 this.parameters = parameters;
-                this.callback = callback;
+                this.call = call;
                 this.returnType = returnType;
+                this.name = name ?? call.Method.Name;
             }
 
-            public Value execute(Value[] parameters) {
+            public Value execute(Value[] parameters)
+            {
                 Dictionary<string, Value> provided = new Dictionary<string, Value>();
                 for (int i = 0; i < this.parameters.Length; i++) {
                     if (parameters.Length <= i) provided.Add(this.parameters[i], null);
                     else provided.Add(this.parameters[i], parameters[i]);
                 }
-                return callback(provided);
+                return call(provided);
             }
         }
 
