@@ -494,7 +494,15 @@ namespace Qrakhen.Sqript
                     }
                     Log.debug("\n~ Tip: type 'global' to print out the global context");
                 } else if (content == "#exit") break;
+                StackTrace st = new StackTrace();
                 execute(content);
+                if (Log.loggingLevel == Log.Level.VERBOSE) {
+                    List<string> stf = new List<string>();
+                    for (int i = 0; i < st.FrameCount; i++) {
+                        var f = st.GetFrame(i);
+                        
+                    }
+                }
             } while (content != "exit");
         }
 
