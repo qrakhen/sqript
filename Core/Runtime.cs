@@ -436,7 +436,7 @@ namespace Qrakhen.Sqript
         }
 
         static void cli(string startCommand = "", bool hideHeader = false) {
-            Log.setLoggingLevel(Log.Level.VERBOSE);
+            Log.setLoggingLevel(Log.Level.DEBUG);
             if (!hideHeader) {
                 Log.write("\n" + SQRIPT.asciiLogo + "", ConsoleColor.Green, "\n", "    ");
                 Log.info("  available cli commands:");
