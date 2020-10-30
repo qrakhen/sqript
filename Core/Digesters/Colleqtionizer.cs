@@ -18,6 +18,7 @@
                         string key = digest().str();
                         t = peek();
                         if (t.check(Operator.ASSIGN_REFERENCE) || t.check(Operator.ASSIGN_VALUE)) {
+                            //@TODO: maybe use new Segmentizer().parse() here? we can't do { a <~ 5 + 3 } yet...
                             Operator op = Operators.get(digest().ToString());
                             Value value = readNextValue(context);
                             if (value == null) throw new ParseException("could not read value for '" + key + "': unreadable or no value.", t);
