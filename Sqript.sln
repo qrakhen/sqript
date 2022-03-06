@@ -1,36 +1,31 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqriptRuntime", "SqriptRuntime.csproj", "{F0E0B230-B782-4137-A67D-6F8D38775BB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sqript", "Sqript\Sqript.csproj", "{2BAD24E2-6797-47AC-9755-15BE46F57306}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sqript.Libs", "..\Sqript.Libs\Sqript.Libs.csproj", "{EECFB58E-E041-42A6-957A-B19988DE299D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sqript.Libs", "Sqript.Libs\Sqript.Libs.csproj", "{0D6EEFAC-8A11-4636-A367-899F74AA9D2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-		win32_exe|Any CPU = win32_exe|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F0E0B230-B782-4137-A67D-6F8D38775BB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F0E0B230-B782-4137-A67D-6F8D38775BB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F0E0B230-B782-4137-A67D-6F8D38775BB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F0E0B230-B782-4137-A67D-6F8D38775BB1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F0E0B230-B782-4137-A67D-6F8D38775BB1}.win32_exe|Any CPU.ActiveCfg = Debug|Any CPU
-		{F0E0B230-B782-4137-A67D-6F8D38775BB1}.win32_exe|Any CPU.Build.0 = Debug|Any CPU
-		{EECFB58E-E041-42A6-957A-B19988DE299D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EECFB58E-E041-42A6-957A-B19988DE299D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EECFB58E-E041-42A6-957A-B19988DE299D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EECFB58E-E041-42A6-957A-B19988DE299D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EECFB58E-E041-42A6-957A-B19988DE299D}.win32_exe|Any CPU.ActiveCfg = Debug|Any CPU
-		{EECFB58E-E041-42A6-957A-B19988DE299D}.win32_exe|Any CPU.Build.0 = Debug|Any CPU
+		{2BAD24E2-6797-47AC-9755-15BE46F57306}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BAD24E2-6797-47AC-9755-15BE46F57306}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BAD24E2-6797-47AC-9755-15BE46F57306}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BAD24E2-6797-47AC-9755-15BE46F57306}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D6EEFAC-8A11-4636-A367-899F74AA9D2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D6EEFAC-8A11-4636-A367-899F74AA9D2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D6EEFAC-8A11-4636-A367-899F74AA9D2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D6EEFAC-8A11-4636-A367-899F74AA9D2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {DD17708F-B5B8-49BA-8EC8-1D7FD4EC05D3}
+		SolutionGuid = {B3469D06-2817-4366-8370-FCF78DB346B1}
 	EndGlobalSection
 EndGlobal

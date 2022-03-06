@@ -1,3 +1,0 @@
-﻿~(a b { <~ a * b; })(3, 7);
-// for some reason throws an error at the moment.
-// nice language, dave
