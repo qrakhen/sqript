@@ -1,0 +1,3 @@
+﻿for(*~ i <~ 10; i++) {
+	console:writeln("hi");
+}

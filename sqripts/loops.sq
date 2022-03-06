@@ -1,7 +1,6 @@
 ﻿*~ n <~ 0;
 while (n < 10) {
 	n <~ n + 1;
-	*~ t <~ "we're at step " + n + "
-	";
+	*~ t <~ "we're at step " + n + "\n";
 	console:write(t);
 }

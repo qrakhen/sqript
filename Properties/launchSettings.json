@@ -1,7 +1,10 @@
 {
   "profiles": {
-    "SqriptRuntime": {
-      "commandName": "Project"
+    "Sqript": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\Coding\\Sqript\\Sqript\\sqripts\\Testing.sq",
+      "workingDirectory": "..\\bin\\Sqript",
+      "nativeDebugging": false
     }
   }
 }
