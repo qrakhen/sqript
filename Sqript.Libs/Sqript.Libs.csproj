@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<Authors>Qrakhen</Authors>
+		<Description>This project was created by Qrakhen and Updated by Vision</Description>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<SignAssembly>false</SignAssembly>
+		<PublishSingleFile>true</PublishSingleFile>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<OutputPath>..\bin\Sqript.Libs</OutputPath>
+	</PropertyGroup>
+
+  <ItemGroup>
+		<ProjectReference Include="..\Sqript\Sqript.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="mkdir &quot;$(SolutionDir)bin\Sqript\lib&quot;&#xD;&#xA;copy &quot;$(SolutionDir)bin\Sqript.Libs\Sqript.Libs.dll&quot; &quot;$(SolutionDir)bin\Sqript\lib&quot;" />
+  </Target>
+
+</Project>

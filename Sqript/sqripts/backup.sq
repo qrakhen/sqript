@@ -1,0 +1,18 @@
+﻿*~ emptyboard <~ 
+[
+	['1', '2', '3'],
+	['4', '5', '6']
+];
+
+fq printList ~(listParam {
+	*~ r <~ 0;
+	*~ c <~ 0;
+	loop (index < listParam:len) {
+		loop (index < listParam:len) {
+			console:write(listParam:index:0 + " ");
+			index <~ index + 1;
+		}
+	}
+});
+
+printList(emptyboard);
