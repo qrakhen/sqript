@@ -1,5 +1,7 @@
 ﻿namespace Qrakhen.Sqript {
+
 	internal class Struqture {
+
 		public const string
 			MEMBER = ":";
 		public const int

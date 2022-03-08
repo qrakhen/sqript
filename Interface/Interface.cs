@@ -7,47 +7,50 @@ namespace Qrakhen.Sqript {
 	/// All default Sqript libraries (i.e. sqlib.base.dll) are made by extending this class.
 	/// </summary>
 	public abstract class Interface {
-		public string name { get; private set; }
-		public Dictionary<string, Call> calls;
+
+		public string Name { get; private set; }
+		public Dictionary<string, Call> Calls;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="name"></param>
 		public Interface(string name) {
-			this.name = name;
-			calls = new Dictionary<string, Call>();
+			this.Name = name;
+			Calls = new Dictionary<string, Call>();
 		}
 
 		/// <summary>
 		/// The load method should use define() to register all interface calls.
 		/// </summary>
-		public abstract void load();
+		public abstract void Load();
 
 		/// <summary>
 		/// defines an interface Call, see the Call class for more information
 		/// </summary>
 		/// <param name="call"></param>
-		public void define(Call call) {
-			calls.Add(call.name, call);
+		public void Define(Call call) {
+			Calls.Add(call.Name, call);
 		}
 
-		internal Value call(string name, Value[] parameters) {
-			if(calls.ContainsKey(name))
-				return calls[name].execute(parameters);
-			else
+		internal QValue CallMethod(string name, QValue[] parameters) {
+			if (this.Calls.ContainsKey(name)) {
+				return Calls[name].Execute(parameters);
+			} else {
 				throw new InterfaceException("could not find interface call '" + name + "'", this);
+			}
 		}
 
 		public sealed class Call {
-			public delegate Value CallMethodParam(Dictionary<string, Value> parameters);
-			public delegate Value CallMethod();
 
-			public CallMethodParam callParam { get; private set; }
-			public CallMethod call { get; private set; }
-			public string name { get; private set; }
-			public string[] parameters { get; private set; }
-			public ValueType returnType { get; private set; }
+			public delegate QValue CallMethodParam(Dictionary<string, QValue> parameters);
+			public delegate QValue CallMethod();
+
+			private readonly CallMethodParam _callParam;
+			private readonly CallMethod _call;
+			public string Name { get; private set; }
+			public string[] Parameters { get; private set; }
+			public ValueType ReturnType { get; private set; }
 
 			/// <summary>
 			/// Creates a Method with parameters
@@ -60,10 +63,10 @@ namespace Qrakhen.Sqript {
 			/// <param name="returnType">returntype of the function</param>
 			/// <param name="name">function name, as used in code</param>
 			public Call(CallMethodParam call, string[] parameters, ValueType returnType = ValueType.Any, string name = null) {
-				this.callParam = call;
-				this.parameters = parameters;
-				this.returnType = returnType;
-				this.name = name ?? call.Method.Name;
+				this._callParam = call;
+				this.Parameters = parameters;
+				this.ReturnType = returnType;
+				this.Name = name ?? call.Method.Name;
 			}
 
 			/// <summary>
@@ -76,59 +79,60 @@ namespace Qrakhen.Sqript {
 			/// <param name="returnType">returntype of the function</param>
 			/// <param name="name">function name, as used in code</param>
 			public Call(CallMethod call, ValueType returnType = ValueType.Any, string name = null) {
-				this.call = call;
-				this.returnType = returnType;
-				this.name = name ?? call.Method.Name;
+				this._call = call;
+				this.ReturnType = returnType;
+				this.Name = name ?? call.Method.Name;
 			}
 
-			public Value execute(Value[] parameters) {
-				if(parameters is null || parameters.Length == 0) {
-					return execute();
+			public QValue Execute(QValue[] parameters) {
+				if (parameters is null || parameters.Length == 0) {
+					return Execute();
 				}
-				Dictionary<string, Value> provided = new Dictionary<string, Value>();
-				for(int i = 0; i < this.parameters.Length; i++) {
-					if(parameters.Length <= i)
-						provided.Add(this.parameters[i], null);
-					else
-						provided.Add(this.parameters[i], parameters[i]);
+				Dictionary<string, QValue> provided = new Dictionary<string, QValue>();
+				for (int i = 0; i < this.Parameters.Length; i++) {
+					if (parameters.Length <= i)
+						provided.Add(this.Parameters[i], null);
+					else {
+						provided.Add(this.Parameters[i], parameters[i]);
+					}
 				}
-				return callParam(provided);
+				return _callParam(provided);
 			}
 
-			public Value execute() {
-				return call();
+			public QValue Execute() {
+				return _call();
 			}
 		}
 
 		internal class Funqtion : Sqript.Funqtion {
-			public Call call { get; private set; }
+			public readonly Call call; 
 
 			public Funqtion(Qontext parent, Call call) : base(parent) {
 				this.call = call;
 			}
 
-			public override Value execute(Value[] parameters, Value caller = null) {
-				return call.execute(parameters);
+			public override QValue Execute(QValue[] parameters, QValue caller = null) {
+				return call.Execute(parameters);
 			}
 
 			public override string ToString() {
-				string r = "<" + call.returnType + ">(";
-				if(call.parameters != null) {
-					foreach(string parameter in call.parameters) {
+				string r = "<" + call.ReturnType + ">(";
+				if (call.Parameters != null) {
+					foreach (string parameter in call.Parameters) {
 						r += parameter + ", ";
 					}
-					if(r.EndsWith(", ")) {
-						r = r.Substring(0, r.Length - 2);
+					if (r.EndsWith(", ")) {
+						r = r[0..^2];
 					}
 				}
 				return r + ")";
 			}
 		}
 
-		internal Obqect createInterfaceContext() {
+		internal Obqect CreateInterfaceContext() {
 			Obqect context = new Obqect(null, false);
-			foreach(var call in calls) {
-				context.set(call.Key, new Reference(new Funqtion(context, call.Value), context, call.Key, Access.PUBLIC, true));
+			foreach (var call in Calls) {
+				context.Set(call.Key, new Reference(new Funqtion(context, call.Value), context, call.Key, Access.PUBLIC, true));
 			}
 			return context;
 		}

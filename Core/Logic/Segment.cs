@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 
 namespace Qrakhen.Sqript {
-	internal class Segment : Interpretoken {
-		public bool returning { get; protected set; }
-		protected Node head;
 
-		public SegmentType type { get; protected set; }
+	internal class Segment : Interpretoken {
+
+		public bool Returning { get; protected set; }
+		protected Node Head;
+
+		public SegmentType Type { get; protected set; }
 		public enum SegmentType {
 			UNDEFINED = 0x00,
 			EXPRESSION = 0x01,
@@ -16,7 +18,7 @@ namespace Qrakhen.Sqript {
 		}
 
 		public Segment(Token[] stack, SegmentType type = SegmentType.UNDEFINED) : base(stack) {
-			this.type = type;
+			this.Type = type;
 		}
 
 		/************************************
@@ -30,283 +32,296 @@ namespace Qrakhen.Sqript {
 		 *		  }
 		 *	 }
 		 **/
-		public virtual Value execute(Qontext context) {
-			Log.spam("segment.execute()");
-			reset();
-			returning = false;
-			head = new Node();
-			Node tail = build(context, new Node());
-			Log.spam("executing node:\n" + tail);
-			Value r = Value.Null;
-			if(tail.empty() && !head.empty()) {
-				r = head.execute();
+		public virtual QValue Execute(Qontext context) {
+			Log.Spam("segment.Execute()");
+			Reset();
+			Returning = false;
+			Head = new Node();
+			Node tail = Build(context, new Node());
+			Log.Spam("executing node:\n" + tail);
+			QValue r;
+			if (tail.Empty() && !Head.Empty()) {
+				r = Head.Execute();
 			} else {
-				r = tail.execute();
-				if(!head.empty()) {
-					head.right = r;
-					head.execute();
+				r = tail.Execute();
+				if (!Head.Empty()) {
+					Head.Right = r;
+					Head.Execute();
 				}
 			}
-			if(!head.empty() && head.left is FloatingReference<string>)
-				(head.left as FloatingReference<string>).bind();
-			else if(!head.empty() && head.left is FloatingReference<int>)
-				(head.left as FloatingReference<int>).bind();
+			if (!Head.Empty() && Head.Left is FloatingReference<string>)
+				(Head.Left as FloatingReference<string>).Bind();
+			else if (!Head.Empty() && Head.Left is FloatingReference<int>)
+				(Head.Left as FloatingReference<int>).Bind();
 			return r;
 		}
 
-		protected virtual Node build(Qontext context, Node node = null) {
+		protected virtual Node Build(Qontext context, Node node = null) {
 			int step = 0;
 			do {
-				if(node == null)
+				if (node == null)
 					node = new Node();
-				Token t = peek();
-				if(t.check(ValueType.Keyword)) {
-					if(t.check(Keyword.REFERENCE)) {
-						if(node.left != null)
+				Token t = Peek();
+				if (t.Check(ValueType.Keyword)) {
+					if (t.Check(Keyword.REFERENCE)) {
+						if (node.Left != null)
 							throw new ParseException("can not declare a new reference here ._.", t);
-						type = SegmentType.REFERENCE;
-						digest();
-						t = peek();
-						if(t.check(ValueType.Identifier)) {
-							head.left = new FloatingReference<string>(digest().str(), context);
-						} else
-							throw new ParseException("expected identifier after new reference keyword, got '" + t + "' instead", t);
-					} else if(t.check(Keyword.CURRENT_CONTEXT) || t.check(Keyword.PARENT_CONTEXT)) {
-						if(head.empty()) {
-							head = new Node(rrr(context), null, null);
+						Type = SegmentType.REFERENCE;
+						Digest();
+						t = Peek();
+						if (t.Check(ValueType.Identifier)) {
+							Head.Left = new FloatingReference<string>(Digest().Str(), context);
 						} else {
-							node.put(rrr(context));
+							throw new ParseException("expected identifier after new reference keyword, got '" + t + "' instead", t);
 						}
-					} else if(t.check(Keyword.RETURN)) {
-						digest();
-						returning = true;
-					} else
+					} else if (t.Check(Keyword.CURRENT_CONTEXT) || t.Check(Keyword.PARENT_CONTEXT)) {
+						if (Head.Empty()) {
+							Head = new Node(RRR(context), null, null);
+						} else {
+							node.Put(RRR(context));
+						}
+					} else if (t.Check(Keyword.RETURN)) {
+						Digest();
+						Returning = true;
+					} else {
 						throw new Exception("check me");
-				} else if(t.check(ValueType.Operator)) {
-					Operator op = digest().getValue<Operator>();
+					}
+				} else if (t.Check(ValueType.Operator)) {
+					Operator op = Digest().GetValue<Operator>();
 					// ToDo: Operator ==, < und >
-					if(op.symbol == Operator.ASSIGN_VALUE || op.symbol == Operator.ASSIGN_REFERENCE) {
-						if(step == 0)
-							returning = true;
-						else if(head.empty() && step == 1) {
-							head.left = node.left;
-							node.left = null;
+					if (op.Symbol == Operator.ASSIGN_VALUE || op.Symbol == Operator.ASSIGN_REFERENCE) {
+						if (step == 0)
+							Returning = true;
+						else if (Head.Empty() && step == 1) {
+							Head.Left = node.Left;
+							node.Left = null;
 						}
 					}
-					if(node.ready()) {
-						Log.spam("comparing operators to chain nodes");
-						if(op.compare(node.op) > 0)
-							node.right = build(context, new Node(node.right, null, op));
-						else
-							node = build(context, new Node(node, null, op));
-					} else if(head.op == null && (
-						op.symbol == Operator.ASSIGN_VALUE ||
-						op.symbol == Operator.ASSIGN_REFERENCE)) {
-						head.op = op;
-					} else if(node.left == null || (node.op != null && node.right == null)) {
-						if(op.symbol == Operator.CALCULATE_ADD)
+					if (node.Ready()) {
+						Log.Spam("comparing operators to chain nodes");
+						if (op.Compare(node.Operator) > 0) {
+							node.Right = Build(context, new Node(node.Right, null, op));
+						} else {
+							node = Build(context, new Node(node, null, op));
+						}
+					} else if (Head.Operator == null && (
+						op.Symbol == Operator.ASSIGN_VALUE ||
+						op.Symbol == Operator.ASSIGN_REFERENCE)) {
+						Head.Operator = op;
+					} else if (node.Left == null || (node.Operator != null && node.Right == null)) {
+						if (op.Symbol == Operator.CALCULATE_ADD)
 							continue;
-						else if(op.symbol == Operator.CALCULATE_SUBTRACT) {
+						else if (op.Symbol == Operator.CALCULATE_SUBTRACT) {
 							var neg = new Segment(new Token[] {
-								Token.create(ValueType.Number, "-1"),
-								Token.create(ValueType.Operator, Operator.CALCULATE_MULTIPLY),
-								digest() });
-							Log.spam("created negating segment: " + neg.ToString());
-							if(node.left == null)
-								node.left = neg.execute(context);
-							else
-								node.right = neg.execute(context);
-						} else if(op.symbol == Operator.CONDITION_BIGGER
-							|| op.symbol == Operator.CONDITION_BIGGER_EQUAL
-							|| op.symbol == Operator.CONDITION_SMALLER
-							|| op.symbol == Operator.CONDITION_SMALLER_EQUAL
-							|| op.symbol == Operator.CONDITION_EQUALS
+								Token.Create(ValueType.Number, "-1"),
+								Token.Create(ValueType.Operator, Operator.CALCULATE_MULTIPLY),
+								Digest() });
+							Log.Spam("created negating segment: " + neg.ToString());
+							if (node.Left == null) {
+								node.Left = neg.Execute(context);
+							} else {
+								node.Right = neg.Execute(context);
+							}
+						} else if (op.Symbol == Operator.CONDITION_BIGGER
+							|| op.Symbol == Operator.CONDITION_BIGGER_EQUAL
+							|| op.Symbol == Operator.CONDITION_SMALLER
+							|| op.Symbol == Operator.CONDITION_SMALLER_EQUAL
+							|| op.Symbol == Operator.CONDITION_EQUALS
+							|| op.Symbol == Operator.CONDITION_NOT_EQUALS
 						) {
 							var tempContext = context;
-							if(this.stack[0].isType(ValueType.Identifier)) {
-								node.left = tempContext.get(this.stack[0].value.ToString());
+							if (this.stack[0].IsType(ValueType.Identifier)) {
+								node.Left = tempContext.Get(this.stack[0].Value.ToString());
 							} else {
-								node.left = this.stack[0];
+								node.Left = this.stack[0];
 							}
-							if(this.stack[2].isType(ValueType.Identifier)) {
-								node.right = tempContext.get(this.stack[2].value.ToString());
+							if (this.stack[2].IsType(ValueType.Identifier)) {
+								node.Right = tempContext.Get(this.stack[2].Value.ToString());
 							} else {
-								node.right = this.stack[2];
+								node.Right = this.stack[2];
 							}
-							node.op = op;
+							node.Operator = op;
 							return node;
 						} else {
-							throw new ParseException("unexpected operator " + op.symbol + " at start of expression", t);
+							throw new ParseException("unexpected operator " + op.Symbol + " at start of expression", t);
 						}
-					} else if(node.left != null) {
-						node.op = op;
-					} else
+					} else if (node.Left != null) {
+						node.Operator = op;
+					} else {
 						throw new ParseException("sorry, manipulation operators (operators without left-hand value) are not yet implemented. :/", t);
-				} else if(t.check(ValueType.Struqture, "(")) {
-					if(node.ready())
+					}
+				} else if (t.Check(ValueType.Struqture, "(")) {
+					if (node.Ready())
 						throw new ParseException("can not open new segment without prior operator.", t);
-					Segment sub = new Segment(readBody());
-					node.put(sub.execute(context));
+					Segment sub = new Segment(ReadBody());
+					node.Put(sub.Execute(context));
 				} else {
-					if(t.check(";") || endOfStack()) {
-						Log.spam("end of node chain reached: ';'");
-						digest();
+					if (t.Check(";") || EndOfStack()) {
+						Log.Spam("end of node chain reached: ';'");
+						Digest();
 						break;
 					}
-					if(node.ready())
+					if (node.Ready())
 						throw new ParseException("can not add another value to finished new segment node without prior operator.", t);
-					Value v = readNextValue(context);
-					node.put(v);
+					QValue v = ReadNextValue(context);
+					node.Put(v);
 				}
 				step++;
-			} while(!endOfStack());
+			} while (!EndOfStack());
 			return node;
 		}
 
 		public override string ToString() {
 			string r = "";
-			foreach(Token t in stack) {
-				r += " " + t.str();
+			foreach (Token t in stack) {
+				r += " " + t.Str();
 			}
-			if(r.Length > 0)
-				r = r.Substring(1) + ";";
+			if (r.Length > 0)
+				r = r[1..] + ";";
 			return r;
 		}
 
 		protected class Node {
-			public object left { get; set; }
-			public object right { get; set; }
-			public Operator op { get; set; }
+
+			public object Left { get; set; }
+			public object Right { get; set; }
+			public Operator Operator { get; set; }
 
 			public Node(object left = null, object right = null, Operator op = null) {
-				this.left = left;
-				this.right = right;
-				this.op = op;
+				this.Left = left;
+				this.Right = right;
+				this.Operator = op;
 			}
 
-			public Value execute() {
-				if(left != null) {
-					if(op != null && right != null) {
-						Value _left;
-						Value _right;
-						if(right is Node)
-							_right = (right as Node).execute();
-						else
-							_right = (Value) right;
-						if(left is Node)
-							_left = (left as Node).execute();
-						else
-							_left = (Value) left;
-						return op.execute(_left, _right);
+			public QValue Execute() {
+				if (Left != null) {
+					if (Operator != null && Right != null) {
+						QValue _left;
+						QValue _right;
+						if (Right is Node) {
+							_right = (Right as Node).Execute();
+						} else {
+							_right = (QValue) Right;
+						}
+						if (Left is Node) {
+							_left = (Left as Node).Execute();
+						} else {
+							_left = (QValue) Left;
+						}
+						return Operator.Execute(_left, _right);
 					} else {
-						return (Value) left;
+						return (QValue) Left;
 					}
 				} else {
-					return Value.Null;
+					return QValue.Null;
 				}
 			}
 
-			public bool isReturner() {
-				return (left == null && right != null &&
-					(op.symbol == Operator.ASSIGN_VALUE || op.symbol == Operator.ASSIGN_REFERENCE));
+			public bool IsReturner() {
+				return (Left == null && Right != null &&
+					(Operator.Symbol == Operator.ASSIGN_VALUE || Operator.Symbol == Operator.ASSIGN_REFERENCE));
 			}
 
-			public bool ready() {
-				return (left != null && right != null && op != null);
+			public bool Ready() {
+				return (Left != null && Right != null && Operator != null);
 			}
 
-			public bool empty() {
-				return (left == null && right == null && op == null);
+			public bool Empty() {
+				return (Left == null && Right == null && Operator == null);
 			}
 
-			public bool put(object value) {
-				if(left == null)
-					left = value;
-				else if(right == null)
-					right = value;
-				else
+			public bool Put(object value) {
+				if (Left == null) {
+					Left = value;
+				} else if (Right == null) {
+					Right = value;
+				} else {
 					return false;
+				}
 				return true;
 			}
 
 			public override string ToString() {
-				if(empty())
+				if (Empty()) {
 					return "{ void }";
-				return "{ " + (left ?? "null") + " " + (op == null ? "NaO" : op.symbol) + " " + (right ?? "null") + " }";
+				}
+				return "{ " + (Left ?? "null") + " " + (Operator == null ? "NaO" : Operator.Symbol) + " " + (Right ?? "null") + " }";
 			}
 		}
 	}
 
 	internal class LoopSegment : Segment {
+
 		public const int HEAD = 0x1, FOOT = 0x2;
 
-		public Segment[] body { get; protected set; }
-		public int loopType { get; protected set; }
+		public Segment[] Body { get; protected set; }
+		public int LoopType { get; protected set; }
 
 		public LoopSegment(Segment[] body, int loopType, Token[] stack) : base(stack) {
-			this.body = body;
-			this.loopType = loopType;
+			this.Body = body;
+			this.LoopType = loopType;
 		}
 
-		public override Value execute(Qontext context) {
-			Value p = new Value(true, ValueType.Boolean);
+		public override QValue Execute(Qontext context) {
+			QValue p = new QValue(true, ValueType.Boolean);
 			do {
-				if(loopType == HEAD) {
-					p = base.execute(context);
-					while(p.isType(ValueType.Reference)) {
-						p = (Value) p.value;
+				if (LoopType == HEAD) {
+					p = base.Execute(context);
+					while (p.IsType(ValueType.Reference)) {
+						p = (QValue) p.Value;
 					}
 				}
-				if(!p.isType(ValueType.Boolean))
-					throw new ConditionException("expression for loop condition has to return a value of type BOOL, got " + p.type.ToString() + " instead.");
-				if(p.getValue<bool>()) {
-					Funqtion fq = new Funqtion(context, new List<Segment>(body));
-					Value v = fq.execute();
-					if(fq.returning) {
-						this.returning = true;
+				if (!p.IsType(ValueType.Boolean))
+					throw new ConditionException("expression for loop condition has to return a value of type BOOL, got " + p.Type.ToString() + " instead.");
+				if (p.GetValue<bool>()) {
+					Funqtion fq = new Funqtion(context, new List<Segment>(Body));
+					QValue v = fq.Execute();
+					if (fq.Returning) {
+						this.Returning = true;
 						return v;
 					}
 				} else {
 					break;
 				}
-				if(loopType == FOOT) {
-					p = base.execute(context);
-					while(p.isType(ValueType.Reference)) {
-						p = (Value) p.value;
+				if (LoopType == FOOT) {
+					p = base.Execute(context);
+					while (p.IsType(ValueType.Reference)) {
+						p = (QValue) p.Value;
 					}
 				}
-			} while(true);
+			} while (true);
 			return null;
 		}
 	}
 
 	internal class IfElseSegment : Segment {
-		public Segment[] body { get; protected set; }
-		public Segment next { get; protected set; }
+
+		public Segment[] Body { get; protected set; }
+		public Segment Next { get; protected set; }
 
 		public IfElseSegment(Segment[] body, Token[] stack) : base(stack, SegmentType.CONDITION) {
-			this.body = body;
+			this.Body = body;
 		}
 
-		public void append(IfElseSegment next) {
-			this.next = next;
+		public void Append(IfElseSegment next) {
+			this.Next = next;
 		}
 
-		public override Value execute(Qontext context) {
-			Value r = stack.Length == 0 ? Value.True : base.execute(context);
-			while(r.isType(ValueType.Reference)) {
-				r = (Value) r.value;
+		public override QValue Execute(Qontext context) {
+			QValue r = stack.Length == 0 ? QValue.True : base.Execute(context);
+			while (r.IsType(ValueType.Reference)) {
+				r = (QValue) r.Value;
 			}
-			if(!r.isType(ValueType.Boolean))
-				throw new ConditionException("expression for loop condition has to return a value of type Boolean, got " + r.type.ToString() + " instead.");
-			else if(r.getValue<bool>()) {
-				Funqtion xfq = new Funqtion(context, new List<Segment>(body));
-				Value v = xfq.execute();
-				if(xfq.returning)
-					this.returning = true;
+			if (!r.IsType(ValueType.Boolean))
+				throw new ConditionException("expression for loop condition has to return a value of type Boolean, got " + r.Type.ToString() + " instead.");
+			else if (r.GetValue<bool>()) {
+				Funqtion xfq = new Funqtion(context, new List<Segment>(Body));
+				QValue v = xfq.Execute();
+				if (xfq.Returning)
+					this.Returning = true;
 				return v;
-			} else if(next != null) {
-				next.execute(context);
+			} else if (Next != null) {
+				Next.Execute(context);
 			}
 			return null;
 		}

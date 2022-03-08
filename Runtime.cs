@@ -7,7 +7,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Qrakhen.Sqript {
+
 	internal static class SQRIPT {
+
 		public const string asciiLogo =
 			"  _______/ ^ \\___.___,\n" +
 			" (__.   ._ .	 |	 \n" +
@@ -17,7 +19,8 @@ namespace Qrakhen.Sqript {
 	}
 
 	internal static class Log {
-		public static Level loggingLevel { get; private set; } = Level.DEBUG;
+
+		public static Level LoggingLevel { get; private set; } = Level.DEBUG;
 
 		public enum Level {
 			MUFFLE = 0,
@@ -28,61 +31,61 @@ namespace Qrakhen.Sqript {
 			VERBOSE = 5
 		}
 
-		public static void logToFile(string name, string content) {
-			if(!Directory.Exists("log"))
+		public static void LogToFile(string name, string content) {
+			if (!Directory.Exists("log"))
 				Directory.CreateDirectory("log");
 			File.WriteAllText("log\\" + name + "_" + DateTime.Now.ToFileTimeUtc() + ".loq", content);
 		}
 
-		public static void setLoggingLevel(Level level) {
-			loggingLevel = level;
+		public static void SetLoggingLevel(Level level) {
+			LoggingLevel = level;
 		}
 
-		public static void write(object message, ConsoleColor color = ConsoleColor.White, string newLineSeperator = "\n", string prefix = "") {
+		public static void Write(object message, ConsoleColor color = ConsoleColor.White, string newLineSeperator = "\n", string prefix = "") {
 			string[] lines = message.ToString().Split(new char[] { '\n' });
-			foreach(string line in lines) {
+			foreach (string line in lines) {
 				Console.ForegroundColor = color;
 				Console.Write(prefix + line + newLineSeperator);
 			}
 		}
 
-		public static void write(Level level, object message, ConsoleColor color = ConsoleColor.White, string newLineSeperator = "\n", string prefix = "") {
-			if(((int) loggingLevel >= (int) level))
-				write(message, color, newLineSeperator, prefix);
+		public static void Write(Level level, object message, ConsoleColor color = ConsoleColor.White, string newLineSeperator = "\n", string prefix = "") {
+			if (((int) LoggingLevel >= (int) level))
+				Write(message, color, newLineSeperator, prefix);
 		}
 
-		private static void writeOut(object message, ConsoleColor color = ConsoleColor.White) {
+		private static void WriteOut(object message, ConsoleColor color = ConsoleColor.White) {
 			string[] lines = message.ToString().Split(new char[] { '\n' });
-			foreach(string line in lines) {
+			foreach (string line in lines) {
 				Console.ForegroundColor = color;
 				Console.Write(" ~> ");
-				write(line, color);
+				Write(line, color);
 			}
 		}
 
-		public static void error(object message, ConsoleColor color = ConsoleColor.Red) {
-			if(((int) loggingLevel >= (int) Level.CRITICAL))
-				writeOut("ERROR " + message, color);
+		public static void Error(object message, ConsoleColor color = ConsoleColor.Red) {
+			if (((int) LoggingLevel >= (int) Level.CRITICAL))
+				WriteOut("ERROR " + message, color);
 		}
 
-		public static void warn(object message, ConsoleColor color = ConsoleColor.Yellow) {
-			if(((int) loggingLevel >= (int) Level.WARNINGS))
-				writeOut("ALERT " + message, color);
+		public static void Warn(object message, ConsoleColor color = ConsoleColor.Yellow) {
+			if (((int) LoggingLevel >= (int) Level.WARNINGS))
+				WriteOut("ALERT " + message, color);
 		}
 
-		public static void info(object message, ConsoleColor color = ConsoleColor.White) {
-			if(((int) loggingLevel >= (int) Level.INFO))
-				writeOut(message, color);
+		public static void Info(object message, ConsoleColor color = ConsoleColor.White) {
+			if (((int) LoggingLevel >= (int) Level.INFO))
+				WriteOut(message, color);
 		}
 
-		public static void debug(object message, ConsoleColor color = ConsoleColor.Gray) {
-			if(((int) loggingLevel >= (int) Level.DEBUG))
-				writeOut(message, color);
+		public static void Debug(object message, ConsoleColor color = ConsoleColor.Gray) {
+			if (((int) LoggingLevel >= (int) Level.DEBUG))
+				WriteOut(message, color);
 		}
 
-		public static void spam(object message, ConsoleColor color = ConsoleColor.DarkGray) {
-			if(((int) loggingLevel >= (int) Level.VERBOSE))
-				writeOut(message, color);
+		public static void Spam(object message, ConsoleColor color = ConsoleColor.DarkGray) {
+			if (((int) LoggingLevel >= (int) Level.VERBOSE))
+				WriteOut(message, color);
 		}
 	}
 
@@ -287,104 +290,110 @@ namespace Qrakhen.Sqript {
 		[DllImport("user32.dll")]
 		private static extern short GetAsyncKeyState(int vKey);
 
-		private static State[] keys = new State[Enum.GetValues(typeof(Keys)).Length];
-		private static System.Threading.Timer timer;
+		private static readonly State[] _keys = new State[Enum.GetValues(typeof(Keys)).Length];
+		private static Timer _timer;
 
 		public struct State {
-			public int keyCode;
-			public string keyName;
-			public byte state;
+			public int KeyCode;
+			public string KeyName;
+			public byte StateCode;
 		}
 
-		public static void run() {
-			timer = new Timer(tick, null, 0, 1);
+		public static void Run() {
+			_timer = new Timer(Tick, null, 0, 1);
 			int __idx = 0;
-			foreach(int __key in Enum.GetValues(typeof(Keys))) {
-				keys[__idx++] = new State {
-					keyCode = __key,
-					keyName = Enum.GetName(typeof(Keys), __key),
-					state = 0
+			foreach (int __key in Enum.GetValues(typeof(Keys))) {
+				_keys[__idx++] = new State {
+					KeyCode = __key,
+					KeyName = Enum.GetName(typeof(Keys), __key),
+					StateCode = 0
 				};
 			}
 		}
 
-		public static bool keyDown(int keyCode) {
-			foreach(State key in keys) {
-				if(key.keyCode == keyCode)
-					return (key.state == 1);
+		public static bool KeyDown(int keyCode) {
+			foreach (State key in _keys) {
+				if (key.KeyCode == keyCode)
+					return (key.StateCode == 1);
 			}
 			return false;
 		}
 
-		public static bool keyDown(string keyName) {
-			foreach(State key in keys) {
-				if(key.keyName == keyName)
-					return (key.state == 1);
+		public static bool KeyDown(string keyName) {
+			foreach (State key in _keys) {
+				if (key.KeyName == keyName) {
+					return (key.StateCode == 1);
+				}
 			}
 			return false;
 		}
 
-		private static void tick(object state) {
-			for(int i = 0; i < keys.Length; i++) {
-				int __k = GetAsyncKeyState(keys[i].keyCode);
-				if(__k == 1 || __k == Int16.MinValue)
-					keys[i].state = 1;
-				else
-					keys[i].state = 0;
+		private static void Tick(object state) {
+			for (int i = 0; i < _keys.Length; i++) {
+				int __k = GetAsyncKeyState(_keys[i].KeyCode);
+				if (__k == 1 || __k == short.MinValue) {
+					_keys[i].StateCode = 1;
+				} else {
+					_keys[i].StateCode = 0;
+				}
 			}
 		}
 	}
 
 	public static class Watcher {
-		private static List<Diag> log = new List<Diag>();
+
+		private static readonly List<Diag> _log = new List<Diag>();
 
 		public struct Diag {
-			public long mem;
-			public double cpu;
-			public int thr;
+
+			public long Mem;
+			public double Cpu;
+			public int Thr;
 
 			public override string ToString() {
 				string r = "";
-				r += "Mem: " + mem + " M\n";
-				r += "Pct: " + cpu + " ms\n";
-				r += "Thr: " + thr + " x";
+				r += "Mem: " + Mem + " M\n";
+				r += "Pct: " + Cpu + " ms\n";
+				r += "Thr: " + Thr + " x";
 				return r;
 			}
 
 			public string ToString(Diag compare) {
 				string r = "";
-				var _mem = mem - compare.mem;
-				var _cpu = cpu - compare.cpu;
-				var _thr = thr - compare.thr;
-				r += "Mem: " + mem + " M (" + (_mem < 0 ? "-" : "+") + _mem + ")\n";
-				r += "Pct: " + cpu + " ms (" + (_cpu < 0 ? "-" : "+") + _cpu + ")\n";
-				r += "Thr: " + thr + " x (" + (_thr < 0 ? "-" : "+") + _thr + ")\n";
+				var _mem = Mem - compare.Mem;
+				var _cpu = Cpu - compare.Cpu;
+				var _thr = Thr - compare.Thr;
+				r += "Mem: " + Mem + " M (" + (_mem < 0 ? "-" : "+") + _mem + ")\n";
+				r += "Pct: " + Cpu + " ms (" + (_cpu < 0 ? "-" : "+") + _cpu + ")\n";
+				r += "Thr: " + Thr + " x (" + (_thr < 0 ? "-" : "+") + _thr + ")\n";
 				return r;
 			}
 		}
 
-		public static string getDiagString() {
-			if(log.Count == 1) {
-				return log[0].ToString();
-			} else if(log.Count > 1) {
-				return log[0].ToString(log[1]);
-			} else
+		public static string GetDiagString() {
+			if (_log.Count == 1) {
+				return _log[0].ToString();
+			} else if (_log.Count > 1) {
+				return _log[0].ToString(_log[1]);
+			} else {
 				return "";
+			}
 		}
 
-		public static Diag diagnose() {
+		public static Diag Diagnose() {
 			var proc = Process.GetCurrentProcess();
 			Diag now = new Diag {
-				mem = proc.WorkingSet64 / 1024 / 1024,
-				cpu = proc.TotalProcessorTime.TotalMilliseconds,
-				thr = proc.Threads.Count
+				Mem = proc.WorkingSet64 / 1024 / 1024,
+				Cpu = proc.TotalProcessorTime.TotalMilliseconds,
+				Thr = proc.Threads.Count
 			};
-			log.Insert(0, now);
+			_log.Insert(0, now);
 			return now;
 		}
 	}
 
 	public class Runtime {
+
 		public struct Reader {
 			public string file;
 			public Token token;
@@ -395,164 +404,174 @@ namespace Qrakhen.Sqript {
 			token = null
 		};
 
-		static void asyncInput() {
+		static void AsyncInput() {
 
 		}
 
-		static void execute(string content, bool __DEV_DEBUG = false) {
-			if(content.StartsWith("!!")) {
-				content = content.Substring(2);
+		static void Execute(string content, bool __DEV_DEBUG = false) {
+			if (content.StartsWith("!!")) {
+				content = content[2..];
 				__DEV_DEBUG = true;
-			} else if(content.EndsWith("!!")) {
-				content = content.Substring(0, content.Length - 2);
+			} else if (content.EndsWith("!!")) {
+				content = content[0..^2];
 				__DEV_DEBUG = true;
 			}
 
-			if(__DEV_DEBUG) {
+			if (__DEV_DEBUG) {
 				var nizer = new Tokenizer(content);
-				var stack = nizer.parse();
-				GlobalContext.getInstance().queue(new Segmentizer(stack).parse(GlobalContext.getInstance()));
-				GlobalContext.getInstance().execute();
+				var stack = nizer.Parse();
+				GlobalContext.GetInstance().Queue(new Segmentizer(stack).Parse(GlobalContext.GetInstance()));
+				GlobalContext.GetInstance().Execute();
 			} else {
 				try {
 					var nizer = new Tokenizer(content);
-					var stack = nizer.parse();
-					GlobalContext.getInstance().queue(new Segmentizer(stack).parse(GlobalContext.getInstance()));
-					GlobalContext.getInstance().execute();
-				} catch(Exception e) {
-					GlobalContext.getInstance().clearQueue();
-					Log.warn("exception thrown in file " + reader.file + " at " + e.getLocation());
-					if(e.cause != null)
-						Log.debug("(probably) caused by token " + e.cause.ToString() + e.cause.getLocation());
-					else if(reader.token != null)
-						Log.debug("cause unknown - last read token: " + reader.token.ToString() + reader.token.getLocation());
-					Log.error("[" + e.GetType().ToString() + "] " + e.Message);
-					Log.debug(e.StackTrace);
-				} catch(System.Exception e) {
-					GlobalContext.getInstance().clearQueue();
+					var stack = nizer.Parse();
+					GlobalContext.GetInstance().Queue(new Segmentizer(stack).Parse(GlobalContext.GetInstance()));
+					GlobalContext.GetInstance().Execute();
+				} catch (Exception e) {
+					GlobalContext.GetInstance().ClearQueue();
+					Log.Warn("exception thrown in file " + reader.file + " at " + e.GetLocation());
+					if (e.cause != null)
+						Log.Debug("(probably) caused by token " + e.cause.ToString() + e.cause.GetLocation());
+					else if (reader.token != null)
+						Log.Debug("cause unknown - last read token: " + reader.token.ToString() + reader.token.GetLocation());
+					Log.Error("[" + e.GetType().ToString() + "] " + e.Message);
+					Log.Debug(e.StackTrace);
+				} catch (System.Exception e) {
+					GlobalContext.GetInstance().ClearQueue();
 					//Debug.error("!SYS_EXCEPTION! [" + e.GetType().ToString() + "] " + e.Message);
-					Log.error("exception thrown in file " + reader.file);
-					Log.error("this is a system exception and should not happen - writing to logs.");
-					Log.logToFile("sys_err", e.ToString());
-					Log.debug(e.StackTrace);
+					Log.Error("exception thrown in file " + reader.file);
+					Log.Error("this is a system exception and should not happen - writing to logs.");
+					Log.LogToFile("sys_err", e.ToString());
+					Log.Debug(e.StackTrace);
 				}
 			}
 		}
 
-		static void cli(string startCommand = "", bool hideHeader = false) {
-			Log.setLoggingLevel(Log.Level.DEBUG);
-			if(!hideHeader) {
-				Log.write("\n" + SQRIPT.asciiLogo + "", ConsoleColor.Green, "\n", "	");
-				Log.info("  available cli commands:");
-				Log.info("   - #help");
-				Log.info("   - #run <filename>");
-				Log.info("   - #clr (clears global context)");
-				Log.info("   - #diag (process diagnose)");
-				Log.info("   - #dbg (toggle debug mode)");
-				Log.debug("\n  use qonfig('logLevel', '5'); for verbose output\n");
+		static void Cli(string startCommand = "", bool hideHeader = false) {
+			Log.SetLoggingLevel(Log.Level.DEBUG);
+			if (!hideHeader) {
+				Log.Write("\n" + SQRIPT.asciiLogo + "", ConsoleColor.Green, "\n", "	");
+				Log.Info("  available cli commands:");
+				Log.Info("   - #help");
+				Log.Info("   - #run <filename>");
+				Log.Info("   - #clr (clears global context)");
+				Log.Info("   - #diag (process diagnose)");
+				Log.Info("   - #dbg (toggle debug mode)");
+				Log.Debug("\n  use qonfig('logLevel', '5'); for verbose output\n");
 			}
 
-			GlobalContext.resetInstance();
+			GlobalContext.ResetInstance();
 			string content;
 			do {
 				reader.file = "stdin";
 				content = "";
-				Log.write(" <~ ", ConsoleColor.White, "");
+				Log.Write(" <~ ", ConsoleColor.White, "");
 				// ConsoleKeyInfo c;
 				do {
 					string line;
-					if(startCommand != "") {
+					if (startCommand != "") {
 						line = startCommand;
 						startCommand = "";
 					} else {
 						line = Console.ReadLine();
 					}
-					if(line == "" && content == "") {
+					if (line == "" && content == "") {
 						Console.SetCursorPosition(4, Console.CursorTop - 1);
 					} else {
 						content += line;
-						if(!KeyState.keyDown((int) KeyState.Keys.ShiftKey))
+						if (!KeyState.KeyDown((int) KeyState.Keys.ShiftKey))
 							break;
 						content += "\n";
-						Log.write("	", ConsoleColor.White, "");
+						Log.Write("	", ConsoleColor.White, "");
 					}
-				} while(true);  //c.Key != ConsoleKey.Escape);
-				if(content.StartsWith("#run")) {
-					content = File.ReadAllText(content.Substring(5) + (content.EndsWith(".sq") ? "" : ".sq"));
-					Log.info("executing:");
-					Log.info(content, ConsoleColor.Cyan);
-				} else if(content == "#clr") {
-					GlobalContext.resetInstance();
+				} while (true);  //c.Key != ConsoleKey.Escape);
+				if (content.StartsWith("#run")) {
+					content = File.ReadAllText(content[5..] + (content.EndsWith(".sq") ? "" : ".sq"));
+					Log.Info("executing:");
+					Log.Info(content, ConsoleColor.Cyan);
+				} else if (content == "#clr") {
+					GlobalContext.ResetInstance();
 					continue;
-				} else if(content == "#dbg") {
-					Log.setLoggingLevel((int) Log.loggingLevel > 4 ? Log.Level.INFO : Log.Level.VERBOSE);
+				} else if (content == "#dbg") {
+					Log.SetLoggingLevel((int) Log.LoggingLevel > 4 ? Log.Level.INFO : Log.Level.VERBOSE);
 					continue;
-				} else if(content == "#diag") {
-					Watcher.diagnose();
-					Log.info(Watcher.getDiagString(), ConsoleColor.Cyan);
-				} else if(content == "#help") {
-					Log.debug("~ HELP ~\n");
-					Log.debug("~ Keywords:");
-					foreach(var keyword in Keywords.get()) {
-						Log.debug("  > " + keyword.name + ":\n	aliases:");
-						foreach(var alias in keyword.aliases)
-							Log.debug("	- " + alias);
-						Log.debug(" ----- ");
+				} else if (content == "#diag") {
+					Watcher.Diagnose();
+					Log.Info(Watcher.GetDiagString(), ConsoleColor.Cyan);
+				} else if (content == "#help") {
+					Log.Debug("~ HELP ~\n");
+					Log.Debug("~ Keywords:");
+					foreach (var keyword in Keywords.Get()) {
+						Log.Debug("  > " + keyword.Name + ":\n	aliases:");
+						foreach (var alias in keyword.Aliases)
+							Log.Debug("	- " + alias);
+						Log.Debug(" ----- ");
 					}
-					Log.debug("\n~ Tip: type 'global' to print out the global context");
-				} else if(content == "#exit")
+					Log.Debug("\n~ Tip: type 'global' to print out the global context");
+				} else if (content == "#exit") {
 					break;
+				}
+				Execute(content);
+				/*
 				StackTrace st = new StackTrace();
-				execute(content);
-				if(Log.loggingLevel == Log.Level.VERBOSE) {
+				if (Log.loggingLevel == Log.Level.VERBOSE) {
 					List<string> stf = new List<string>();
-					for(int i = 0; i < st.FrameCount; i++) {
+					for (int i = 0; i < st.FrameCount; i++) {
 						var f = st.GetFrame(i);
 					}
 				}
-			} while(content != "exit");
+				*/
+			} while (content != "exit");
 		}
 
 		static void Main(string[] args) {
-			Core.init();
-			KeyState.run();
-			cli((args.Length > 0 ? "#run " + args[0] : ""), args.Length > 0);
+			Core.Init();
+			KeyState.Run();
+			Cli((args.Length > 0 ? "#run " + args[0] : ""), args.Length > 0);
 		}
 	}
 
 	internal class ConditionException : Exception {
+
 		public ConditionException(string message, Token cause = null) : base(message, cause) { }
+
 	}
 
 	internal class ReferenceException : Exception {
-		private Reference reference;
+
+		private readonly Reference _reference;
 
 		public ReferenceException(string message, Reference reference, Token cause = null) : base(message, cause) {
-			this.reference = reference;
+			this._reference = reference;
 		}
 
 		public override string ToString() {
-			return base.ToString() + Environment.NewLine + reference;
+			return base.ToString() + Environment.NewLine + _reference;
 		}
 	}
 
 	internal class OperationException : Exception {
-		public OperationException(string message, Token cause = null) : base(message, cause) {
-		}
+
+		public OperationException(string message, Token cause = null) : base(message, cause) { }
+
 	}
 
 	internal class ParseException : Exception {
-		public ParseException(string message, Token cause = null) : base(message, cause) {
-		}
+
+		public ParseException(string message, Token cause = null) : base(message, cause) { }
+
 	}
 
 	public class Exception : System.Exception {
+
 		public Token cause;
+
 		public Exception(string message, Token cause = null) : base(message) {
 			this.cause = cause;
 		}
 
-		public string getLocation() {
+		public string GetLocation() {
 			return cause == null ? "unknown" : "line " + (cause.line + 1) + " at column " + cause.col;
 		}
 	}

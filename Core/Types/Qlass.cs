@@ -15,7 +15,8 @@ namespace Qrakhen.Sqript {
 	 (})
 	 ***/
 	internal class Qlass : Qontext {
-		public Dictionary<string, Property> properties;
+
+		public Dictionary<string, Property> Properties;
 
 		/// <summary>
 		/// Qlass.value is a Dictionary with all STATIC references, so a qlass without any static properties won't have anything inside its value.
@@ -25,28 +26,29 @@ namespace Qrakhen.Sqript {
 				Qontext parent,
 				Dictionary<string, Property> instanceProperties = null,
 				Dictionary<string, Reference> staticReferences = null) : base(parent, ValueType.Qlass, staticReferences) {
-			properties = (instanceProperties ?? new Dictionary<string, Property>());
+			Properties = instanceProperties ?? new Dictionary<string, Property>();
 		}
 
-		public Instance instantiate() {
+		public Instance Instantiate() {
 			return null;
 		}
 
 		public class Property {
-			public string name { get; private set; }
-			public Access access { get; private set; }
-			public ValueType type { get; private set; }
-			public Readonly defaultValue { get; private set; }
+
+			public string Name { get; private set; }
+			public Access Access { get; private set; }
+			public ValueType Type { get; private set; }
+			public Readonly DefaultValue { get; private set; }
 
 			public Property(
 					string name,
 					ValueType type = ValueType.Null,
 					Access access = Access.PUBLIC,
-					Value defaultValue = null) {
-				this.name = name;
-				this.type = type;
-				this.defaultValue = Readonly.fromValue(defaultValue);
-				this.access = access;
+					QValue defaultValue = null) {
+				this.Name = name;
+				this.Type = type;
+				this.DefaultValue = Readonly.FromValue(defaultValue);
+				this.Access = access;
 			}
 		}
 	}

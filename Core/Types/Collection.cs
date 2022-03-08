@@ -3,48 +3,52 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Qrakhen.Sqript {
-	internal class Collection<K> : Value<Dictionary<K, Reference>> {
+
+	internal class Collection<K> : QValue<Dictionary<K, Reference>> {
+
 		public const string MEMBER_DELIMITER = ":";
 
-		public int size {
-			get { return (value as Dictionary<K, Reference>).Count; }
+		public int Size {
+			get { return (Value as Dictionary<K, Reference>).Count; }
 		}
 
 		public Collection(ValueType type, Dictionary<K, Reference> value) : base(type, value) {
 
 		}
 
-		public virtual void set(K key, Reference item) {
-			Reference _item = get(key);
-			if(_item == null)
-				value.Add(key, item);
-			else
-				value[key] = item;
+		public virtual void Set(K key, Reference item) {
+			Reference _item = Get(key);
+			if (_item == null)
+				Value.Add(key, item);
+			else {
+				Value[key] = item;
+			}
 		}
 
-		public virtual void remove(K key) {
-			value.Remove(key);
+		public virtual void Remove(K key) {
+			Value.Remove(key);
 		}
 
-		public virtual Reference get(K key) {
-			return value.ContainsKey(key) ? value[key] : null;
+		public virtual Reference Get(K key) {
+			return Value.ContainsKey(key) ? Value[key] : null;
 		}
 
-		public virtual Reference getOrThrow(K key) {
-			if(value.ContainsKey(key))
-				return value[key];
-			else
+		public virtual Reference GetOrThrow(K key) {
+			if (Value.ContainsKey(key)) {
+				return Value[key];
+			} else {
 				throw new QontextException("unkown identifier or index '" + key + "' in given context or array");
+			}
 		}
 
 		public override string ToString() {
 			string r = "{\n";
-			foreach(var reference in value) {
-				if(reference.Value.getTrueValue() == this)
+			foreach (var reference in Value) {
+				if (reference.Value.GetTrueValue() == this)
 					continue;
-				string[] lines = reference.Value.getTrueValue().ToString().Split('\n');
+				string[] lines = reference.Value.GetTrueValue().ToString().Split('\n');
 				r += "	" + reference.Key + ": " + lines[0] + "\n";
-				for(int i = 1; i < lines.Length; i++)
+				for (int i = 1; i < lines.Length; i++)
 					r += "	" + lines[i] + "\n";
 			}
 			return r + "}";

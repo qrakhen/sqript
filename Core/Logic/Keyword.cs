@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 
 namespace Qrakhen.Sqript {
+
 	public class Keyword {
+
 		public struct Kwrd {
 			public readonly int id;
 			public readonly string name;
@@ -39,126 +41,119 @@ namespace Qrakhen.Sqript {
 			REFERENCIAL = 0x030000
 		}
 
-		public int id { get; private set; }
-		public string name { get; private set; }
-		public string[] aliases { get; private set; }
+		public int Id { get; private set; }
+		public string Name { get; private set; }
+		public string[] Aliases { get; private set; }
 
 		public Keyword(int id, string name, string[] aliases) {
-			this.id = id;
-			this.name = name;
-			this.aliases = aliases;
+			this.Id = id;
+			this.Name = name;
+			this.Aliases = aliases;
 		}
 
 		public override string ToString() {
-			return name;
+			return Name;
 		}
 
-		public bool isType(KeywordType type) {
-			return ((id & (int) type) > 0);
+		public bool IsType(KeywordType type) {
+			return ((Id & (int) type) > 0);
 		}
 
-		public T getKey<T>() {
-			return (T) (object) name;
+		public T GetKey<T>() {
+			return (T) (object) Name;
 		}
 
 		public override int GetHashCode() {
-			return HashCode.Combine(id, name);
+			return HashCode.Combine(Id, Name);
 		}
 
 		public override bool Equals(object obj) {
-			if(obj is Keyword) {
-				return (id == (obj as Keyword).id);
-			} else if(obj is Kwrd) {
-				Kwrd k = (Kwrd) obj;
-				return (id == k.id);
-			} else
-				return base.Equals(obj);
+			return obj switch {
+				Keyword _ => Id == (obj as Keyword).Id,
+				Kwrd k => Id == k.id,
+				_ => base.Equals(obj),
+			};
 		}
 
 		public static bool operator ==(Keyword a, Keyword b) {
-			bool? r = (a?.Equals(b));
-			if(r.HasValue)
-				return r.Value;
-			else
-				return false;
+			bool? r = a?.Equals(b);
+			return r ?? false;
 		}
 
 		public static bool operator ==(Keyword a, Kwrd b) {
-			bool? r = (a?.Equals(b));
-			if(r.HasValue)
-				return r.Value;
-			else
-				return false;
+			bool? r = a?.Equals(b);
+			return r ?? false;
 		}
 
 		public static bool operator !=(Keyword a, Keyword b) {
 			bool? r = !(a?.Equals(b));
-			if(r.HasValue)
-				return r.Value;
-			else
-				return false;
+			return r ?? false;
 		}
 
 		public static bool operator !=(Keyword a, Kwrd b) {
 			bool? r = !(a?.Equals(b));
-			if(r.HasValue)
-				return r.Value;
-			else
-				return false;
+			return r ?? false;
 		}
 	}
 
 
 	public static class Keywords {
-		private static Dictionary<string, Keyword> keywords = new Dictionary<string, Keyword>();
+
+		private static readonly Dictionary<string, Keyword> _keywords = new Dictionary<string, Keyword>();
 
 		/// <summary>
 		/// Should maybe return an object at some point
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		public static Keyword get(string name) {
-			if(keywords.ContainsKey(name))
-				return keywords[name];
-			foreach(Keyword keyword in keywords.Values) {
-				foreach(string alias in keyword.aliases) {
-					if(alias == name)
+		public static Keyword Get(string name) {
+			if (_keywords.ContainsKey(name)) {
+				return _keywords[name];
+			}
+			foreach (Keyword keyword in _keywords.Values) {
+				foreach (string alias in keyword.Aliases) {
+					if (alias == name) {
 						return keyword;
+					}
 				}
 			}
 			return null;
 		}
 
-		public static Keyword[] get() {
+		public static Keyword[] Get() {
 			List<Keyword> keywords = new List<Keyword>();
-			foreach(var keyword in Keywords.keywords)
+			foreach (var keyword in Keywords._keywords)
 				keywords.Add(keyword.Value);
 			return keywords.ToArray();
 		}
 
-		public static bool isAlias(string key, Keyword.Kwrd kwrd) {
-			return isAlias(key, kwrd.name);
+		public static bool IsAlias(string key, Keyword.Kwrd kwrd) {
+			return IsAlias(key, kwrd.name);
 		}
 
-		public static bool isAlias(string key, string name) {
-			if(keywords.ContainsKey(key))
-				return (keywords[key].name == name);
-			foreach(Keyword keyword in keywords.Values) {
-				foreach(string alias in keyword.aliases) {
-					if(alias == key)
-						return (keyword.name == name);
+		public static bool IsAlias(string key, string name) {
+			if (_keywords.ContainsKey(key)) {
+				return (_keywords[key].Name == name);
+			}
+			foreach (Keyword keyword in _keywords.Values) {
+				foreach (string alias in keyword.Aliases) {
+					if (alias == key) {
+						return (keyword.Name == name);
+					}
 				}
 			}
 			return false;
 		}
 
-		public static void define(Keyword.Kwrd kwrd, params string[] aliases) {
-			if(get(kwrd.name) != null)
+		public static void Define(Keyword.Kwrd kwrd, params string[] aliases) {
+			if (Get(kwrd.name) != null) {
 				throw new InvalidOperationException("keyword with given name already exists");
-			foreach(string alias in aliases)
-				if(get(alias) != null)
+			}
+			foreach (string alias in aliases)
+				if (Get(alias) != null) {
 					throw new InvalidOperationException("keyword with given alias '" + alias + "' already exists");
-			keywords.Add(kwrd.name, new Keyword(kwrd.id, kwrd.name, aliases));
+				}
+			_keywords.Add(kwrd.name, new Keyword(kwrd.id, kwrd.name, aliases));
 		}
 	}
 }

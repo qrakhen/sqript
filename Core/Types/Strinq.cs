@@ -3,34 +3,36 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Qrakhen.Sqript {
-	internal class Strinq : Value<string> {
-		public Encoding encoding { get; protected set; }
+
+	internal class Strinq : QValue<string> {
+
+		protected Encoding _encoding;
 
 		static Strinq() {
-			Native.define(
+			Native.Define(
 				ValueType.String,
 				"indexOf",
-				native_indexOf);
+				NativeIndexOf);
 
-			Native.define(
+			Native.Define(
 				ValueType.String,
 				"length",
-				native_length);
+				NativeLength);
 		}
 
 		public Strinq(string value, ValueType type, Encoding encoding = Encoding.UTF8) : base(type, value) {
-			this.encoding = encoding;
+			this._encoding = encoding;
 		}
 
-		public static Value native_indexOf(Value target, Value[] parameters) {
-			if(parameters.Length < 1)
+		public static QValue NativeIndexOf(QValue target, QValue[] parameters) {
+			if (parameters.Length < 1)
 				return Int(-1);
-			string subString = parameters[0].str();
-			return target.value != null ? Int(target.getValue<string>().IndexOf(subString)) : Int(-1);
+			string subString = parameters[0].Str();
+			return target.Value != null ? Int(target.GetValue<string>().IndexOf(subString)) : Int(-1);
 		}
 
-		public static Value native_length(Value target, Value[] parameters) {
-			return target.value != null ? Int(target.getValue<string>().Length) : Int(0);
+		public static QValue NativeLength(QValue target, QValue[] parameters) {
+			return target.Value != null ? Int(target.GetValue<string>().Length) : Int(0);
 		}
 
 		public enum Encoding {

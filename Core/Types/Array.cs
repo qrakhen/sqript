@@ -11,38 +11,39 @@ namespace Qrakhen.Sqript {
 		 
 	 ***/
 	internal class Array : Collection<int> {
-		public const string
-			CHAR_OPEN = "[",
-			CHAR_CLOSE = "]";
+
+		public const string CHAR_OPEN = "[", CHAR_CLOSE = "]";
 
 		public Array(Dictionary<int, Reference> value) : base(ValueType.Array, value) { }
 		public Array() : base(ValueType.Array, new Dictionary<int, Reference>()) { }
 
-		public virtual void add(Reference item) {
+		public virtual void Add(Reference item) {
 			int free = 0;
 			do {
-				if(get(free) == null)
+				if (this.Get(free) == null) {
 					break;
-				else
+				} else {
 					free++;
-			} while(true);
-			set(free, item);
+				}
+			} while (true);
+			Set(free, item);
 		}
 
-		public void add(Value item) {
-			add(new Reference(item));
+		public void Add(QValue item) {
+			Add(new Reference(item));
 		}
 
-		public override void set(int key, Reference item) {
-			if(key < 0)
-				add(item);
-			else
-				base.set(key, item);
+		public override void Set(int key, Reference item) {
+			if (key < 0) {
+				Add(item);
+			} else {
+				base.Set(key, item);
+			}
 		}
 
 		public override string ToString() {
 			string r = base.ToString();
-			r = "[" + r.Substring(1, r.Length - 2) + "]";
+			r = "[" + r[1..^1] + "]";
 			return r;
 		}
 	}

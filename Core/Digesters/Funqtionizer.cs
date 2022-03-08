@@ -1,68 +1,76 @@
 ﻿using System.Collections.Generic;
 
 namespace Qrakhen.Sqript {
+
 	internal class Funqtionizer : Interpretoken {
+
 		public Funqtionizer(Token[] stack) : base(stack) { }
 
-		public static Funqtion parse(Qontext context, Token[] stack) {
-			return new Funqtionizer(stack).parse(context);
+		public static Funqtion Parse(Qontext context, Token[] stack) {
+			return new Funqtionizer(stack).Parse(context);
 		}
 
-		public Funqtion parse(Qontext context) {
-			Token t = digest();
-			if(t.check(Struqture.Funqtion[OPEN])) {
+		public Funqtion Parse(Qontext context) {
+			Token t = Digest();
+			if (t.Check(Struqture.Funqtion[OPEN])) {
 				Funqtion fq = new Funqtion(context);
 				do {
-					t = peek();
-					if(t.check(Struqture.Context[OPEN]))
+					t = Peek();
+					if (t.Check(Struqture.Context[OPEN])) {
 						break;
-					else if(t.check(ValueType.Identifier)) {
-						fq.parameters.Add(t.str());
-						digest();
-					} else
+					} else if (t.Check(ValueType.Identifier)) {
+						fq.Parameters.Add(t.Str());
+						Digest();
+					} else {
 						throw new ParseException("unexpected token found when trying to parse funqtion parameter declaration", t);
-				} while(!endOfStack());
-				if(endOfStack())
+					}
+				} while (!EndOfStack());
+				if (EndOfStack())
 					throw new ParseException("unexpected end of stack when trying to parse funqtion parameter declaration", t);
 				else {
-					Token[] body = readBody();
-					fq.segments.AddRange(new Segmentizer(body).parse(fq));
-					if(peek().check(Struqture.Funqtion[CLOSE])) {
+					Token[] body = ReadBody();
+					fq.Segments.AddRange(new Segmentizer(body).Parse(fq));
+					if (Peek().Check(Struqture.Funqtion[CLOSE])) {
 						return fq;
-					} else if(peek().check(Struqture.Funqtion[DEL])) {
-						throw new FunqtionizerException("funqtions overloads not yet implemented", peek());
-					} else
-						throw new ParseException("unexpected token found when trying to parse funqtion body definition", peek());
+					} else if (Peek().Check(Struqture.Funqtion[DEL])) {
+						throw new FunqtionizerException("funqtions overloads not yet implemented", Peek());
+					} else {
+						throw new ParseException("unexpected token found when trying to parse funqtion body definition", Peek());
+					}
 				}
-			} else
+			} else {
 				throw new ParseException("unexpected funqtion parameter opening, expected '~('", t);
+			}
 		}
 
-		public Value[] parseParameters(Qontext context) {
-			List<Value> parameters = new List<Value>();
-			Token t = peek();
-			if(t.check(Struqture.Call[OPEN])) {
+		public QValue[] ParseParameters(Qontext context) {
+			List<QValue> parameters = new List<QValue>();
+			Token t = Peek();
+			if (t.Check(Struqture.Call[OPEN])) {
 				do {
-					var seg = Segmentizer.parseOne(context, readBody(false, ",)"));
-					if(seg == null) {
+					var seg = Segmentizer.ParseOne(context, ReadBody(false, ",)"));
+					if (seg == null) {
 						return parameters.ToArray();
 					}
-					parameters.Add(seg.execute(context));
-					shift(-1);
-					if(peek().check(Struqture.Call[CLOSE]))
+					parameters.Add(seg.Execute(context));
+					Shift(-1);
+					if (Peek().Check(Struqture.Call[CLOSE])) {
 						break;
-					if(peek().check(Struqture.Call[DEL]))
+					}
+					if (Peek().Check(Struqture.Call[DEL])) {
 						continue;
-					else
+					} else {
 						throw new ParseException("unexpected token found when trying to parse funqtion call", t);
-				} while(!endOfStack());
+					}
+				} while (!EndOfStack());
 				return parameters.ToArray();
-			} else
+			} else {
 				throw new ParseException("unexpected funqtion call parameter opening, expected '('", t);
+			}
 		}
 
-		public static Value[] parseParameters(Qontext context, Token[] stack) {
-			return new Funqtionizer(stack).parseParameters(context);
+		public static QValue[] ParseParameters(Qontext context, Token[] stack) {
+			return new Funqtionizer(stack).ParseParameters(context);
 		}
 	}
 

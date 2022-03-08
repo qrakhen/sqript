@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 
 namespace Qrakhen.Sqript {
+
 	public class Operator {
+
 		public const string
 			ASSIGN_VALUE = "<~",
 			ASSIGN_REFERENCE = "<&",
@@ -13,6 +15,7 @@ namespace Qrakhen.Sqript {
 			CONDITION_AND = "&&",
 			CONDITION_OR = "||",
 			CONDITION_EQUALS = "==",
+			CONDITION_NOT_EQUALS = "!=",
 			CONDITION_SMALLER = "<",
 			CONDITION_SMALLER_EQUAL = "<=",
 			CONDITION_BIGGER = ">",
@@ -29,45 +32,41 @@ namespace Qrakhen.Sqript {
 		// inventory <+ diamond
 		// chrisInv 100:-> diamond +> daveInv &
 
-		public string symbol { get; protected set; }
-		public Func<Value, Value, Value> execute { get; protected set; }
+		public string Symbol { get; protected set; }
+		public Func<QValue, QValue, QValue> Execute { get; protected set; }
 
-		public Operator(string symbol, Func<Value, Value, Value> calculate = null) {
-			this.symbol = symbol;
-			this.execute = calculate;
+		public Operator(string symbol, Func<QValue, QValue, QValue> calculate = null) {
+			this.Symbol = symbol;
+			this.Execute = calculate;
 		}
 
-		public int compare(Operator op) {
-			return importance - op.importance;
+		public int Compare(Operator op) {
+			return Importance - op.Importance;
 		}
 
-		public int importance => (symbol == CALCULATE_ADD || symbol == CALCULATE_SUBTRACT ? 1 : (symbol == CALCULATE_MULTIPLY || symbol == CALCULATE_DIVIDE ? 2 : 0));
+		public int Importance => (Symbol == CALCULATE_ADD || Symbol == CALCULATE_SUBTRACT ? 1 : (Symbol == CALCULATE_MULTIPLY || Symbol == CALCULATE_DIVIDE ? 2 : 0));
 
-		public static Value getRealValue(Value v) {
-			if(v is Reference)
-				return (v as Reference).getTrueValue();
-			else
-				return v;
+		public static QValue GetRealValue(QValue v) {
+			return v is Reference ? (v as Reference).GetTrueValue() : v;
 		}
 
 		public override string ToString() {
-			return symbol;
+			return Symbol;
 		}
 	}
 
 	public static class Operators {
-		private static Dictionary<string, Operator> operators = new Dictionary<string, Operator>();
 
-		public static Operator get(string symbol) {
-			if(operators.ContainsKey(symbol))
-				return operators[symbol];
-			return null;
+		private static readonly Dictionary<string, Operator> _operators = new Dictionary<string, Operator>();
+
+		public static Operator Get(string symbol) {
+			return _operators.ContainsKey(symbol) ? _operators[symbol] : null;
 		}
 
-		public static void define(string symbol, Func<Value, Value, Value> calculate = null) {
-			if(get(symbol) != null)
+		public static void Define(string symbol, Func<QValue, QValue, QValue> calculate = null) {
+			if (Get(symbol) != null)
 				throw new InvalidOperationException("operator with given name already exists");
-			operators.Add(symbol, new Operator(symbol, calculate));
+			_operators.Add(symbol, new Operator(symbol, calculate));
 		}
 	}
 }

@@ -1,5 +1,7 @@
 ﻿namespace Qrakhen.Sqript {
-	internal class Reference : Value<Value> {
+
+	internal class Reference : QValue<QValue> {
+
 		public readonly ValueType acceptedType;
 		public readonly Qontext owner;
 		public readonly Access access;
@@ -7,7 +9,7 @@
 		public readonly string name;
 
 		public Reference(
-				Value value,
+				QValue value,
 				Qontext owner = null,
 				string name = null,
 				Access access = Access.PUBLIC,
@@ -24,65 +26,66 @@
 			this.acceptedType = acceptedType;
 		}
 
-		public virtual void assign(Value value) {
-			setReference(value);
+		public virtual void Assign(QValue value) {
+			SetReference(value);
 		}
 
-		public virtual Value getReference() {
-			return value;
+		public virtual QValue GetReference() {
+			return Value;
 		}
 
-		public virtual Value getTrueValue() {
-			return (getReference() is Reference ? (value as Reference).getTrueValue() : getReference());
+		public virtual QValue GetTrueValue() {
+			return (GetReference() is Reference ? (Value as Reference).GetTrueValue() : GetReference());
 		}
 
-		public virtual void setReference(Value value) {
-			if(isReadonly)
+		public virtual void SetReference(QValue value) {
+			if (isReadonly)
 				throw new ReferenceException("can not set the value of read-only reference '" + name?.ToString() + "'", this);
-			else if(acceptedType != ValueType.Null && !value.isType(acceptedType))
-				throw new ReferenceException("can not assign value '" + value.str() + "': expected a value of type '" + acceptedType + "', got '" + value.toFullString() + "' instead", this);
-			else if(owner != null) {
+			else if (acceptedType != ValueType.Null && !value.IsType(acceptedType))
+				throw new ReferenceException("can not assign value '" + value.Str() + "': expected a value of type '" + acceptedType + "', got '" + value.ToFullString() + "' instead", this);
+			else if (owner != null) {
 
 			} else {
-				setValue(value, type);
+				base.SetValue((object) value, Type);
 			}
 		}
 
-		public new virtual T getValue<T>() {
-			return value.getValue<T>();
+		public new virtual T GetValue<T>() {
+			return Value.GetValue<T>();
 		}
 
-		public new virtual object getValue() {
-			return getTrueValue()?.getValue();
+		public new virtual object GetValue() {
+			return GetTrueValue()?.GetValue();
 		}
 
-		public ValueType getValueType() {
-			return getTrueValue().type;
+		public ValueType GetValueType() {
+			return GetTrueValue().Type;
 		}
 
 		public override string ToString() {
 			return
-				name != null ? name : "" + " " +
+				this.name ?? "" + " " +
 				(acceptedType != ValueType.Null ? "<" + acceptedType + ":" : "") +
-				(getTrueValue() == null ? Null.ToString() : getTrueValue().ToString()) +
+				(GetTrueValue() == null ? Null.ToString() : GetTrueValue().ToString()) +
 				(acceptedType != ValueType.Null ? ">" : "");
 		}
 	}
 
 	internal class FloatingReference<T> : Reference {
-		public T key { get; private set; }
-		public Collection<T> target { get; private set; }
+
+		public T Key { get; private set; }
+		public Collection<T> Target { get; private set; }
 
 		public FloatingReference(T key, Collection<T> target) : base(Null) {
-			this.key = key;
-			this.target = target;
+			this.Key = key;
+			this.Target = target;
 		}
 
-		public void bind() {
-			if(target is Qontext && !(target as Qontext).extendable)
+		public void Bind() {
+			if (Target is Qontext && !(Target as Qontext).extendable)
 				throw new QontextException("can not assign new reference to context: context not extendable or read-only");
-			if(value.type != ValueType.Null)
-				target.set(key, new Reference(value));
+			if (Value.Type != ValueType.Null)
+				Target.Set(Key, new Reference(Value));
 		}
 	}
 }
