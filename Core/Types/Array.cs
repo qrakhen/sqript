@@ -14,8 +14,10 @@ namespace Qrakhen.Sqript {
 
 		public const string CHAR_OPEN = "[", CHAR_CLOSE = "]";
 
+
 		public Array(Dictionary<int, Reference> value) : base(ValueType.Array, value) { }
 		public Array() : base(ValueType.Array, new Dictionary<int, Reference>()) { }
+
 
 		public virtual void Add(Reference item) {
 			int free = 0;

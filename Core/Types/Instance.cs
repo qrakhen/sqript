@@ -6,6 +6,7 @@ namespace Qrakhen.Sqript {
 
 		public Qlass Constructor { get; protected set; }
 
+
 		public Instance(Qlass constructor, Qontext parent, Dictionary<string, Reference> value) : base(parent, value) {
 			this.Constructor = constructor;
 		}

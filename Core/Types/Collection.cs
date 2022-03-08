@@ -12,9 +12,9 @@ namespace Qrakhen.Sqript {
 			get { return (Value as Dictionary<K, Reference>).Count; }
 		}
 
-		public Collection(ValueType type, Dictionary<K, Reference> value) : base(type, value) {
 
-		}
+		public Collection(ValueType type, Dictionary<K, Reference> value) : base(type, value) { }
+
 
 		public virtual void Set(K key, Reference item) {
 			Reference _item = Get(key);

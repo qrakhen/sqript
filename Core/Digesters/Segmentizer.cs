@@ -6,6 +6,7 @@ namespace Qrakhen.Sqript {
 
 		public Segmentizer(Token[] stack) : base(stack) { }
 
+
 		public static Segment[] Parse(Qontext context, Token[] stack) {
 			return new Segmentizer(stack).Parse(context);
 		}

@@ -12,10 +12,10 @@ namespace Qrakhen.Sqript {
 
 		public const string asciiLogo =
 			"  _______/ ^ \\___.___,\n" +
-			" (__.   ._ .	 |	 \n" +
+			" (__.   ._ .	 |	    \n" +
 			" .__)(_][  | [_) | _.  \n" +
-			"  \\	|	 |	 /  \n\n" +
-			"	 qrakhen.net	   \n\n";
+			"  \\	|	 |	 /      \n\n" +
+			"	 qrakhen.net	    \n\n";
 	}
 
 	internal static class Log {
@@ -90,6 +90,7 @@ namespace Qrakhen.Sqript {
 	}
 
 	public static class KeyState {
+
 		public enum Keys {
 			Modifiers = -65536,
 			None = 0,
@@ -299,6 +300,7 @@ namespace Qrakhen.Sqript {
 			public byte StateCode;
 		}
 
+
 		public static void Run() {
 			_timer = new Timer(Tick, null, 0, 1);
 			int __idx = 0;
@@ -370,6 +372,7 @@ namespace Qrakhen.Sqript {
 			}
 		}
 
+
 		public static string GetDiagString() {
 			if (_log.Count == 1) {
 				return _log[0].ToString();
@@ -430,18 +433,18 @@ namespace Qrakhen.Sqript {
 					GlobalContext.GetInstance().Execute();
 				} catch (Exception e) {
 					GlobalContext.GetInstance().ClearQueue();
-					Log.Warn("exception thrown in file " + reader.file + " at " + e.GetLocation());
+					Log.Warn("Exception thrown in file " + reader.file + " at " + e.GetLocation());
 					if (e.cause != null)
-						Log.Debug("(probably) caused by token " + e.cause.ToString() + e.cause.GetLocation());
+						Log.Debug("May be caused by token " + e.cause.ToString() + e.cause.GetLocation());
 					else if (reader.token != null)
-						Log.Debug("cause unknown - last read token: " + reader.token.ToString() + reader.token.GetLocation());
+						Log.Debug("Cause unknown - last read token " + reader.token.ToString() + reader.token.GetLocation());
 					Log.Error("[" + e.GetType().ToString() + "] " + e.Message);
 					Log.Debug(e.StackTrace);
 				} catch (System.Exception e) {
 					GlobalContext.GetInstance().ClearQueue();
 					//Debug.error("!SYS_EXCEPTION! [" + e.GetType().ToString() + "] " + e.Message);
-					Log.Error("exception thrown in file " + reader.file);
-					Log.Error("this is a system exception and should not happen - writing to logs.");
+					Log.Error("Exception thrown in file " + reader.file);
+					Log.Error("This is a system exception and should not happen - writing to logs.");
 					Log.LogToFile("sys_err", e.ToString());
 					Log.Debug(e.StackTrace);
 				}
@@ -488,7 +491,7 @@ namespace Qrakhen.Sqript {
 				} while (true);  //c.Key != ConsoleKey.Escape);
 				if (content.StartsWith("#run")) {
 					content = File.ReadAllText(content[5..] + (content.EndsWith(".sq") ? "" : ".sq"));
-					Log.Info("executing:");
+					Log.Info("Executing:");
 					Log.Info(content, ConsoleColor.Cyan);
 				} else if (content == "#clr") {
 					GlobalContext.ResetInstance();
@@ -533,9 +536,7 @@ namespace Qrakhen.Sqript {
 	}
 
 	internal class ConditionException : Exception {
-
 		public ConditionException(string message, Token cause = null) : base(message, cause) { }
-
 	}
 
 	internal class ReferenceException : Exception {
@@ -552,15 +553,11 @@ namespace Qrakhen.Sqript {
 	}
 
 	internal class OperationException : Exception {
-
 		public OperationException(string message, Token cause = null) : base(message, cause) { }
-
 	}
 
 	internal class ParseException : Exception {
-
 		public ParseException(string message, Token cause = null) : base(message, cause) { }
-
 	}
 
 	public class Exception : System.Exception {

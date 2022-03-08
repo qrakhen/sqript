@@ -5,9 +5,11 @@
 		protected T[] stack;
 		protected int position;
 
+
 		public Digester(T[] stack) {
 			this.stack = stack;
 		}
+
 
 		protected virtual void Reset() {
 			position = 0;
@@ -39,13 +41,16 @@
 			return !EndOfStack() ? stack[position++] : Peek();
 		}
 
+
 		public class Sweeper {
 
 			public Digester<T> Source { get; private set; }
 
+
 			public Sweeper(Digester<T> source) {
 				this.Source = source;
 			}
+
 
 			public T Peek() {
 				return Source.Peek();

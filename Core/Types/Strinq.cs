@@ -24,6 +24,7 @@ namespace Qrakhen.Sqript {
 			this._encoding = encoding;
 		}
 
+
 		public static QValue NativeIndexOf(QValue target, QValue[] parameters) {
 			if (parameters.Length < 1)
 				return Int(-1);
@@ -34,6 +35,7 @@ namespace Qrakhen.Sqript {
 		public static QValue NativeLength(QValue target, QValue[] parameters) {
 			return target.Value != null ? Int(target.GetValue<string>().Length) : Int(0);
 		}
+
 
 		public enum Encoding {
 			UTF8,

@@ -8,6 +8,7 @@
 		public readonly bool isReadonly;
 		public readonly string name;
 
+
 		public Reference(
 				QValue value,
 				Qontext owner = null,
@@ -25,6 +26,7 @@
 		public Reference(ValueType acceptedType = ValueType.Null) : base(ValueType.Reference, Null) {
 			this.acceptedType = acceptedType;
 		}
+
 
 		public virtual void Assign(QValue value) {
 			SetReference(value);
@@ -76,10 +78,12 @@
 		public T Key { get; private set; }
 		public Collection<T> Target { get; private set; }
 
+
 		public FloatingReference(T key, Collection<T> target) : base(Null) {
 			this.Key = key;
 			this.Target = target;
 		}
+
 
 		public void Bind() {
 			if (Target is Qontext && !(Target as Qontext).extendable)

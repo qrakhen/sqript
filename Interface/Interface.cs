@@ -20,6 +20,7 @@ namespace Qrakhen.Sqript {
 			Calls = new Dictionary<string, Call>();
 		}
 
+
 		/// <summary>
 		/// The load method should use define() to register all interface calls.
 		/// </summary>
@@ -40,6 +41,7 @@ namespace Qrakhen.Sqript {
 				throw new InterfaceException("could not find interface call '" + name + "'", this);
 			}
 		}
+
 
 		public sealed class Call {
 
@@ -84,14 +86,16 @@ namespace Qrakhen.Sqript {
 				this.Name = name ?? call.Method.Name;
 			}
 
+
 			public QValue Execute(QValue[] parameters) {
 				if (parameters is null || parameters.Length == 0) {
 					return Execute();
 				}
 				Dictionary<string, QValue> provided = new Dictionary<string, QValue>();
 				for (int i = 0; i < this.Parameters.Length; i++) {
-					if (parameters.Length <= i)
+					if (parameters.Length <= i) {
 						provided.Add(this.Parameters[i], null);
+					}
 					else {
 						provided.Add(this.Parameters[i], parameters[i]);
 					}
@@ -105,11 +109,14 @@ namespace Qrakhen.Sqript {
 		}
 
 		internal class Funqtion : Sqript.Funqtion {
+
 			public readonly Call call; 
+
 
 			public Funqtion(Qontext parent, Call call) : base(parent) {
 				this.call = call;
 			}
+
 
 			public override QValue Execute(QValue[] parameters, QValue caller = null) {
 				return call.Execute(parameters);
@@ -139,8 +146,11 @@ namespace Qrakhen.Sqript {
 	}
 
 	public class InterfaceException : Exception {
+
 		public Interface intf;
 		public Interface.Call call;
+
+
 		public InterfaceException(string message, Interface intf = null, Interface.Call call = null) : base(message) {
 			this.intf = intf;
 			this.call = call;

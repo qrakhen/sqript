@@ -6,6 +6,7 @@ namespace Qrakhen.Sqript {
 
 		public Funqtionizer(Token[] stack) : base(stack) { }
 
+
 		public static Funqtion Parse(Qontext context, Token[] stack) {
 			return new Funqtionizer(stack).Parse(context);
 		}
@@ -74,7 +75,10 @@ namespace Qrakhen.Sqript {
 		}
 	}
 
+
 	internal class FunqtionizerException : Exception {
+
 		public FunqtionizerException(string message, Token cause = null) : base(message, cause) { }
+
 	}
 }

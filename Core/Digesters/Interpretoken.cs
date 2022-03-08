@@ -7,7 +7,9 @@ namespace Qrakhen.Sqript {
 
 		protected const int OPEN = 0x0, CLOSE = 0x1, DEL = 0x2;
 
+
 		public Interpretoken(Token[] stack) : base(stack) { }
+		
 
 		protected override Token Digest() {
 			Token t = base.Digest();
@@ -220,7 +222,6 @@ namespace Qrakhen.Sqript {
 			} else if (t.Check(ValueType.Operator)) {
 				throw new ParseException("next token was unreadable as value: " + t, t);
 			}
-
 			return result;
 		}
 	}

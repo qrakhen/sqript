@@ -27,6 +27,7 @@ namespace Qrakhen.Sqript {
 		protected Func<QValue, QValue[], QValue> nativeCallback;
 		public bool Returning = false;
 
+
 		public Funqtion(
 				Qontext parent,
 				Dictionary<string, Reference> references,
@@ -38,12 +39,15 @@ namespace Qrakhen.Sqript {
 		}
 
 		public Funqtion(Qontext parent) : this(parent, new Dictionary<string, Reference>(), new List<Segment>()) { }
+
 		public Funqtion(Qontext parent, ValueType type) : this(parent, null, null, null, type) { }
+		
 		public Funqtion(Qontext parent, List<Segment> statements) : this(parent, new Dictionary<string, Reference>(), statements) { }
 
 		public Funqtion(Qontext parent, Func<QValue, QValue[], QValue> nativeCallback) : this(parent, null, null, null, ValueType.NativeCall) {
 			this.nativeCallback = nativeCallback;
 		}
+
 
 		public virtual QValue Execute(QValue[] parameters = null, QValue caller = null) {
 			if (nativeCallback != null)

@@ -45,11 +45,13 @@ namespace Qrakhen.Sqript {
 		public string Name { get; private set; }
 		public string[] Aliases { get; private set; }
 
+
 		public Keyword(int id, string name, string[] aliases) {
 			this.Id = id;
 			this.Name = name;
 			this.Aliases = aliases;
 		}
+
 
 		public override string ToString() {
 			return Name;

@@ -29,6 +29,7 @@ namespace Qrakhen.Sqript {
 			Properties = instanceProperties ?? new Dictionary<string, Property>();
 		}
 
+
 		public Instance Instantiate() {
 			return null;
 		}

@@ -10,10 +10,6 @@ namespace Qrakhen.Sqript {
 		public static readonly QValue False = new QValue(false, ValueType.Boolean);
 		public static readonly QValue Null = new QValue(null, ValueType.Null);
 		public static readonly QValue Undefined = new QValue(null, ValueType.Undefined);
-		public static QValue Int(int v) { return new QValue(v, ValueType.Integer); }
-		public static QValue Decimal(decimal v) { return new QValue(v, ValueType.Decimal); }
-		public static QValue Decimal(float v) { return new QValue(Convert.ToDecimal(v), ValueType.Decimal); }
-		public static QValue Decimal(double v) { return new QValue(Convert.ToDecimal(v), ValueType.Decimal); }
 
 		public static Dictionary<string, Func<QValue[], QValue, QValue>> nativeCalls = new Dictionary<string, Func<QValue[], QValue, QValue>>();
 
@@ -36,6 +32,11 @@ namespace Qrakhen.Sqript {
 			this.Type = type;
 			this.Value = value;
 		}
+
+		public static QValue Int(int v) => new QValue(v, ValueType.Integer);
+		public static QValue Decimal(decimal v) => new QValue(v, ValueType.Decimal);
+		public static QValue Decimal(float v) => new QValue(Convert.ToDecimal(v), ValueType.Decimal);
+		public static QValue Decimal(double v) => new QValue(Convert.ToDecimal(v), ValueType.Decimal);
 
 		public virtual QValue Clone() {
 			return new QValue(Value, Type);
@@ -113,6 +114,7 @@ namespace Qrakhen.Sqript {
 		}
 	}
 
+
 	public class Readonly : QValue {
 
 		public new object Value {
@@ -125,9 +127,11 @@ namespace Qrakhen.Sqript {
 			set { }
 		}
 
+
 		public Readonly(ValueType type, object value) : base(value, type) {
 
 		}
+
 
 		public static Readonly FromValue(QValue value) {
 			return new Readonly(value.Type, value.Value);
@@ -140,9 +144,11 @@ namespace Qrakhen.Sqript {
 			get { return (T) base.Value; }
 		}
 
+
 		public QValue(ValueType type, T value) : base(value, type) {
 
 		}
+
 
 		public new virtual T GetValue() {
 			return (T) base.GetValue();
@@ -152,6 +158,7 @@ namespace Qrakhen.Sqript {
 			base.SetValue(value, type);
 		}
 	}
+
 
 	public enum ValueType {
 		Null = 0x0000,

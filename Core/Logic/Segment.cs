@@ -17,9 +17,11 @@ namespace Qrakhen.Sqript {
 			CLASS = 0x10
 		}
 
+
 		public Segment(Token[] stack, SegmentType type = SegmentType.UNDEFINED) : base(stack) {
 			this.Type = type;
 		}
+
 
 		/************************************
 		 *  *~ a <~ 5 + (8 / 2);

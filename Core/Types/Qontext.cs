@@ -9,6 +9,7 @@ namespace Qrakhen.Sqript {
 		public readonly bool extendable;
 		public Qontext Parent { get; protected set; }
 
+
 		public Qontext(Qontext parent, ValueType type, Dictionary<string, Reference> value, bool extendable = true) : base(type, value) {
 			this.Parent = parent;
 			this.extendable = extendable;
@@ -18,6 +19,7 @@ namespace Qrakhen.Sqript {
 			this.Parent = parent;
 			this.extendable = extendable;
 		}
+
 
 		public override void Set(string key, Reference reference) {
 			if (Value.ContainsKey(key)) {
@@ -86,6 +88,7 @@ namespace Qrakhen.Sqript {
 			}
 		}
 	}
+
 
 	internal class StatiqQontext : Qontext {
 		public StatiqQontext(Qontext parent) : base(parent) { }

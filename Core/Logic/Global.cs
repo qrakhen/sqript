@@ -12,9 +12,11 @@ namespace Qrakhen.Sqript {
 		public override string ToString() {
 			return "()";
 		}
+
 	}
 
 	internal class QonfigFunqtion : GlobalFunqtion {
+
 		public override QValue Execute(QValue[] parameters = null, QValue caller = null) {
 			if (parameters.Length == 1) {
 				Qonfig.ResetValue(parameters[0].GetValue().ToString());
@@ -32,12 +34,15 @@ namespace Qrakhen.Sqript {
 	}
 
 	internal static class Qonfig {
+
 		public static Dictionary<string, string> defaultValues = new Dictionary<string, string>();
+
 
 		static Qonfig() {
 			defaultValues.Add("logLevel", "INFO");
 			// ToDo: Add auto #clr
 		}
+
 
 		public static string GetDefaultValue(string key) {
 			return !defaultValues.ContainsKey(key) ? "undefined" : defaultValues[key];
@@ -69,7 +74,9 @@ namespace Qrakhen.Sqript {
 
 		private readonly List<Segment> _queued = new List<Segment>();
 
+
 		public GlobalContext() : base(null) { }
+
 
 		private void Init() {
 			Set("qonfig", new Reference(new QonfigFunqtion()));

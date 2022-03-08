@@ -18,15 +18,18 @@ namespace Qrakhen.Sqript {
 			this.Qlasses = qlasses ?? new Dictionary<string, Property>();
 		}
 
+
 		public Instance Instantiate() {
 			return null;
 		}
+
 
 		public class Property {
 
 			public string Name { get; private set; }
 			public Access Access { get; private set; }
 			public Qlass Qlass { get; private set; }
+
 
 			public Property(
 					string name,

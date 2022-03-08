@@ -35,10 +35,12 @@ namespace Qrakhen.Sqript {
 		public string Symbol { get; protected set; }
 		public Func<QValue, QValue, QValue> Execute { get; protected set; }
 
+
 		public Operator(string symbol, Func<QValue, QValue, QValue> calculate = null) {
 			this.Symbol = symbol;
 			this.Execute = calculate;
 		}
+
 
 		public int Compare(Operator op) {
 			return Importance - op.Importance;

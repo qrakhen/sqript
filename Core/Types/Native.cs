@@ -7,6 +7,7 @@ namespace Qrakhen.Sqript {
 
 		public static readonly Dictionary<ValueType, Qontext> native = new Dictionary<ValueType, Qontext>();
 
+
 		public static void Define(ValueType type, string name, Func<QValue, QValue[], QValue> callback) {
 			Funqtion fq = new Funqtion(null, callback);
 			if (!native.ContainsKey(type))
