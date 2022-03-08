@@ -41,7 +41,7 @@ fq checkIfWon ~(board symbol playerId {
 	*~ c <~ 0;
 	*~ count <~ 0;
 	*~ rows <~ board:len;
-	if(rows < 1) {
+	~? (rows < 1) {
 		return -1;
 	}
 	*~ tempRow <~ board:0;
@@ -211,16 +211,11 @@ loop(run > 0) {
 		}
 	}
 
-	printBoard(currentboard);	
-
-	console:setColor("DarkBlue");
-	console:writeln("--------Winner--------")
-	console:write("Congratulations:");
-	console:setColor("Blue");
-	console:writeln(currentPlayerName);
-	console:setColor("DarkBlue");
-	console:writeln("----------------------\n\n")
-	console:setColor("White");
+	printBoard(currentboard);
+	console:writeln("--------Winner--------", "DarkBlue");
+	console:write("Congratulations:", "DarkBlue");
+	console:writeln(currentPlayerName, "Blue");
+	console:writeln("----------------------\n\n", "DarkBlue");
 	
 	console:write('Again? [y/n]: ');
 	*~ input <~ console:read();
