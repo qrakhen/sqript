@@ -1,6 +1,8 @@
-﻿namespace Qrakhen.Sqript {
+﻿namespace Qrakhen.Sqript
+{
 
-	internal class Reference : QValue<QValue> {
+	internal class Reference : QValue<QValue>
+	{
 
 		public readonly ValueType acceptedType;
 		public readonly Qontext owner;
@@ -73,7 +75,8 @@
 		}
 	}
 
-	internal class FloatingReference<T> : Reference {
+	internal class FloatingReference<T> : Reference
+	{
 
 		public T Key { get; private set; }
 		public Collection<T> Target { get; private set; }

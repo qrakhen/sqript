@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 	/***
 	 
 	 *~ a <~ [ 3, '5', { n <~ 't'}]; 
@@ -10,7 +11,8 @@ namespace Qrakhen.Sqript {
 	 *<t1>~ t <~ [ val(t1), ... ];	
 		 
 	 ***/
-	internal class Array : Collection<int> {
+	internal class Array : Collection<int>
+	{
 
 		public const string CHAR_OPEN = "[", CHAR_CLOSE = "]";
 

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 
-	internal class Segment : Interpretoken {
+	internal class Segment : Interpretoken
+	{
 
 		public bool Returning { get; protected set; }
 		protected Node Head;
@@ -183,7 +185,8 @@ namespace Qrakhen.Sqript {
 			return r;
 		}
 
-		protected class Node {
+		protected class Node
+		{
 
 			public object Left { get; set; }
 			public object Right { get; set; }
@@ -252,7 +255,8 @@ namespace Qrakhen.Sqript {
 		}
 	}
 
-	internal class LoopSegment : Segment {
+	internal class LoopSegment : Segment
+	{
 
 		public const int HEAD = 0x1, FOOT = 0x2;
 
@@ -296,7 +300,8 @@ namespace Qrakhen.Sqript {
 		}
 	}
 
-	internal class IfElseSegment : Segment {
+	internal class IfElseSegment : Segment
+	{
 
 		public Segment[] Body { get; protected set; }
 		public Segment Next { get; protected set; }

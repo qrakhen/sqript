@@ -4,9 +4,10 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
 
-namespace Qrakhen.Sqript {
-
-	internal static class Loader {
+namespace Qrakhen.Sqript
+{
+	internal static class Loader
+	{
 
 		public static Interface[] LoadLibrary(string file) {
 			var r = new List<Interface>();

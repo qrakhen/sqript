@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript 
+{
 
-	internal class Qroup : Qontext {
+	internal class Qroup : Qontext 
+	{
 
 		public Dictionary<string, Property> Qlasses = new Dictionary<string, Property>();
 
@@ -24,7 +26,8 @@ namespace Qrakhen.Sqript {
 		}
 
 
-		public class Property {
+		public class Property 
+		{
 
 			public string Name { get; private set; }
 			public Access Access { get; private set; }

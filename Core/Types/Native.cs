@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 
-	internal class Native {
+	internal class Native
+	{
 
 		public static readonly Dictionary<ValueType, Qontext> native = new Dictionary<ValueType, Qontext>();
 

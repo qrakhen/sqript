@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 
-	public class Keyword {
+	public class Keyword
+	{
 
 		public struct Kwrd {
 			public readonly int id;
@@ -99,7 +101,8 @@ namespace Qrakhen.Sqript {
 	}
 
 
-	public static class Keywords {
+	public static class Keywords
+	{
 
 		private static readonly Dictionary<string, Keyword> _keywords = new Dictionary<string, Keyword>();
 

@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript 
+{
 
-	public class QValue {
+	public class QValue 
+	{
 
 		public static readonly QValue True = new QValue(true, ValueType.Boolean);
 		public static readonly QValue False = new QValue(false, ValueType.Boolean);
 		public static readonly QValue Null = new QValue(null, ValueType.Null);
 		public static readonly QValue Undefined = new QValue(null, ValueType.Undefined);
+		public static QValue Int(int v) => new QValue(v, ValueType.Integer);
+		public static QValue Decimal(decimal v) => new QValue(v, ValueType.Decimal);
+		public static QValue Decimal(float v) => new QValue(Convert.ToDecimal(v), ValueType.Decimal);
+		public static QValue Decimal(double v) => new QValue(Convert.ToDecimal(v), ValueType.Decimal);
 
 		public static Dictionary<string, Func<QValue[], QValue, QValue>> nativeCalls = new Dictionary<string, Func<QValue[], QValue, QValue>>();
 
@@ -32,11 +38,6 @@ namespace Qrakhen.Sqript {
 			this.Type = type;
 			this.Value = value;
 		}
-
-		public static QValue Int(int v) => new QValue(v, ValueType.Integer);
-		public static QValue Decimal(decimal v) => new QValue(v, ValueType.Decimal);
-		public static QValue Decimal(float v) => new QValue(Convert.ToDecimal(v), ValueType.Decimal);
-		public static QValue Decimal(double v) => new QValue(Convert.ToDecimal(v), ValueType.Decimal);
 
 		public virtual QValue Clone() {
 			return new QValue(Value, Type);
@@ -115,7 +116,8 @@ namespace Qrakhen.Sqript {
 	}
 
 
-	public class Readonly : QValue {
+	public class Readonly : QValue 
+	{
 
 		public new object Value {
 			get { return base.Value; }
@@ -138,7 +140,8 @@ namespace Qrakhen.Sqript {
 		}
 	}
 
-	public class QValue<T> : QValue {
+	public class QValue<T> : QValue
+	{
 
 		public new T Value {
 			get { return (T) base.Value; }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 
-	internal abstract class GlobalFunqtion : Funqtion {
+	internal abstract class GlobalFunqtion : Funqtion 
+	{
 
 		public GlobalFunqtion() : base(GlobalContext.GetInstance()) {
 
@@ -15,7 +17,8 @@ namespace Qrakhen.Sqript {
 
 	}
 
-	internal class QonfigFunqtion : GlobalFunqtion {
+	internal class QonfigFunqtion : GlobalFunqtion
+	{
 
 		public override QValue Execute(QValue[] parameters = null, QValue caller = null) {
 			if (parameters.Length == 1) {
@@ -33,7 +36,8 @@ namespace Qrakhen.Sqript {
 		}
 	}
 
-	internal static class Qonfig {
+	internal static class Qonfig
+	{
 
 		public static Dictionary<string, string> defaultValues = new Dictionary<string, string>();
 
@@ -68,7 +72,8 @@ namespace Qrakhen.Sqript {
 		}
 	}
 
-	internal class GlobalContext : Funqtion {
+	internal class GlobalContext : Funqtion
+	{
 
 		private static GlobalContext _instance;
 

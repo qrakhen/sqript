@@ -1,6 +1,7 @@
 ﻿using System;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 
 	public enum Access {
 		PRIVATE = 0x1,
@@ -9,7 +10,8 @@ namespace Qrakhen.Sqript {
 		PUBLIC = 0x8
 	}
 
-	public static class Core {
+	public static class Core 
+	{
 
 		internal static void Init() {
 			DefineKeywords();

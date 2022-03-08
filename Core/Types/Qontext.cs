@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript 
+{
 
-	internal abstract class Qontext : Collection<string> {
+	internal abstract class Qontext : Collection<string> 
+	{
 
 		public readonly bool extendable;
 		public Qontext Parent { get; protected set; }
@@ -90,7 +92,8 @@ namespace Qrakhen.Sqript {
 	}
 
 
-	internal class StatiqQontext : Qontext {
+	internal class StatiqQontext : Qontext 
+		{
 		public StatiqQontext(Qontext parent) : base(parent) { }
 	}
 

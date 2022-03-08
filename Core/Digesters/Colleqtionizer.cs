@@ -1,6 +1,7 @@
 ﻿namespace Qrakhen.Sqript {
 
-	internal class Colleqtionizer : Interpretoken {
+	internal class Colleqtionizer : Interpretoken
+	{
 
 		public Colleqtionizer(Token[] stack) : base(stack) { }
 

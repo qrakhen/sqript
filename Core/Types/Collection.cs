@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 
-	internal class Collection<K> : QValue<Dictionary<K, Reference>> {
+	internal class Collection<K> : QValue<Dictionary<K, Reference>>
+	{
 
 		public const string MEMBER_DELIMITER = ":";
 

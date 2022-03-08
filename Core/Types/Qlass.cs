@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript 
+{
 	/***
 	 (qroup qroupName {)
 
@@ -14,7 +15,8 @@ namespace Qrakhen.Sqript {
 	 
 	 (})
 	 ***/
-	internal class Qlass : Qontext {
+	internal class Qlass : Qontext 
+	{
 
 		public Dictionary<string, Property> Properties;
 

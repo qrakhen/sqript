@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 
-	internal class Segmentizer : Interpretoken {
+	internal class Segmentizer : Interpretoken
+	{
 
 		public Segmentizer(Token[] stack) : base(stack) { }
 

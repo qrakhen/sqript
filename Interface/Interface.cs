@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 	/// <summary>
 	/// The Interface class is used to create libraries, for example custom networking implementations.
 	/// All default Sqript libraries (i.e. sqlib.base.dll) are made by extending this class.
 	/// </summary>
-	public abstract class Interface {
+	public abstract class Interface
+	{
 
 		public string Name { get; private set; }
 		public Dictionary<string, Call> Calls;

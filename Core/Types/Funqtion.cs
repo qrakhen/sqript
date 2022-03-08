@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 	/***
 	 
 	 *~ f <~ ~(a b c {
@@ -20,7 +21,8 @@ namespace Qrakhen.Sqript {
 	 });
 		 
 	 ***/
-	internal class Funqtion : Qontext {
+	internal class Funqtion : Qontext
+	{
 
 		public List<Segment> Segments { get; protected set; }
 		public List<string> Parameters { get; protected set; }

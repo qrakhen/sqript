@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 
-	internal class Interpretoken : Digester<Token> {
+	internal class Interpretoken : Digester<Token>
+	{
 
 		protected const int OPEN = 0x0, CLOSE = 0x1, DEL = 0x2;
 

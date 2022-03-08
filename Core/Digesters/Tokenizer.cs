@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 
-	public class Token : QValue {
+	public class Token : QValue
+	{
 
 		public readonly int line, col;
 

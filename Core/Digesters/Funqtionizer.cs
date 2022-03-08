@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 
-	internal class Funqtionizer : Interpretoken {
+	internal class Funqtionizer : Interpretoken
+	{
 
 		public Funqtionizer(Token[] stack) : base(stack) { }
 
@@ -76,9 +78,8 @@ namespace Qrakhen.Sqript {
 	}
 
 
-	internal class FunqtionizerException : Exception {
-
+	internal class FunqtionizerException : Exception
+	{
 		public FunqtionizerException(string message, Token cause = null) : base(message, cause) { }
-
 	}
 }

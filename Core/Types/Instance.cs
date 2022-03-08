@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 
-	internal class Instance : Obqect {
+	internal class Instance : Obqect
+	{
 
 		public Qlass Constructor { get; protected set; }
 

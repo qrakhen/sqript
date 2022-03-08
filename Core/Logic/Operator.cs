@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 
-	public class Operator {
+	public class Operator
+	{
 
 		public const string
 			ASSIGN_VALUE = "<~",
@@ -57,7 +59,8 @@ namespace Qrakhen.Sqript {
 		}
 	}
 
-	public static class Operators {
+	public static class Operators
+	{
 
 		private static readonly Dictionary<string, Operator> _operators = new Dictionary<string, Operator>();
 

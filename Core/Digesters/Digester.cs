@@ -1,6 +1,8 @@
-﻿namespace Qrakhen.Sqript {
+﻿namespace Qrakhen.Sqript
+{
 
-	internal abstract class Digester<T> {
+	internal abstract class Digester<T>
+	{
 
 		protected T[] stack;
 		protected int position;
@@ -42,7 +44,8 @@
 		}
 
 
-		public class Sweeper {
+		public class Sweeper
+		{
 
 			public Digester<T> Source { get; private set; }
 

@@ -6,9 +6,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 
-	internal static class SQRIPT {
+	internal static class SQRIPT
+	{
 
 		public const string asciiLogo =
 			"  _______/ ^ \\___.___,\n" +
@@ -18,7 +20,8 @@ namespace Qrakhen.Sqript {
 			"	 qrakhen.net	    \n\n";
 	}
 
-	internal static class Log {
+	internal static class Log
+	{
 
 		public static Level LoggingLevel { get; private set; } = Level.DEBUG;
 
@@ -89,7 +92,8 @@ namespace Qrakhen.Sqript {
 		}
 	}
 
-	public static class KeyState {
+	public static class KeyState
+	{
 
 		public enum Keys {
 			Modifiers = -65536,
@@ -342,7 +346,8 @@ namespace Qrakhen.Sqript {
 		}
 	}
 
-	public static class Watcher {
+	public static class Watcher
+	{
 
 		private static readonly List<Diag> _log = new List<Diag>();
 
@@ -395,7 +400,8 @@ namespace Qrakhen.Sqript {
 		}
 	}
 
-	public class Runtime {
+	public class Runtime
+	{
 
 		public struct Reader {
 			public string file;
@@ -535,11 +541,13 @@ namespace Qrakhen.Sqript {
 		}
 	}
 
-	internal class ConditionException : Exception {
+	internal class ConditionException : Exception
+	{
 		public ConditionException(string message, Token cause = null) : base(message, cause) { }
 	}
 
-	internal class ReferenceException : Exception {
+	internal class ReferenceException : Exception
+	{
 
 		private readonly Reference _reference;
 
@@ -552,15 +560,18 @@ namespace Qrakhen.Sqript {
 		}
 	}
 
-	internal class OperationException : Exception {
+	internal class OperationException : Exception
+	{
 		public OperationException(string message, Token cause = null) : base(message, cause) { }
 	}
 
-	internal class ParseException : Exception {
+	internal class ParseException : Exception
+	{
 		public ParseException(string message, Token cause = null) : base(message, cause) { }
 	}
 
-	public class Exception : System.Exception {
+	public class Exception : System.Exception
+	{
 
 		public Token cause;
 

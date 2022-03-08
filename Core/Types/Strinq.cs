@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Qrakhen.Sqript {
+namespace Qrakhen.Sqript
+{
 
-	internal class Strinq : QValue<string> {
+	internal class Strinq : QValue<string>
+	{
 
 		protected Encoding _encoding;
 
