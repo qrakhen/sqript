@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<Authors>Qrakhen</Authors>
+		<Description>This project was created by Qrakhen and Updated by Vision</Description>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<SignAssembly>false</SignAssembly>
+		<StartupObject>Qrakhen.Sqript.Runtime</StartupObject>
+	</PropertyGroup>
+
+	<PropertyGroup>
+	  <OutputPath>..\bin\Sqript</OutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <PlatformTarget>AnyCPU</PlatformTarget>
+	  <DefineConstants>TRACE</DefineConstants>
+	  <Optimize>false</Optimize>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<Compile Remove="Core\Digesters\Expressionizer.cs" />
+		<Compile Remove="Core\Digesters\Segment.cs" />
+		<Compile Remove="Core\Logic\Expression.cs" />
+		<Compile Remove="Core\Logic\Statement.cs" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <None Remove="sqripts\Backups.sq" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Resource Include="sqripts\Backups.sq" />
+	</ItemGroup>
+
+</Project>

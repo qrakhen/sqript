@@ -5,223 +5,263 @@ using System.Text.RegularExpressions;
 
 namespace Qrakhen.Sqript
 {
-    public class Token : Value
-    {
-        public readonly int line, col;
 
-        private Token(ValueType type, object value, int line = -1, int col = -1) : base(value, type) {
-            this.line = line;
-            this.col = col;
-        }
+	public class Token : QValue
+	{
 
-        public override void setValue(object value, ValueType type) {
-            throw new Exception("token value is read only", this);
-        }
+		public readonly int line, col;
 
-        public bool check(ValueType type, object value) {
-            return (this.type == type && this.value == value);
-        }
 
-        public bool check(string value) {
-            return (this.value?.ToString() == value);
-        }
+		private Token(ValueType type, object value, int line = -1, int col = -1) : base(value, type) {
+			this.line = line;
+			this.col = col;
+		}
 
-        public bool check(ValueType type) {
-            return isType(type);
-        }
 
-        public bool check(Keyword.Kwrd kwrd) {
-            return (value?.ToString() == Keywords.get(kwrd.name).ToString());
-        }
+		public override void SetValue(object value, ValueType type) {
+			throw new Exception("token value is read only", this);
+		}
 
-        public Value makeValue() {
-            return new Value(value, type);
-        }
+		public bool Check(ValueType type, object value) {
+			return (this.Type == type && this.Value == value);
+		}
 
-        public static Token create(ValueType type, string value, int line = -1, int col = -1) {
-            object parsed = null;
-            NumberFormatInfo format = new NumberFormatInfo();
-            format.NumberDecimalSeparator = ".";
-            switch (type) {
-                case ValueType.Keyword: parsed = Keywords.get(value); break;
-                case ValueType.Operator: parsed = Operators.get(value); break;
-                case ValueType.Integer: parsed = Int32.Parse(value); break;
-                case ValueType.Decimal: parsed = System.Decimal.Parse(value, format); break;
-                case ValueType.Boolean: parsed = Boolean.Parse(value); break;
-                default: parsed = value; break;
-            }
-            return new Token(type, parsed, line, col);
-        }
+		public bool Check(string value) {
+			return (this.Value?.ToString() == value);
+		}
 
-        public string getLocation() {
-            return " @ " + line + " : " + col;
-        }
-    }
+		public bool Check(ValueType type) {
+			return IsType(type);
+		}
 
-    internal class Tokenizer : Digester<char>
-    {
-        private List<Token> result;
-        private int __line = 0, __col = 0;
+		public bool Check(Keyword.Kwrd kwrd) {
+			return (Value?.ToString() == Keywords.Get(kwrd.name).ToString());
+		}
 
-        public Tokenizer(string sequence) : this(sequence.ToCharArray()) { }
+		public QValue MakeValue() {
+			return new QValue(Value, Type);
+		}
 
-        private Tokenizer(char[] stack) : base(stack) { }
+		public static Token Create(ValueType type, string value, int line = -1, int col = -1) {
+			object parsed;
+			NumberFormatInfo format = new NumberFormatInfo {
+				NumberDecimalSeparator = "."
+			};
+			parsed = type switch {
+				ValueType.Keyword => Keywords.Get(value),
+				ValueType.Operator => Operators.Get(value),
+				ValueType.Integer => Int32.Parse(value),
+				ValueType.Decimal => System.Decimal.Parse(value, format),
+				ValueType.Boolean => Boolean.Parse(value),
+				_ => value,
+			};
+			return new Token(type, parsed, line, col);
+		}
 
-        protected new string peek() {
-            return base.peek().ToString();
-        }
+		public string GetLocation() {
+			return " @ " + line + " : " + col;
+		}
+	}
 
-        protected new string peek(int shift) {
-            return base.peek(shift).ToString();
-        }
+	internal class Tokenizer : Digester<char> {
+		private List<Token> _result;
+		private int __line = 0, __col = 0;
 
-        protected new string digest() {
-            __col++;
-            return base.digest().ToString();
-        }
+		public Tokenizer(string sequence) : this(sequence.ToCharArray()) { }
 
-        public Token[] parse() {
-            if (stack.Length < 1) throw new InvalidOperationException("input sequence empty");
-            result = new List<Token>();
+		private Tokenizer(char[] stack) : base(stack) { }
 
-            do {
-                string cur = peek();
-                if (Is.Whitespace(cur)) {
-                    if (digest() == "\n") {
-                        __line++;
-                        __col = 0;
-                    }
-                } else if (Is.Comment(cur)) {
-                    string start = digest();
-                    string close = "\n";
-                    if (peek() == "/") close = "/#";
-                    string s = digest();
-                    do {
-                        s = digest();
-                        if (close == "/#" && s == "/" && peek() == "#") {
-                            peek();
-                            digest();
-                            break;
-                        } else if (s == close) break;
-                    } while (!endOfStack());
-                } else if (Is.Structure(cur)) addToken(readStructure(), ValueType.Struqture, __line, __col);
-                else if (Is.Operator(cur)) addToken(readOperator(), ValueType.Operator, __line, __col);
-                else if (Is.String(cur)) addToken(readString(), ValueType.String, __line, __col);
-                else if (Is.Number(cur)) addToken(readNumber(), ValueType.Number, __line, __col);
-                else if (Is.Identifier(cur)) addToken(readIdentifier(), ValueType.Identifier, __line, __col);
-                else throw new Exception("unreadable symbol " + cur);
-            } while (!endOfStack());
-            return result.ToArray();
-        }
+		protected new string Peek() {
+			return base.Peek().ToString();
+		}
 
-        private void addToken(string value, ValueType type, int line = 0, int col = 0) {
-            if (type != ValueType.String && Keywords.get(value) != null) type = ValueType.Keyword;
-            else if (type != ValueType.String && Operators.get(value) != null) type = ValueType.Operator;
-            else if (type == ValueType.Number) type = (value.IndexOf(".") < 0 ? ValueType.Integer : ValueType.Decimal);
-            result.Add(Token.create(type, value, line, col));
-            Log.spam("[" + type.ToString() + "] > '" + value + "'");
-        }
+		protected new string Peek(int shift) {
+			return base.Peek(shift).ToString();
+		}
 
-        private string[] SQR_SPECIAL = new string[] {
-            "~(", ".~", ":~", "*~", "*:", "^~"
-        };            
+		protected new string Digest() {
+			__col++;
+			return base.Digest().ToString();
+		}
 
-        private string readStructure() {
-            string buffer = digest();
-            do {
-                string next = peek();
-                foreach (string s in SQR_SPECIAL) {
-                    if (buffer + next == s) {
-                        buffer += digest();
-                        break;
-                    }
-                }
-                break;
-            } while (!endOfStack());
-            return buffer;
-        }
+		public Token[] Parse() {
+			if (stack.Length < 1)
+				throw new InvalidOperationException("input sequence empty");
+			_result = new List<Token>();
 
-        private string readOperator() {
-            string buffer = "";
-            do {
-                if (Is.Operator(peek())) buffer += digest();
-                else if (Is.Structure(peek())) {
-                    string next = peek();
-                    foreach (string s in SQR_SPECIAL) {
-                        if (buffer + next == s) {
-                            buffer += digest();
-                            break;
-                        }
-                    }
-                    break;
-                } else break;
-            } while (!endOfStack());
-            return buffer;
-        }
+			do {
+				string cur = Peek();
+				if (Is.Whitespace(cur)) {
+					if (Digest() == "\n") {
+						__line++;
+						__col = 0;
+					}
+				} else if (Is.Comment(cur)) {
+					Digest();
+					string close = "\n";
+					if (Peek() == "/")
+						close = "/#";
+					string start = Digest();
+					do {
+						start = Digest();
+						if (close == "/#" && start == "/" && Peek() == "#") {
+							Peek();
+							Digest();
+							break;
+						} else if (start == close) {
+							break;
+						}
+					} while (!EndOfStack());
+				} else if (Is.Structure(cur))
+					AddToken(ReadStructure(), ValueType.Struqture, __line, __col);
+				else if (Is.Operator(cur))
+					AddToken(ReadOperator(), ValueType.Operator, __line, __col);
+				else if (Is.String(cur))
+					AddToken(ReadString(), ValueType.String, __line, __col);
+				else if (Is.Number(cur))
+					AddToken(ReadNumber(), ValueType.Number, __line, __col);
+				else if (Is.Identifier(cur)) {
+					string identifier = ReadIdentifier();
+					if (identifier.Equals("true") || identifier.Equals("false")) {
+						AddToken(identifier, ValueType.Boolean, __line, __col);
+					} else {
+						AddToken(identifier, ValueType.Identifier, __line, __col);
+					}
+				} else {
+					throw new Exception("unreadable symbol " + cur);
+				}
+			} while (!EndOfStack());
+			return _result.ToArray();
+		}
 
-        private string readNumber() {
-            string buffer = "";
-            do {
-                if (peek() == "." && buffer.IndexOf(".") > -1) break;
-                else if (Is.Number(peek())) buffer += digest();
-                else break;
-            } while (!endOfStack());
-            return buffer;
-        }
+		private void AddToken(string value, ValueType type, int line = 0, int col = 0) {
+			if (type == ValueType.Boolean)
+				type = ValueType.Boolean;
+			else if (type != ValueType.String && Keywords.Get(value) != null)
+				type = ValueType.Keyword;
+			else if (type != ValueType.String && Operators.Get(value) != null)
+				type = ValueType.Operator;
+			else if (type == ValueType.Number)
+				type = (value.IndexOf(".") < 0 ? ValueType.Integer : ValueType.Decimal);
+			_result.Add(Token.Create(type, value, line, col));
+			Log.Spam("[" + type.ToString() + "] > '" + value + "'");
+		}
 
-        private string readIdentifier() {
-            string buffer = "";
-            do {
-                if (Is.Identifier(peek()) || Is.Number(peek())) buffer += digest();
-                /*else if (peek() == Context.MEMBER_DELIMITER
-                        && buffer.Length > 0
-                        && buffer.Substring(buffer.Length - 1) != Context.MEMBER_DELIMITER) {
-                    if (Is.Identifier(peek(1))) buffer += digest();
-                    else break; }*/
-                else break;
-            } while (!endOfStack());
-            return buffer;
-        }
+		private static readonly string[] SQR_SPECIAL = new string[] {
+			"~(", ".~", ":~", "*~", "*:", "^~", "?~", "~?"
+		};
 
-        private string readString() {
-            string buffer = "", limiter = digest();
-            do {
-                if (peek() != limiter) buffer += digest();
-                else if (buffer.Substring(buffer.Length - 1, 1) == @"\") buffer = buffer.Substring(0, buffer.Length - 1) + digest();
-                else { digest(); break; }
-            } while (!endOfStack());
-            return buffer;
-        }
+		// ToDo: Types
+		// private string TYPED_REF = "*type~";
 
-        static class Is
-        {
-            public static bool Operator(string c) {
-                return Regex.IsMatch(c, @"[\/\-\*+=&<>~^?!]");
-            }
+		private string ReadStructure() {
+			string buffer = Digest();
+			do {
+				string next = Peek();
+				foreach (string s in SQR_SPECIAL) {
+					if (buffer + next == s) {
+						buffer += Digest();
+						break;
+					}
+				}
+				break;
+			} while (!EndOfStack());
+			return buffer;
+		}
 
-            public static bool Structure(string c) {
-                return Regex.IsMatch(c, @"[{}()[\].,:;~]");
-            }
+		private string ReadOperator() {
+			string buffer = "";
+			do {
+				if (Is.Operator(Peek()))
+					buffer += Digest();
+				else if (Is.Structure(Peek())) {
+					string next = Peek();
+					foreach (string s in SQR_SPECIAL) {
+						if (buffer + next == s) {
+							buffer += Digest();
+							break;
+						}
+					}
+					break;
+				} else {
+					break;
+				}
+			} while (!EndOfStack());
+			return buffer;
+		}
 
-            public static bool String(string c) {
-                return Regex.IsMatch(c, "[\"']");
-            }
+		private string ReadNumber() {
+			string buffer = "";
+			do {
+				if (Peek() == "." && buffer.IndexOf(".") > -1)
+					break;
+				else if (Is.Number(Peek())) {
+					buffer += Digest();
+				} else {
+					break;
+				}
+			} while (!EndOfStack());
+			return buffer;
+		}
 
-            public static bool Number(string c) {
-                return Regex.IsMatch(c, @"[\d.]");
-            }
+		private string ReadIdentifier() {
+			string buffer = "";
+			do {
+				if (Is.Identifier(Peek()) || Is.Number(Peek())) {
+					buffer += Digest();
+					/*} else if (Peek() == Qontext.MEMBER_DELIMITER
+					  && buffer.Length > 0
+					  && buffer.Substring(buffer.Length - 1) != Qontext.MEMBER_DELIMITER) {
+						if (Is.Identifier(Peek(1)))
+							buffer += Digest();
+					*/
+				} else {
+					break;
+				}
+			} while (!EndOfStack());
+			return buffer;
+		}
 
-            public static bool Whitespace(string c) {
-                return Regex.IsMatch(c, @"\s");
-            }
+		private string ReadString() {
+			string buffer = "", limiter = Digest();
+			do {
+				if (Peek() != limiter)
+					buffer += Digest();
+				else if (buffer.Length != 0 && buffer.Substring(buffer.Length - 1, 1) == @"\")
+					buffer = buffer[0..^1] + Digest();
+				else { Digest(); break; }
+			} while (!EndOfStack());
+			return buffer;
+		}
 
-            public static bool Comment(string c) {
-                return Regex.IsMatch(c, @"#");
-            }
+		static class Is {
+			public static bool Operator(string c) {
+				return Regex.IsMatch(c, @"[\/\-\*+=&<>~^?!]");
+			}
 
-            public static bool Identifier(string c) {
-                return (!Operator(c) && !Structure(c) && !String(c) && !Number(c) && !Whitespace(c));
-            }
-        }
-    }
+			public static bool Structure(string c) {
+				return Regex.IsMatch(c, @"[{}()[\].,:;~]");
+			}
+
+			public static bool String(string c) {
+				return Regex.IsMatch(c, "[\"']");
+			}
+
+			public static bool Number(string c) {
+				return Regex.IsMatch(c, @"[\d.]");
+			}
+
+			public static bool Whitespace(string c) {
+				return Regex.IsMatch(c, @"\s");
+			}
+
+			public static bool Comment(string c) {
+				return Regex.IsMatch(c, @"#");
+			}
+
+			public static bool Identifier(string c) {
+				return (!Operator(c) && !Structure(c) && !String(c) && !Number(c) && !Whitespace(c));
+			}
+		}
+	}
 }

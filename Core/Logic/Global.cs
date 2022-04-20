@@ -3,130 +3,138 @@ using System.Collections.Generic;
 
 namespace Qrakhen.Sqript
 {
-    internal abstract class GlobalFunqtion : Funqtion
-    {
-        public GlobalFunqtion() : base(GlobalContext.getInstance()) {
 
-        }
+	internal abstract class GlobalFunqtion : Funqtion 
+	{
 
-        public override string ToString() {
-            return "()";
-        }
-    }
+		public GlobalFunqtion() : base(GlobalContext.GetInstance()) {
 
-    internal class QonfigFunqtion : GlobalFunqtion
-    {
-        public override Value execute(Value[] parameters = null, Value caller = null) {
-            if (parameters.Length == 1) {
-                Qonfig.resetValue(parameters[0].getValue().ToString());
-            } else {
-                Qonfig.setValue(
-                    parameters[0].getValue().ToString(), 
-                    parameters[1].getValue().ToString());
-            }
-            return null;
-        }
+		}
 
-        public override string ToString() {
-            return "(key, value)";
-        }
-    }
+		public override string ToString() {
+			return "()";
+		}
 
-    internal static class Qonfig
-    {
-        public static Dictionary<string, string> defaultValues = new Dictionary<string, string>();
+	}
 
-        static Qonfig() {
-            defaultValues.Add("logLevel", "INFO");
-        }
+	internal class QonfigFunqtion : GlobalFunqtion
+	{
 
-        public static string getDefaultValue(string key) {
-            if (!defaultValues.ContainsKey(key)) return "undefined";
-            return defaultValues[key];
-        }
+		public override QValue Execute(QValue[] parameters = null, QValue caller = null) {
+			if (parameters.Length == 1) {
+				Qonfig.ResetValue(parameters[0].GetValue().ToString());
+			} else {
+				Qonfig.SetValue(
+					parameters[0].GetValue().ToString(),
+					parameters[1].GetValue().ToString());
+			}
+			return null;
+		}
 
-        public static void setValue(string key, string value) {
-            Log.debug("setting value <" + value + "> for qonfig entry '" + key + "'");
-            switch (key) {
-                case "log":
-                case "logLevel":
-                    int i = 0;
-                    if (Int32.TryParse(value, out i)) {
-                        Log.setLoggingLevel((Log.Level) i);
-                    } else Log.setLoggingLevel((Log.Level) Enum.Parse(typeof(Log.Level), value));
-                    break;
-            }
-        }
+		public override string ToString() {
+			return "(key, value)";
+		}
+	}
 
-        public static void resetValue(string key) {
-            setValue(key, getDefaultValue(key));
-        }
-    }
+	internal static class Qonfig
+	{
 
-    internal class GlobalContext : Funqtion
-    {
-        private static GlobalContext instance;
+		public static Dictionary<string, string> defaultValues = new Dictionary<string, string>();
 
-        private List<Segment> queued;
 
-        public GlobalContext() : base(null) {
-            queued = new List<Segment>();
-        }
+		static Qonfig() {
+			defaultValues.Add("logLevel", "INFO");
+			// ToDo: Add auto #clr
+		}
 
-        private void init() {
-            set("qonfig", new Reference(new QonfigFunqtion()));
-            set("global", new Reference(getInstance()));
 
-            Interface[] libs = Loader.loadDirectory(AppContext.BaseDirectory + "\\lib\\");
-            if (libs.Length > 0) {
-                foreach (var lib in libs) {
-                    try {
-                        //lib.load();
-                        set(lib.name, new Reference(lib.createInterfaceContext()));
-                        Log.spam("loaded external library component '" + lib.name + "' into global context");
-                    } catch(Exception e) {
-                        Log.error("failed to load library '" + lib.name + "': " + e.Message); 
-                    }
-                }
-                Log.debug("successfully loaded " + libs.Length + " external libraries.");
-            }
-        }
+		public static string GetDefaultValue(string key) {
+			return !defaultValues.ContainsKey(key) ? "undefined" : defaultValues[key];
+		}
 
-        public static GlobalContext getInstance() {
-            if (instance == null) resetInstance();
-            return instance;
-        }
+		public static void SetValue(string key, string value) {
+			Log.Debug("setting value <" + value + "> for qonfig entry '" + key + "'");
+			switch (key) {
+				case "log":
+				case "logLevel":
+					int i;
+					if (Int32.TryParse(value, out i)) {
+						Log.SetLoggingLevel((Log.Level) i);
+					} else {
+						Log.SetLoggingLevel((Log.Level) Enum.Parse(typeof(Log.Level), value));
+					}
+					break;
+			}
+		}
 
-        public static void resetInstance() {
-            instance = new GlobalContext();
-            instance.init();
-        }
+		public static void ResetValue(string key) {
+			SetValue(key, GetDefaultValue(key));
+		}
+	}
 
-        public void queue(Segment[] statements) {
-            foreach (Segment statement in statements) {
-                queued.Add(statement);
-            }
-        }
+	internal class GlobalContext : Funqtion
+	{
 
-        public void queue(Segment statement) {
-            queue(new Segment[] { statement });
-        }
+		private static GlobalContext _instance;
 
-        public void clearQueue() {
-            queued.Clear();
-        }
+		private readonly List<Segment> _queued = new List<Segment>();
 
-        public void execute() {
-            if (queued.Count > 0) {
-            Log.spam("main context processing " + queued.Count + " queued statements...");
-                foreach (Segment s in queued) {
-                    Value r = s.execute(this);
-                    if (r != null) Log.debug(r.ToString(), ConsoleColor.Green);
-                    segments.Add(s);
-                }
-                clearQueue();
-            }
-            Log.spam("main context total executed statement amount: " + segments.Count);
-        }
-    }
+
+		public GlobalContext() : base(null) { }
+
+
+		private void Init() {
+			Set("qonfig", new Reference(new QonfigFunqtion()));
+			Set("global", new Reference(GetInstance()));
+
+			Interface[] libs = Loader.LoadDirectory(AppContext.BaseDirectory + "\\lib\\");
+			if (libs.Length > 0) {
+				foreach (var lib in libs) {
+					lib.Load();
+					Set(lib.Name, new Reference(lib.CreateInterfaceContext()));
+					Log.Spam("loaded external library component '" + lib.Name + "' into global context");
+				}
+				Log.Debug("successfully loaded " + libs.Length + " external libraries.");
+			}
+		}
+
+		public static GlobalContext GetInstance() {
+			if (_instance == null)
+				ResetInstance();
+			return _instance;
+		}
+
+		public static void ResetInstance() {
+			_instance = new GlobalContext();
+			_instance.Init();
+		}
+
+		public void Queue(Segment[] statements) {
+			foreach (Segment statement in statements) {
+				_queued.Add(statement);
+			}
+		}
+
+		public void Queue(Segment statement) {
+			Queue(new Segment[] { statement });
+		}
+
+		public void ClearQueue() {
+			_queued.Clear();
+		}
+
+		public void Execute() {
+			if (_queued.Count > 0) {
+				Log.Spam("main context processing " + _queued.Count + " queued statements...");
+				foreach (Segment s in _queued) {
+					QValue r = s.Execute(this);
+					if (r != null && !r.IsNull())
+						Log.Debug(r.ToString(), ConsoleColor.Green);
+					Segments.Add(s);
+				}
+				ClearQueue();
+			}
+			Log.Spam("main context total executed statement amount: " + Segments.Count);
+		}
+	}
 }

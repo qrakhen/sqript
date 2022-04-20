@@ -1,60 +1,67 @@
 ﻿namespace Qrakhen.Sqript
 {
-    internal abstract class Digester<T>
-    {
-        protected T[] stack;
-        protected int position;
 
-        public Digester(T[] stack) {
-            this.stack = stack;
-        }
+	internal abstract class Digester<T>
+	{
 
-        protected virtual void reset() {
-            position = 0;
-        }
+		protected T[] stack;
+		protected int position;
 
-        protected virtual void shift(int shift) {
-            position += shift;
-            position = (position < 0 ? 
-                0 : (position < stack.GetUpperBound(0) ?
-                position : stack.GetUpperBound(0)));
-        }
 
-        protected virtual bool endOfStack() {
-            return (position > stack.Length - 1);
-        }
+		public Digester(T[] stack) {
+			this.stack = stack;
+		}
 
-        protected virtual T peek(int shift) {
-            shift = shift + position;
-            return stack[(shift < 0 ? 
-                0 : (shift < stack.GetUpperBound(0) ?
-                shift : stack.GetUpperBound(0)))];
-        }
 
-        protected virtual T peek() {
-            return stack[(position < stack.GetUpperBound(0) ? position : stack.GetUpperBound(0))];
-        }
+		protected virtual void Reset() {
+			position = 0;
+		}
 
-        protected virtual T digest() {
-            if (!endOfStack()) return stack[position++];
-            else return peek();
-        }
+		protected virtual void Shift(int shift) {
+			position += shift;
+			position = (position < 0 ?
+				0 : (position < stack.GetUpperBound(0) ?
+				position : stack.GetUpperBound(0)));
+		}
 
-        public class Sweeper
-        {
-            public Digester<T> source { get; private set; }
+		protected virtual bool EndOfStack() {
+			return (position > stack.Length - 1);
+		}
 
-            public Sweeper(Digester<T> source) {
-                this.source = source;
-            }
+		protected virtual T Peek(int shift) {
+			shift += position;
+			return stack[(shift < 0 ?
+				0 : (shift < stack.GetUpperBound(0) ?
+				shift : stack.GetUpperBound(0)))];
+		}
 
-            public T peek() {
-                return source.peek();
-            }
+		protected virtual T Peek() {
+			return stack[(position < stack.GetUpperBound(0) ? position : stack.GetUpperBound(0))];
+		}
 
-            public T digest() {
-                return source.digest();
-            }
-        }
-    }
+		protected virtual T Digest() {
+			return !EndOfStack() ? stack[position++] : Peek();
+		}
+
+
+		public class Sweeper
+		{
+
+			public Digester<T> Source { get; private set; }
+
+
+			public Sweeper(Digester<T> source) {
+				this.Source = source;
+			}
+
+
+			public T Peek() {
+				return Source.Peek();
+			}
+
+			public T Digest() {
+				return Source.Digest();
+			}
+		}
+	}
 }

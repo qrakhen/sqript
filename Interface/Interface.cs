@@ -3,115 +3,159 @@ using System.Collections.Generic;
 
 namespace Qrakhen.Sqript
 {
-    /// <summary>
-    /// The Interface class is used to create libraries, for example custom networking implementations.
-    /// All default Sqript libraries (i.e. sqlib.base.dll) are made by extending this class.
-    /// </summary>
-    public abstract class Interface
-    {
-        public string name { get; private set; }
-        public Dictionary<string, Call> calls;
+	/// <summary>
+	/// The Interface class is used to create libraries, for example custom networking implementations.
+	/// All default Sqript libraries (i.e. sqlib.base.dll) are made by extending this class.
+	/// </summary>
+	public abstract class Interface
+	{
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
-        public Interface(string name) {
-            this.name = name;
-            calls = new Dictionary<string, Call>();
-        }
+		public string Name { get; private set; }
+		public Dictionary<string, Call> Calls;
 
-        /// <summary>
-        /// The load method should use define() to register all interface calls.
-        /// </summary>
-        public abstract void load();
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		public Interface(string name) {
+			this.Name = name;
+			Calls = new Dictionary<string, Call>();
+		}
 
-        /// <summary>
-        /// defines an interface Call, see the Call class for more information
-        /// </summary>
-        /// <param name="call"></param>
-        public void define(Call call) {
-            calls.Add(call.name, call);
-        }
 
-        internal Value call(string name, Value[] parameters) {
-            if (calls.ContainsKey(name)) return calls[name].execute(parameters);
-            else throw new InterfaceException("could not find interface call '" + name + "'", this);
-        }
+		/// <summary>
+		/// The load method should use define() to register all interface calls.
+		/// </summary>
+		public abstract void Load();
 
-        public sealed class Call
-        {
-            public delegate Value CallMethod(Dictionary<string, Value> parameters);
+		/// <summary>
+		/// defines an interface Call, see the Call class for more information
+		/// </summary>
+		/// <param name="call"></param>
+		public void Define(Call call) {
+			Calls.Add(call.Name, call);
+		}
 
-            public CallMethod call { get; private set; }
-            public string name { get; private set; }
-            public string[] parameters { get; private set; }
-            public ValueType returnType { get; private set; }
+		internal QValue CallMethod(string name, QValue[] parameters) {
+			if (this.Calls.ContainsKey(name)) {
+				return Calls[name].Execute(parameters);
+			} else {
+				throw new InterfaceException("could not find interface call '" + name + "'", this);
+			}
+		}
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="name">function name, as used in code</param>
-            /// <param name="parameters">parameter names to later be able to identify them inside the callback</param>
-            /// <param name="call">any function that implements the CallbackMethod delegate (Value(Dictionary<string, Value>))
-            /// the actual function, provide any method that accepts a Dictionary as parameter and returns a Sqript.Value
-            /// all provided parameters will be accessible using the dictionary (i.e. string key = parameters["key"];)
-            /// </param>
-            public Call(string[] parameters, CallMethod call, ValueType returnType = ValueType.Any, string name = null)
-            {
-                this.parameters = parameters;
-                this.call = call;
-                this.returnType = returnType;
-                this.name = name ?? call.Method.Name;
-            }
 
-            public Value execute(Value[] parameters)
-            {
-                Dictionary<string, Value> provided = new Dictionary<string, Value>();
-                for (int i = 0; i < this.parameters.Length; i++) {
-                    if (parameters.Length <= i) provided.Add(this.parameters[i], null);
-                    else provided.Add(this.parameters[i], parameters[i]);
-                }
-                return call(provided);
-            }
-        }
+		public sealed class Call {
 
-        internal class Funqtion : Sqript.Funqtion
-        {
-            public Call call { get; private set; }
+			public delegate QValue CallMethodParam(Dictionary<string, QValue> parameters);
+			public delegate QValue CallMethod();
 
-            public Funqtion(Qontext parent, Call call) : base(parent) {
-                this.call = call;
-            }
+			private readonly CallMethodParam _callParam;
+			private readonly CallMethod _call;
+			public string Name { get; private set; }
+			public string[] Parameters { get; private set; }
+			public ValueType ReturnType { get; private set; }
 
-            public override Value execute(Value[] parameters, Value caller = null) {
-                return call.execute(parameters);
-            }
+			/// <summary>
+			/// Creates a Method with parameters
+			/// </summary>
+			/// <param name="call">any function that implements the CallbackMethod delegate (Value(Dictionary<string, Value>))
+			/// the actual function, provide any method that accepts a Dictionary as parameter and returns a Sqript.Value
+			/// all provided parameters will be accessible using the dictionary (i.e. string key = parameters["key"];)
+			/// </param>
+			/// <param name="parameters">parameter names to later be able to identify them inside the callback</param>
+			/// <param name="returnType">returntype of the function</param>
+			/// <param name="name">function name, as used in code</param>
+			public Call(CallMethodParam call, string[] parameters, ValueType returnType = ValueType.Any, string name = null) {
+				this._callParam = call;
+				this.Parameters = parameters;
+				this.ReturnType = returnType;
+				this.Name = name ?? call.Method.Name;
+			}
 
-            public override string ToString() {
-                string r = "<" + call.returnType + ">(";
-                foreach (string parameter in call.parameters) r += parameter + ", ";
-                if (r.EndsWith(", ")) r = r.Substring(0, r.Length - 2);
-                return r + ")";
-            }
-        }
+			/// <summary>
+			/// Creates a Method with no parameters
+			/// </summary>
+			/// <param name="call">any function that implements the CallbackMethod delegate (Value(Dictionary<string, Value>))
+			/// the actual function, provide any method that accepts a Dictionary as parameter and returns a Sqript.Value
+			/// all provided parameters will be accessible using the dictionary (i.e. string key = parameters["key"];)
+			/// </param>
+			/// <param name="returnType">returntype of the function</param>
+			/// <param name="name">function name, as used in code</param>
+			public Call(CallMethod call, ValueType returnType = ValueType.Any, string name = null) {
+				this._call = call;
+				this.ReturnType = returnType;
+				this.Name = name ?? call.Method.Name;
+			}
 
-        internal Obqect createInterfaceContext() {
-            Obqect context = new Obqect(null, false);
-            foreach (var call in calls) {
-                context.set(call.Key, new Reference(new Funqtion(context, call.Value), context, call.Key, Access.PUBLIC, true));
-            }
-            return context;
-        }
-    }
 
-    public class InterfaceException : Exception
-    {
-        public Interface intf;
-        public Interface.Call call;
-        public InterfaceException(string message, Interface intf = null, Interface.Call call = null) : base(message) {
-            this.intf = intf;
-            this.call = call;
-        }
-    }    
+			public QValue Execute(QValue[] parameters) {
+				if (parameters is null || parameters.Length == 0) {
+					return Execute();
+				}
+				Dictionary<string, QValue> provided = new Dictionary<string, QValue>();
+				for (int i = 0; i < this.Parameters.Length; i++) {
+					if (parameters.Length <= i) {
+						provided.Add(this.Parameters[i], null);
+					}
+					else {
+						provided.Add(this.Parameters[i], parameters[i]);
+					}
+				}
+				return _callParam(provided);
+			}
+
+			public QValue Execute() {
+				return _call();
+			}
+		}
+
+		internal class Funqtion : Sqript.Funqtion {
+
+			public readonly Call call; 
+
+
+			public Funqtion(Qontext parent, Call call) : base(parent) {
+				this.call = call;
+			}
+
+
+			public override QValue Execute(QValue[] parameters, QValue caller = null) {
+				return call.Execute(parameters);
+			}
+
+			public override string ToString() {
+				string r = "<" + call.ReturnType + ">(";
+				if (call.Parameters != null) {
+					foreach (string parameter in call.Parameters) {
+						r += parameter + ", ";
+					}
+					if (r.EndsWith(", ")) {
+						r = r[0..^2];
+					}
+				}
+				return r + ")";
+			}
+		}
+
+		internal Obqect CreateInterfaceContext() {
+			Obqect context = new Obqect(null, false);
+			foreach (var call in Calls) {
+				context.Set(call.Key, new Reference(new Funqtion(context, call.Value), context, call.Key, Access.PUBLIC, true));
+			}
+			return context;
+		}
+	}
+
+	public class InterfaceException : Exception {
+
+		public Interface intf;
+		public Interface.Call call;
+
+
+		public InterfaceException(string message, Interface intf = null, Interface.Call call = null) : base(message) {
+			this.intf = intf;
+			this.call = call;
+		}
+	}
 }

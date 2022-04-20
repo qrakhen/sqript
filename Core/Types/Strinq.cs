@@ -4,42 +4,46 @@ using System.Text;
 
 namespace Qrakhen.Sqript
 {
-    internal class Strinq : Value<string>
-    {
-        public Encoding encoding { get; protected set; }
 
-        static Strinq() {
-            Native.define(
-                ValueType.String,
-                "indexOf",
-                native_indexOf);
+	internal class Strinq : QValue<string>
+	{
 
-            Native.define(
-                ValueType.String,
-                "length",
-                native_length);
-        }
-        
-        public Strinq(string value, ValueType type, Encoding encoding = Encoding.UTF8) : base(type, value) {
-            this.encoding = encoding;
-        }
+		protected Encoding _encoding;
 
-        public static Value native_indexOf(Value target, Value[] parameters) {
-            if (parameters.Length < 1) return Int(-1);
-            string subString = parameters[0].str();
-            return target.value != null ? Int(target.getValue<string>().IndexOf(subString)) : Int(-1);
-        }
+		static Strinq() {
+			Native.Define(
+				ValueType.String,
+				"indexOf",
+				NativeIndexOf);
 
-        public static Value native_length(Value target, Value[] parameters) {
-            return target.value != null ? Int(target.getValue<string>().Length) : Int(0);
-        }
+			Native.Define(
+				ValueType.String,
+				"length",
+				NativeLength);
+		}
 
-        public enum Encoding
-        {
-            UTF8,
-            UTF16,
-            UTF32,
-            ASCII
-        }
-    }
+		public Strinq(string value, ValueType type, Encoding encoding = Encoding.UTF8) : base(type, value) {
+			this._encoding = encoding;
+		}
+
+
+		public static QValue NativeIndexOf(QValue target, QValue[] parameters) {
+			if (parameters.Length < 1)
+				return Int(-1);
+			string subString = parameters[0].Str();
+			return target.Value != null ? Int(target.GetValue<string>().IndexOf(subString)) : Int(-1);
+		}
+
+		public static QValue NativeLength(QValue target, QValue[] parameters) {
+			return target.Value != null ? Int(target.GetValue<string>().Length) : Int(0);
+		}
+
+
+		public enum Encoding {
+			UTF8,
+			UTF16,
+			UTF32,
+			ASCII
+		}
+	}
 }
